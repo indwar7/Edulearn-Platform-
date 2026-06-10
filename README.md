@@ -11,6 +11,7 @@ Learn smarter, score better — interactive lessons covering CBSE, NCERT, and 20
 | [edutok/signup.html](edutok/signup.html) | Create account |
 | [edutok/dashboard.html](edutok/dashboard.html) | Student dashboard |
 | [edutok/learn.html](edutok/learn.html) | Course / chapter browser |
+| [edutok/pal.html](edutok/pal.html) | PAL Adaptive AI — mastery-gated adaptive practice |
 
 Shared dark/light theming lives in [theme.css](theme.css) and [theme.js](theme.js).
 

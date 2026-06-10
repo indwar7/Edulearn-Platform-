@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PAL Adaptive AI — EduTok · Learning that meets you where you are</title>
+<meta name="description" content="PAL is EduTok's mastery-gated adaptive engine. It diagnoses gaps, bridges quietly to earlier grades, and unlocks the final test only when you're ready. No labels — just bridges.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&family=Fragment+Mono:ital@0;1&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   EDUTOK · PAL — design tokens (shared with dashboard)
+   ============================================================ */
+:root{
+  --ink:#05080F;
+  --deep:#0A1120;
+  --card:#0D1626;
+  --card2:#121C30;
+  --line:rgba(242,237,227,.09);
+  --cream:#F2EDE3;
+  --muted:#949DB0;
+  --teal:#3DE8C5;
+  --peri:#7C9BFF;
+  --amber:#FFB454;
+  --rose:#FF7AA2;
+  --violet:#C2A8FF;
+  --aurora:linear-gradient(115deg,#3DE8C5 0%,#7C9BFF 48%,#FFB454 100%);
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--ink);
+  color:var(--cream);
+  font-family:'Schibsted Grotesk',sans-serif;
+  font-size:15px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  min-height:100vh;
+}
+::selection{background:rgba(124,155,255,.3);color:var(--cream);}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;color:inherit;background:none;border:none;cursor:pointer;}
+
+/* ---------- typographic atoms ---------- */
+.eyebrow{
+  font-family:'Fragment Mono',monospace;
+  font-size:11px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+.mono{
+  font-family:'Fragment Mono',monospace;
+  font-size:11px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.serif{font-family:'Fraunces',serif;}
+
+/* ---------- atmosphere: blobs + grain ---------- */
+.blobs{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);will-change:transform;}
+.blob.b1{width:680px;height:680px;left:-180px;top:-160px;background:rgba(124,155,255,.16);animation:drift1 26s var(--ease) infinite alternate;}
+.blob.b2{width:760px;height:760px;right:-240px;top:18%;background:rgba(61,232,197,.11);animation:drift2 32s var(--ease) infinite alternate;}
+.blob.b3{width:560px;height:560px;left:30%;bottom:-260px;background:rgba(255,180,84,.10);animation:drift3 28s var(--ease) infinite alternate;}
+@keyframes drift1{from{transform:translate(0,0) scale(1);}to{transform:translate(90px,60px) scale(1.12);}}
+@keyframes drift2{from{transform:translate(0,0) scale(1.05);}to{transform:translate(-80px,70px) scale(.95);}}
+@keyframes drift3{from{transform:translate(0,0);}to{transform:translate(70px,-50px) scale(1.08);}}
+.grain{position:fixed;inset:0;z-index:80;pointer-events:none;opacity:.05;}
+
+/* ---------- page-load reveal ---------- */
+.pl{opacity:0;transform:translateY(24px);animation:rise .7s var(--ease) forwards;animation-delay:var(--d,0ms);}
+@keyframes rise{to{opacity:1;transform:translateY(0);}}
+.rv{opacity:0;transform:translateY(24px);transition:opacity .7s var(--ease),transform .7s var(--ease);}
+.rv.in{opacity:1;transform:translateY(0);}
+
+/* ============================================================
+   NAV (shared with dashboard)
+   ============================================================ */
+.nav{
+  position:sticky;top:0;z-index:60;
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  background:rgba(5,8,15,.7);
+  border-bottom:1px solid var(--line);
+}
+.nav-inner{
+  max-width:1320px;margin:0 auto;padding:0 32px;
+  height:68px;display:flex;align-items:center;gap:28px;
+}
+.logo{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.logo .wordmark{font-family:'Fraunces',serif;font-weight:600;font-size:22px;letter-spacing:-.01em;}
+.logo svg{display:block;}
+.nav-links{display:flex;gap:6px;margin:0 auto;}
+.nav-link{
+  position:relative;padding:8px 14px;border-radius:99px;
+  font-size:14px;font-weight:500;color:var(--muted);
+  transition:color .3s var(--ease),background .3s var(--ease);
+}
+.nav-link:hover{color:var(--cream);background:rgba(255,255,255,.05);}
+.nav-link.current{color:var(--cream);}
+.nav-link.current::after{
+  content:'';position:absolute;left:50%;bottom:-1px;transform:translateX(-50%);
+  width:18px;height:3px;border-radius:3px;background:var(--aurora);
+  box-shadow:0 0 12px rgba(124,155,255,.6);
+}
+.nav-right{display:flex;align-items:center;gap:14px;flex-shrink:0;}
+.lang-pill{
+  display:flex;align-items:center;border:1px solid var(--line);
+  border-radius:99px;overflow:hidden;background:rgba(255,255,255,.02);
+}
+.lang-pill button{
+  font-family:'Fragment Mono',monospace;font-size:11px;letter-spacing:.08em;
+  padding:7px 13px;color:var(--muted);transition:all .3s var(--ease);
+}
+.lang-pill button.on{background:rgba(242,237,227,.12);color:var(--cream);}
+.lang-pill button:hover:not(.on){color:var(--cream);}
+
+.btn-primary{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--aurora);color:var(--ink);
+  font-weight:700;font-size:14px;
+  padding:11px 22px;border-radius:99px;
+  box-shadow:0 8px 32px rgba(61,232,197,.35);
+  transition:transform .35s var(--ease),box-shadow .35s var(--ease);
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 44px rgba(61,232,197,.5);}
+.btn-primary svg{flex-shrink:0;}
+.btn-ghost{
+  display:inline-flex;align-items:center;gap:8px;
+  border:1px solid var(--line);color:var(--cream);
+  font-weight:600;font-size:14px;padding:10px 20px;border-radius:99px;
+  transition:background .3s var(--ease),transform .3s var(--ease),border-color .3s var(--ease);
+}
+.btn-ghost:hover{background:rgba(255,255,255,.05);transform:translateY(-1px);}
+.btn-ghost:disabled{opacity:.35;cursor:not-allowed;transform:none;}
+
+/* ============================================================
+   SHELL + HERO
+   ============================================================ */
+.shell{position:relative;z-index:1;max-width:1320px;margin:0 auto;padding:0 32px;}
+.hero{
+  display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);
+  gap:48px;align-items:center;padding:72px 0 56px;
+}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:7px 14px;border-radius:99px;border:1px solid rgba(124,155,255,.35);
+  background:rgba(124,155,255,.08);margin-bottom:22px;
+}
+.hero-eyebrow span{font-family:'Fragment Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--peri);}
+.hero h1{
+  font-family:'Fraunces',serif;font-weight:430;
+  font-size:clamp(38px,4.6vw,62px);line-height:1.04;letter-spacing:-.018em;
+}
+.hero h1 em{
+  font-style:italic;font-weight:480;
+  background:var(--aurora);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+html.dark-mode .hero h1 em{color:transparent !important;}
+.hero-lede{margin-top:20px;font-size:16.5px;color:var(--muted);max-width:54ch;}
+.hero-chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px;}
+.p-chip{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:8px 15px;border-radius:99px;border:1px solid var(--line);
+  background:rgba(255,255,255,.02);
+}
+.p-chip span{font-family:'Fragment Mono',monospace;font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);}
+.p-chip svg{flex-shrink:0;}
+
+/* ---------- mastery dial card ---------- */
+.dial-card{
+  background:var(--card);border:1px solid var(--line);border-radius:26px;
+  padding:30px 30px 26px;position:relative;overflow:hidden;
+  display:flex;flex-direction:column;align-items:center;gap:14px;
+}
+.dial-card::before{
+  content:'';position:absolute;inset:-40% -30% auto;height:70%;
+  background:radial-gradient(closest-side,rgba(124,155,255,.16),transparent 70%);
+  pointer-events:none;
+}
+.dial-wrap{position:relative;width:218px;height:218px;}
+.dial-wrap svg{transform:rotate(-90deg);display:block;}
+.dial-track{stroke:rgba(242,237,227,.08);}
+.dial-arc{
+  stroke:url(#auroraRing);stroke-linecap:round;
+  transition:stroke-dashoffset 1s var(--ease);
+  filter:drop-shadow(0 0 8px rgba(124,155,255,.5));
+}
+.dial-center{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:2px;
+}
+.dial-num{font-family:'Fraunces',serif;font-weight:480;font-size:52px;letter-spacing:-.02em;line-height:1;color:var(--cream);}
+.dial-num small{font-size:22px;color:var(--muted);}
+.dial-lab{font-family:'Fragment Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);}
+.dial-level{display:flex;align-items:center;gap:10px;}
+.dial-level .name{font-family:'Fragment Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--peri);}
+.lvl-dots{display:flex;gap:4px;}
+.lvl-dots i{width:6px;height:6px;border-radius:50%;background:rgba(124,155,255,.25);}
+.lvl-dots i.f{background:var(--peri);box-shadow:0 0 7px rgba(124,155,255,.8);}
+.dial-gate{
+  display:flex;align-items:center;gap:8px;margin-top:2px;
+  font-family:'Fragment Mono',monospace;font-size:10px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);
+}
+.dial-gate.open{color:var(--teal);}
+.dial-card.surge .dial-arc{filter:drop-shadow(0 0 16px rgba(61,232,197,.9));}
+
+/* ============================================================
+   HOW PAL WORKS — 4 steps
+   ============================================================ */
+.steps-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin:26px 0 22px;}
+.steps-head h2{font-family:'Fraunces',serif;font-weight:460;font-size:clamp(24px,2.6vw,34px);letter-spacing:-.01em;}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}
+.step{
+  background:var(--card);border:1px solid var(--line);border-radius:20px;
+  padding:22px 22px 20px;position:relative;overflow:hidden;
+  transition:border-color .4s var(--ease),transform .4s var(--ease);
+}
+.step:hover{border-color:rgba(124,155,255,.35);transform:translateY(-3px);}
+.step .num{
+  font-family:'Fragment Mono',monospace;font-size:11px;letter-spacing:.14em;
+  color:var(--peri);display:block;margin-bottom:14px;
+}
+.step h3{font-family:'Fraunces',serif;font-weight:500;font-size:19px;margin-bottom:8px;letter-spacing:-.01em;color:var(--cream);}
+.step p{font-size:13px;color:var(--muted);line-height:1.6;}
+.step::after{
+  content:'';position:absolute;left:22px;right:22px;bottom:0;height:2px;
+  background:var(--aurora);opacity:0;transition:opacity .4s var(--ease);
+}
+.step:hover::after{opacity:1;}
+
+/* ============================================================
+   SESSION LAYOUT
+   ============================================================ */
+.session-grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:28px;align-items:start;margin-top:54px;padding-bottom:30px;}
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:22px;
+  padding:26px 28px;position:relative;overflow:hidden;
+  transition:border-color .4s var(--ease);
+}
+.card:hover{border-color:rgba(242,237,227,.16);}
+.card-head{display:flex;align-items:baseline;justify-content:space-between;gap:14px;margin-bottom:20px;flex-wrap:wrap;}
+.card-title{font-family:'Fraunces',serif;font-weight:500;font-size:21px;letter-spacing:-.01em;}
+
+/* ---------- track badge ---------- */
+.track-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:6px 13px;border-radius:99px;
+  border:1px solid rgba(61,232,197,.35);background:rgba(61,232,197,.07);
+  transition:all .4s var(--ease);
+}
+.track-badge span{font-family:'Fragment Mono',monospace;font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);}
+.track-badge.bridge{border-color:rgba(255,180,84,.4);background:rgba(255,180,84,.08);}
+.track-badge.bridge span{color:var(--amber);}
+
+/* ---------- mastery bar ---------- */
+.mbar{height:7px;border-radius:99px;background:rgba(242,237,227,.07);overflow:hidden;margin:4px 0 24px;}
+.mbar i{
+  display:block;height:100%;border-radius:99px;background:var(--aurora);
+  width:0%;transition:width .9s var(--ease);
+  box-shadow:0 0 12px rgba(124,155,255,.5);
+}
+.mbar-row{display:flex;justify-content:space-between;align-items:baseline;}
+.mbar-row .gate-mark{color:var(--muted);}
+
+/* ---------- question ---------- */
+.q-zone{min-height:300px;display:flex;flex-direction:column;}
+.q-text{
+  font-family:'Fraunces',serif;font-weight:460;font-size:clamp(21px,2.2vw,27px);
+  letter-spacing:-.01em;line-height:1.3;margin-bottom:22px;
+  transition:opacity .3s var(--ease),transform .3s var(--ease);
+}
+.q-zone.swap .q-text,.q-zone.swap .opts{opacity:0;transform:translateY(10px);}
+.opts{
+  display:grid;grid-template-columns:1fr 1fr;gap:12px;
+  transition:opacity .3s var(--ease),transform .3s var(--ease);
+}
+.opt{
+  display:flex;align-items:center;gap:12px;text-align:left;
+  padding:15px 18px;border-radius:15px;border:1px solid var(--line);
+  background:rgba(255,255,255,.02);font-size:15.5px;font-weight:500;
+  transition:border-color .25s var(--ease),background .25s var(--ease),transform .25s var(--ease);
+}
+.opt:hover:not(:disabled){border-color:rgba(124,155,255,.5);background:rgba(124,155,255,.06);transform:translateY(-1px);}
+.opt .key{
+  font-family:'Fragment Mono',monospace;font-size:10.5px;color:var(--muted);
+  border:1px solid var(--line);border-radius:7px;padding:3px 8px;flex-shrink:0;
+}
+.opt:disabled{cursor:default;}
+.opt.right{border-color:rgba(61,232,197,.65);background:rgba(61,232,197,.10);box-shadow:0 0 22px rgba(61,232,197,.15);}
+.opt.right .key{color:var(--teal);border-color:rgba(61,232,197,.5);}
+.opt.wrong{border-color:rgba(255,122,162,.6);background:rgba(255,122,162,.08);animation:shake .4s var(--ease);}
+.opt.wrong .key{color:var(--rose);border-color:rgba(255,122,162,.5);}
+.opt.dim{opacity:.4;}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-5px);}75%{transform:translateX(5px);}}
+
+/* ---------- hint box ---------- */
+.hint-box{
+  display:none;margin-top:16px;padding:13px 16px;border-radius:13px;
+  border:1px dashed rgba(194,168,255,.4);background:rgba(194,168,255,.06);
+  font-size:13.5px;color:var(--violet);line-height:1.55;
+}
+.hint-box.show{display:flex;gap:10px;align-items:flex-start;animation:rise .4s var(--ease);}
+.hint-box svg{flex-shrink:0;margin-top:2px;}
+
+/* ---------- session toolbar ---------- */
+.q-tools{display:flex;align-items:center;gap:12px;margin-top:auto;padding-top:24px;flex-wrap:wrap;}
+.tool-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:9px 17px;border-radius:99px;border:1px solid var(--line);
+  font-size:13px;font-weight:600;color:var(--cream);
+  transition:all .3s var(--ease);
+}
+.tool-btn:hover:not(:disabled){border-color:rgba(194,168,255,.5);background:rgba(194,168,255,.07);}
+.tool-btn:disabled{opacity:.35;cursor:not-allowed;}
+.tool-btn .cnt{
+  font-family:'Fragment Mono',monospace;font-size:10px;color:var(--violet);
+  background:rgba(194,168,255,.12);border-radius:99px;padding:2px 8px;
+}
+.next-btn{margin-left:auto;display:none;}
+.next-btn.show{display:inline-flex;animation:rise .4s var(--ease);}
+
+/* ---------- PAL voice ---------- */
+.pal-voice{
+  display:flex;align-items:flex-start;gap:13px;margin-top:22px;
+  padding:15px 17px;border-radius:16px;
+  border:1px solid rgba(124,155,255,.22);background:rgba(124,155,255,.05);
+}
+.pal-voice .face{flex-shrink:0;}
+.pal-voice .face .eye{animation:blink 4.5s infinite;}
+@keyframes blink{0%,94%,100%{transform:scaleY(1);}97%{transform:scaleY(.1);}}
+.pal-voice p{font-size:13.5px;color:var(--muted);line-height:1.55;}
+.pal-voice p b{color:var(--peri);font-weight:600;}
+
+/* ============================================================
+   RIGHT RAIL — ladder + inventory
+   ============================================================ */
+.rail{display:flex;flex-direction:column;gap:22px;position:sticky;top:92px;}
+.ladder{display:flex;flex-direction:column;gap:0;margin-top:6px;}
+.rung{
+  display:flex;align-items:center;gap:14px;padding:11px 4px;
+  position:relative;
+}
+.rung .dot{
+  width:11px;height:11px;border-radius:50%;flex-shrink:0;
+  background:rgba(242,237,227,.12);border:2px solid rgba(242,237,227,.18);
+  transition:all .5s var(--ease);position:relative;z-index:1;
+}
+.rung:not(:last-child)::before{
+  content:'';position:absolute;left:9px;top:30px;bottom:-12px;width:2px;
+  background:rgba(242,237,227,.08);
+}
+.rung .lab{font-family:'Fragment Mono',monospace;font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);transition:color .4s var(--ease);}
+.rung .tag{
+  margin-left:auto;font-family:'Fragment Mono',monospace;font-size:9px;
+  letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:99px;
+  opacity:0;transition:opacity .4s var(--ease);
+}
+.rung.here .dot{background:var(--teal);border-color:rgba(61,232,197,.5);box-shadow:0 0 12px rgba(61,232,197,.7);}
+.rung.here .lab{color:var(--cream);}
+.rung.here .tag{opacity:1;color:var(--teal);border:1px solid rgba(61,232,197,.4);background:rgba(61,232,197,.07);}
+.rung.bridge-here .dot{background:var(--amber);border-color:rgba(255,180,84,.5);box-shadow:0 0 12px rgba(255,180,84,.7);}
+.rung.bridge-here .lab{color:var(--cream);}
+.rung.bridge-here .tag{opacity:1;color:var(--amber);border:1px solid rgba(255,180,84,.4);background:rgba(255,180,84,.08);}
+
+.inv-row{display:flex;gap:12px;}
+.inv{
+  flex:1;border:1px solid var(--line);border-radius:16px;padding:14px 16px;
+  background:rgba(255,255,255,.02);
+}
+.inv .n{font-family:'Fraunces',serif;font-size:26px;font-weight:480;}
+.inv .l{font-family:'Fragment Mono',monospace;font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-top:2px;}
+
+.stat-line{display:flex;justify-content:space-between;padding:9px 2px;border-bottom:1px dashed var(--line);}
+.stat-line:last-child{border-bottom:none;}
+.stat-line .k{font-size:13px;color:var(--muted);}
+.stat-line .v{font-family:'Fragment Mono',monospace;font-size:12px;color:var(--cream);letter-spacing:.06em;}
+
+/* ============================================================
+   FINAL GATE
+   ============================================================ */
+.gate{
+  margin:26px 0 90px;border-radius:26px;border:1px solid var(--line);
+  background:var(--card);padding:40px 44px;position:relative;overflow:hidden;
+  display:flex;align-items:center;gap:34px;flex-wrap:wrap;
+  transition:border-color .6s var(--ease),box-shadow .6s var(--ease);
+}
+.gate.open{border-color:rgba(61,232,197,.45);box-shadow:0 0 60px rgba(61,232,197,.12),inset 0 0 80px rgba(61,232,197,.04);}
+.gate-lock{flex-shrink:0;width:74px;height:74px;border-radius:22px;display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--line);background:rgba(255,255,255,.03);transition:all .6s var(--ease);}
+.gate.open .gate-lock{border-color:rgba(61,232,197,.5);background:rgba(61,232,197,.08);box-shadow:0 0 30px rgba(61,232,197,.25);}
+.gate-txt{flex:1;min-width:260px;}
+.gate-txt h3{font-family:'Fraunces',serif;font-weight:480;font-size:26px;letter-spacing:-.01em;margin-bottom:8px;color:var(--cream);}
+.gate-txt p{font-size:14px;color:var(--muted);max-width:60ch;}
+.gate .pct{font-family:'Fragment Mono',monospace;color:var(--peri);}
+.gate-cta{flex-shrink:0;}
+
+/* ---------- celebration burst ---------- */
+.burst{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+.burst i{
+  position:absolute;width:8px;height:8px;border-radius:2px;opacity:0;
+}
+.gate.open .burst i{animation:pop 1.1s var(--ease) forwards;animation-delay:var(--bd,0ms);}
+@keyframes pop{
+  0%{opacity:0;transform:translate(0,0) rotate(0deg) scale(.4);}
+  15%{opacity:1;}
+  100%{opacity:0;transform:translate(var(--bx,0),var(--by,-90px)) rotate(220deg) scale(1);}
+}
+
+/* ============================================================
+   FOOTER (slim, shared)
+   ============================================================ */
+footer{position:relative;z-index:1;border-top:1px solid var(--line);padding:46px 0 40px;overflow:hidden;}
+.foot-inner{max-width:1320px;margin:0 auto;padding:0 32px;display:flex;align-items:center;justify-content:space-between;gap:22px;flex-wrap:wrap;}
+.foot-tag{font-size:13px;color:var(--muted);margin-top:8px;}
+.foot-mono{font-family:'Fragment Mono',monospace;font-size:10px;letter-spacing:.13em;color:var(--muted);margin-top:6px;}
+.foot-links{display:flex;gap:22px;flex-wrap:wrap;}
+.foot-links a{font-size:13.5px;color:var(--muted);transition:color .3s var(--ease);}
+.foot-links a:hover{color:var(--cream);}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width:1020px){
+  .hero{grid-template-columns:1fr;gap:36px;}
+  .dial-card{max-width:420px;}
+  .session-grid{grid-template-columns:1fr;}
+  .rail{position:static;flex-direction:row;flex-wrap:wrap;}
+  .rail .card{flex:1;min-width:240px;}
+  .steps{grid-template-columns:1fr 1fr;}
+}
+@media (max-width:680px){
+  .nav-inner{padding:0 18px;}
+  .shell{padding:0 18px;}
+  .opts{grid-template-columns:1fr;}
+  .steps{grid-template-columns:1fr;}
+  .gate{padding:30px 26px;}
+  .nav-links{display:none;}
+}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;
+    transition-delay:0ms !important;
+  }
+  .blob{animation:none !important;}
+  html{scroll-behavior:auto;}
+}
+
+/* Dark mode overrides */
+html.dark-mode body {
+  background: var(--dm-bg-primary);
+  color: var(--dm-text-primary);
+}
+html.dark-mode [data-theme-toggle] {
+  color: var(--dm-text-primary);
+}
+</style>
+  <link rel="stylesheet" href="../theme.css">
+</head>
+<body>
+
+  <button data-theme-toggle>Dark</button>
+
+<!-- ======== atmosphere ======== -->
+<div class="blobs" aria-hidden="true">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+</div>
+<svg class="grain" aria-hidden="true" width="100%" height="100%">
+  <filter id="grainF"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" stitchTiles="stitch"/></filter>
+  <rect width="100%" height="100%" filter="url(#grainF)"/>
+</svg>
+
+<!-- shared svg defs -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="auroraG" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3DE8C5"/><stop offset="48%" stop-color="#7C9BFF"/><stop offset="100%" stop-color="#FFB454"/>
+    </linearGradient>
+    <linearGradient id="auroraRing" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3DE8C5"/><stop offset="55%" stop-color="#7C9BFF"/><stop offset="100%" stop-color="#FFB454"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<!-- ============================================================
+     NAV
+============================================================ -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="logo pl" style="--d:0ms" href="index.html" aria-label="EduTok home">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+        <path d="M12 1.6C13.1 7.6 16.4 10.9 22.4 12C16.4 13.1 13.1 16.4 12 22.4C10.9 16.4 7.6 13.1 1.6 12C7.6 10.9 10.9 7.6 12 1.6Z" fill="url(#auroraG)"/>
+      </svg>
+      <span class="wordmark">EduTok</span>
+    </a>
+    <div class="nav-links pl" style="--d:60ms">
+      <a class="nav-link" href="index.html" data-i18n="nav.home">Home</a>
+      <a class="nav-link" href="learn.html" data-i18n="nav.learn">Learn</a>
+      <a class="nav-link current" href="pal.html" aria-current="page" data-i18n="nav.pal">PAL Adaptive AI</a>
+      <a class="nav-link" href="dashboard.html" data-i18n="nav.dashboard">Dashboard</a>
+    </div>
+    <div class="nav-right pl" style="--d:120ms">
+      <div class="lang-pill" role="group" aria-label="Language">
+        <button id="langEn" class="on" aria-pressed="true">EN</button>
+        <button id="langHi" aria-pressed="false">हिं</button>
+      </div>
+      <a class="btn-primary" href="learn.html">
+        <span data-i18n="nav.start">Start free</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<main class="shell">
+
+  <!-- ============================================================
+       HERO — promise + mastery dial
+  ============================================================ -->
+  <section class="hero">
+    <div>
+      <div class="hero-eyebrow pl" style="--d:120ms">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="url(#auroraG)"><path d="M12 1.6C13.1 7.6 16.4 10.9 22.4 12C16.4 13.1 13.1 16.4 12 22.4C10.9 16.4 7.6 13.1 1.6 12C7.6 10.9 10.9 7.6 12 1.6Z"/></svg>
+        <span data-i18n="hero.eyebrow">PAL · Personalized Adaptive Learning</span>
+      </div>
+      <h1 class="pl" style="--d:180ms" id="heroH1">Learning that <em>meets you</em> exactly where you are.</h1>
+      <p class="hero-lede pl" style="--d:260ms" data-i18n="hero.lede">PAL diagnoses what you actually know, bridges quietly back to earlier grades when a concept wobbles, and only unlocks the final test when mastery is real. It never labels. It just builds the bridge.</p>
+      <div class="hero-chips pl" style="--d:340ms">
+        <span class="p-chip">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+          <span data-i18n="hero.chip1">Never labels · just bridges</span>
+        </span>
+        <span class="p-chip">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--peri)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18V8"/><path d="M10 18V4"/><path d="M16 18v-6"/><path d="M2 18h20"/></svg>
+          <span data-i18n="hero.chip2">Remediates up to 4 grades back</span>
+        </span>
+        <span class="p-chip">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4.5 13.5H11L9.5 22 19 10h-7z"/></svg>
+          <span data-i18n="hero.chip3">Works fully offline</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="dial-card pl" style="--d:300ms" id="dialCard">
+      <span class="eyebrow" data-i18n="dial.title">Your remedial mastery · Fractions</span>
+      <div class="dial-wrap">
+        <svg width="218" height="218" viewBox="0 0 218 218">
+          <circle class="dial-track" cx="109" cy="109" r="96" fill="none" stroke-width="13"/>
+          <circle class="dial-arc" id="dialArc" cx="109" cy="109" r="96" fill="none" stroke-width="13"
+                  stroke-dasharray="603.2" stroke-dashoffset="603.2"/>
+        </svg>
+        <div class="dial-center">
+          <div class="dial-num"><span id="dialNum">0</span><small>%</small></div>
+          <span class="dial-lab" data-i18n="dial.gateLab">Gate opens at 80%</span>
+        </div>
+      </div>
+      <div class="dial-level">
+        <span class="name" id="dialLevel">PAL · LEVEL 2 · EXPLORER</span>
+        <span class="lvl-dots" id="dialDots" aria-hidden="true"></span>
+      </div>
+      <div class="dial-gate" id="dialGate">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+        <span id="dialGateTxt" data-i18n="dial.locked">Final quiz locked</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       HOW PAL WORKS
+  ============================================================ -->
+  <div class="steps-head rv">
+    <h2 data-i18n="how.title">How PAL works</h2>
+    <span class="eyebrow" data-i18n="how.sub">Mastery-gated · per concept</span>
+  </div>
+  <section class="steps">
+    <div class="step rv" style="transition-delay:0ms">
+      <span class="num">01 · <span data-i18n="how.s1k">DIAGNOSE</span></span>
+      <h3 data-i18n="how.s1h">Find the real gap</h3>
+      <p data-i18n="how.s1p">A few smart questions trace today's mistake to its root — even if that root sits two grades below.</p>
+    </div>
+    <div class="step rv" style="transition-delay:80ms">
+      <span class="num">02 · <span data-i18n="how.s2k">BRIDGE</span></span>
+      <h3 data-i18n="how.s2h">Step back, quietly</h3>
+      <p data-i18n="how.s2p">PAL slips in earlier-grade questions without fuss or labels. Classmates never know. Confidence stays intact.</p>
+    </div>
+    <div class="step rv" style="transition-delay:160ms">
+      <span class="num">03 · <span data-i18n="how.s3k">MASTER</span></span>
+      <h3 data-i18n="how.s3h">Climb with proof</h3>
+      <p data-i18n="how.s3p">Every correct answer lifts your mastery meter. Three in a row on the bridge and you're back at grade level.</p>
+    </div>
+    <div class="step rv" style="transition-delay:240ms">
+      <span class="num">04 · <span data-i18n="how.s4k">UNLOCK</span></span>
+      <h3 data-i18n="how.s4h">Earn the final</h3>
+      <p data-i18n="how.s4p">The chapter test stays locked until mastery crosses 80% — so a passing score actually means something.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       LIVE SESSION
+  ============================================================ -->
+  <div class="session-grid">
+
+    <!-- ---------- practice card ---------- -->
+    <section class="card rv" aria-label="Adaptive practice session">
+      <div class="card-head">
+        <h3 class="card-title" data-i18n="sess.title">Fix this gap · Fractions</h3>
+        <span class="track-badge" id="trackBadge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg>
+          <span id="trackTxt">CLASS 7 · ON LEVEL</span>
+        </span>
+      </div>
+
+      <div class="mbar-row">
+        <span class="eyebrow" data-i18n="sess.mastery">Remedial mastery</span>
+        <span class="mono gate-mark"><span id="mbarPct">0</span>% / 80%</span>
+      </div>
+      <div class="mbar"><i id="mbarFill"></i></div>
+
+      <div class="q-zone" id="qZone">
+        <p class="q-text" id="qText">—</p>
+        <div class="opts" id="opts"></div>
+        <div class="hint-box" id="hintBox">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--violet)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.4 1 2.3h6c0-.9.4-1.8 1-2.3A7 7 0 0 0 12 2z"/></svg>
+          <span id="hintTxt"></span>
+        </div>
+        <div class="q-tools">
+          <button class="tool-btn" id="hintBtn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.4 1 2.3h6c0-.9.4-1.8 1-2.3A7 7 0 0 0 12 2z"/></svg>
+            <span data-i18n="sess.hint">Hint</span>
+            <span class="cnt" id="hintCnt">×3</span>
+          </button>
+          <button class="tool-btn" id="skipBtn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5l9 7-9 7V5z"/><path d="M19 5v14"/></svg>
+            <span data-i18n="sess.skip">Skip</span>
+            <span class="cnt" id="skipCnt">×1</span>
+          </button>
+          <button class="btn-primary next-btn" id="nextBtn">
+            <span data-i18n="sess.next">Next question</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="pal-voice">
+        <svg class="face" width="38" height="44" viewBox="0 0 80 92" aria-hidden="true">
+          <line x1="40" y1="22" x2="40" y2="10" stroke="url(#auroraG)" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="40" cy="8" r="4" fill="#3DE8C5"/>
+          <circle cx="40" cy="8" r="7" fill="rgba(61,232,197,.18)"/>
+          <circle cx="40" cy="55" r="32" fill="#121C30" stroke="url(#auroraG)" stroke-width="2.5"/>
+          <rect class="eye" x="27" y="45" width="8" height="14" rx="4" fill="#F2EDE3"/>
+          <rect class="eye" x="45" y="45" width="8" height="14" rx="4" fill="#F2EDE3"/>
+          <path d="M32 68 Q40 74 48 68" stroke="#F2EDE3" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        </svg>
+        <p id="palSay"><b>PAL:</b> Let's warm up where your last test wobbled — dividing fractions. I'm right here if you need a hint.</p>
+      </div>
+    </section>
+
+    <!-- ---------- right rail ---------- -->
+    <aside class="rail">
+      <div class="card rv" style="transition-delay:60ms">
+        <div class="card-head" style="margin-bottom:8px;">
+          <h3 class="card-title" style="font-size:18px;" data-i18n="rail.ladder">Grade ladder</h3>
+        </div>
+        <div class="ladder" id="ladder">
+          <div class="rung" data-cl="7">
+            <span class="dot"></span><span class="lab" data-i18n="rail.cl7">Class 7 · Fractions &amp; decimals</span>
+            <span class="tag" data-i18n="rail.you">you</span>
+          </div>
+          <div class="rung" data-cl="6">
+            <span class="dot"></span><span class="lab" data-i18n="rail.cl6">Class 6 · Ch 7 Fractions</span>
+            <span class="tag" data-i18n="rail.bridge">bridge</span>
+          </div>
+          <div class="rung" data-cl="5">
+            <span class="dot"></span><span class="lab" data-i18n="rail.cl5">Class 5 · Parts &amp; wholes</span>
+            <span class="tag"></span>
+          </div>
+          <div class="rung" data-cl="4">
+            <span class="dot"></span><span class="lab" data-i18n="rail.cl4">Class 4 · Halves &amp; quarters</span>
+            <span class="tag"></span>
+          </div>
+        </div>
+        <p style="font-size:12px;color:var(--muted);margin-top:14px;line-height:1.55;" data-i18n="rail.note">PAL can step down up to 4 grades — and nobody but you will ever know.</p>
+      </div>
+
+      <div class="card rv" style="transition-delay:120ms">
+        <div class="card-head" style="margin-bottom:14px;">
+          <h3 class="card-title" style="font-size:18px;" data-i18n="rail.session">This session</h3>
+        </div>
+        <div class="inv-row">
+          <div class="inv"><div class="n" id="invHints">3</div><div class="l" data-i18n="rail.hints">Hints left</div></div>
+          <div class="inv"><div class="n" id="invSkips">1</div><div class="l" data-i18n="rail.skips">Skips left</div></div>
+        </div>
+        <div style="margin-top:16px;">
+          <div class="stat-line"><span class="k" data-i18n="rail.answered">Answered</span><span class="v" id="stAnswered">0</span></div>
+          <div class="stat-line"><span class="k" data-i18n="rail.correct">Correct</span><span class="v" id="stCorrect">0</span></div>
+          <div class="stat-line"><span class="k" data-i18n="rail.streak">Streak</span><span class="v" id="stStreak">0</span></div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ============================================================
+       FINAL GATE
+  ============================================================ -->
+  <section class="gate rv" id="gateCard">
+    <div class="burst" id="burst" aria-hidden="true"></div>
+    <div class="gate-lock" id="gateLock">
+      <svg id="lockIco" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+    </div>
+    <div class="gate-txt">
+      <h3 id="gateH" data-i18n="gate.lockedH">Final quiz · locked</h3>
+      <p id="gateP"><span data-i18n="gate.lockedP1">Cross</span> <span class="pct">80%</span> <span data-i18n="gate.lockedP2">mastery above and PAL opens the chapter final. You're at</span> <span class="pct"><span id="gatePct">0</span>%</span><span data-i18n="gate.lockedP3">. Keep going — every bridge counts.</span></p>
+    </div>
+    <div class="gate-cta">
+      <button class="btn-primary" id="gateBtn" disabled style="opacity:.35;cursor:not-allowed;">
+        <span data-i18n="gate.btn">Take the final</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============================================================
+     FOOTER (slim)
+============================================================ -->
+<footer>
+  <div class="foot-inner">
+    <div>
+      <div class="logo">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="url(#auroraG)"><path d="M12 1.6C13.1 7.6 16.4 10.9 22.4 12C16.4 13.1 13.1 16.4 12 22.4C10.9 16.4 7.6 13.1 1.6 12C7.6 10.9 10.9 7.6 12 1.6Z"/></svg>
+        <span class="wordmark" style="font-size:19px;">EduTok</span>
+      </div>
+      <p class="foot-tag" data-i18n="foot.tag">Made for Bharat. 11 languages. Works fully offline.</p>
+      <p class="foot-mono">CBSE · NCERT · 20+ STATE BOARDS</p>
+    </div>
+    <div class="foot-links">
+      <a href="index.html" data-i18n="nav.home">Home</a>
+      <a href="learn.html" data-i18n="nav.learn">Learn</a>
+      <a href="dashboard.html" data-i18n="nav.dashboard">Dashboard</a>
+      <a href="login.html" data-i18n="foot.login">Sign in</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ============================================================
+   EDUTOK PAL — adaptive engine
+   ============================================================ */
+(function(){
+'use strict';
+
+var $  = function(s, c){ return (c||document).querySelector(s); };
+var $$ = function(s, c){ return Array.prototype.slice.call((c||document).querySelectorAll(s)); };
+
+/* ------------------------------------------------------------
+   SHARED STATE — bridges BOTH localStorage keys so the
+   dashboard chip ("edutok_state") and learn page
+   ("edulearn_state") stay in sync with PAL progress.
+------------------------------------------------------------ */
+var STATE_KEYS = ['edutok_state', 'edulearn_state'];
+var PAL_DEFAULTS = { level:2, remedialMastery:40, finalUnlocked:false, hints:3, skips:1 };
+
+function loadPal(){
+  var pal = JSON.parse(JSON.stringify(PAL_DEFAULTS));
+  var lang = 'en';
+  STATE_KEYS.forEach(function(key){
+    try{
+      var raw = localStorage.getItem(key);
+      if (!raw) return;
+      var st = JSON.parse(raw);
+      if (st && typeof st === 'object'){
+        if (st.lang === 'hi') lang = 'hi';
+        if (st.pal && typeof st.pal === 'object'){
+          Object.keys(PAL_DEFAULTS).forEach(function(k){
+            if (st.pal[k] !== undefined && st.pal[k] !== null) pal[k] = st.pal[k];
+          });
+        }
+      }
+    }catch(e){ /* corrupt entry — keep defaults */ }
+  });
+  return { pal: pal, lang: lang };
+}
+
+function savePal(){
+  STATE_KEYS.forEach(function(key){
+    try{
+      var st = {};
+      var raw = localStorage.getItem(key);
+      if (raw){ try{ st = JSON.parse(raw) || {}; }catch(e){ st = {}; } }
+      st.pal = PAL;
+      st.lang = LANG;
+      localStorage.setItem(key, JSON.stringify(st));
+    }catch(e){ /* storage unavailable */ }
+  });
+}
+
+var loaded = loadPal();
+var PAL  = loaded.pal;
+var LANG = loaded.lang;
+
+/* ------------------------------------------------------------
+   i18n — EN / HI dictionary
+------------------------------------------------------------ */
+var I18N = {
+  en: {
+    'nav.home':'Home', 'nav.learn':'Learn', 'nav.pal':'PAL Adaptive AI', 'nav.dashboard':'Dashboard',
+    'nav.start':'Start free',
+    'hero.eyebrow':'PAL · Personalized Adaptive Learning',
+    'hero.lede':'PAL diagnoses what you actually know, bridges quietly back to earlier grades when a concept wobbles, and only unlocks the final test when mastery is real. It never labels. It just builds the bridge.',
+    'hero.chip1':'Never labels · just bridges',
+    'hero.chip2':'Remediates up to 4 grades back',
+    'hero.chip3':'Works fully offline',
+    'dial.title':'Your remedial mastery · Fractions',
+    'dial.gateLab':'Gate opens at 80%',
+    'dial.locked':'Final quiz locked',
+    'dial.open':'Final quiz unlocked',
+    'how.title':'How PAL works', 'how.sub':'Mastery-gated · per concept',
+    'how.s1k':'DIAGNOSE', 'how.s1h':'Find the real gap',
+    'how.s1p':'A few smart questions trace today’s mistake to its root — even if that root sits two grades below.',
+    'how.s2k':'BRIDGE', 'how.s2h':'Step back, quietly',
+    'how.s2p':'PAL slips in earlier-grade questions without fuss or labels. Classmates never know. Confidence stays intact.',
+    'how.s3k':'MASTER', 'how.s3h':'Climb with proof',
+    'how.s3p':'Every correct answer lifts your mastery meter. Three in a row on the bridge and you’re back at grade level.',
+    'how.s4k':'UNLOCK', 'how.s4h':'Earn the final',
+    'how.s4p':'The chapter test stays locked until mastery crosses 80% — so a passing score actually means something.',
+    'sess.title':'Fix this gap · Fractions',
+    'sess.mastery':'Remedial mastery',
+    'sess.hint':'Hint', 'sess.skip':'Skip', 'sess.next':'Next question',
+    'rail.ladder':'Grade ladder',
+    'rail.cl7':'Class 7 · Fractions & decimals', 'rail.cl6':'Class 6 · Ch 7 Fractions',
+    'rail.cl5':'Class 5 · Parts & wholes', 'rail.cl4':'Class 4 · Halves & quarters',
+    'rail.you':'you', 'rail.bridge':'bridge',
+    'rail.note':'PAL can step down up to 4 grades — and nobody but you will ever know.',
+    'rail.session':'This session',
+    'rail.hints':'Hints left', 'rail.skips':'Skips left',
+    'rail.answered':'Answered', 'rail.correct':'Correct', 'rail.streak':'Streak',
+    'gate.lockedH':'Final quiz · locked',
+    'gate.lockedP1':'Cross', 'gate.lockedP2':'mastery above and PAL opens the chapter final. You’re at',
+    'gate.lockedP3':'. Keep going — every bridge counts.',
+    'gate.openH':'Final quiz · unlocked',
+    'gate.openP':'Mastery is real now. Three questions stand between you and Level 3 · ACHIEVER. No pressure — the gate stays open.',
+    'gate.btn':'Take the final', 'gate.btnDone':'Level 3 reached ✦',
+    'foot.tag':'Made for Bharat. 11 languages. Works fully offline.',
+    'foot.login':'Sign in',
+    'track.on':'CLASS 7 · ON LEVEL', 'track.bridge':'CLASS 6 · BRIDGE', 'track.final':'CHAPTER FINAL',
+    'say.start':'<b>PAL:</b> Let’s warm up where your last test wobbled — dividing fractions. I’m right here if you need a hint.',
+    'say.right':'<b>PAL:</b> Clean. Mastery is climbing — keep that rhythm.',
+    'say.rightBridge':'<b>PAL:</b> That’s the foundation setting. One more like this and the bridge starts feeling easy.',
+    'say.wrong':'<b>PAL:</b> No marks lost for honesty. Look at the hint, or just try the next one.',
+    'say.down':'<b>PAL:</b> Let’s step back to Class 6, Chapter 7 for a moment. Not a demotion — a running start.',
+    'say.up':'<b>PAL:</b> Bridge crossed. Back to Class 7 — you’ve earned the climb.',
+    'say.hint':'<b>PAL:</b> Here’s a nudge. Hints never cost mastery.',
+    'say.skip':'<b>PAL:</b> Skipped, no penalty. Some days a question just isn’t yours.',
+    'say.unlock':'<b>PAL:</b> 80% crossed — the final quiz is open. Take it whenever you feel ready.',
+    'say.finalStart':'<b>PAL:</b> Chapter final. Three questions, no hints, no skips — just you and everything you’ve built.',
+    'say.finalPass':'<b>PAL:</b> Level 3 · ACHIEVER. The gap that started this is officially closed. I’ve told your dashboard.',
+    'say.finalFail':'<b>PAL:</b> Close. The gate stays open — review the bridge and come back when you’re ready.'
+  },
+  hi: {
+    'nav.home':'होम', 'nav.learn':'सीखें', 'nav.pal':'PAL अनुकूली AI', 'nav.dashboard':'डैशबोर्ड',
+    'nav.start':'मुफ़्त शुरू करें',
+    'hero.eyebrow':'PAL · व्यक्तिगत अनुकूली शिक्षा',
+    'hero.lede':'PAL जाँचता है कि आप वास्तव में क्या जानते हैं, अवधारणा डगमगाने पर चुपचाप पिछली कक्षाओं तक पुल बनाता है, और फ़ाइनल टेस्ट तभी खोलता है जब महारत असली हो। यह कभी लेबल नहीं लगाता — सिर्फ़ पुल बनाता है।',
+    'hero.chip1':'लेबल नहीं · सिर्फ़ पुल',
+    'hero.chip2':'4 कक्षाएँ पीछे तक उपचार',
+    'hero.chip3':'पूरी तरह ऑफ़लाइन',
+    'dial.title':'आपकी उपचारात्मक महारत · भिन्न',
+    'dial.gateLab':'गेट 80% पर खुलता है',
+    'dial.locked':'फ़ाइनल क्विज़ बंद',
+    'dial.open':'फ़ाइनल क्विज़ खुला',
+    'how.title':'PAL कैसे काम करता है', 'how.sub':'महारत-आधारित · प्रति अवधारणा',
+    'how.s1k':'निदान', 'how.s1h':'असली कमी ढूँढें',
+    'how.s1p':'कुछ समझदार सवाल आज की गलती की जड़ तक पहुँचते हैं — भले ही वह जड़ दो कक्षाएँ नीचे हो।',
+    'how.s2k':'पुल', 'how.s2h':'चुपचाप पीछे जाएँ',
+    'how.s2p':'PAL बिना शोर या लेबल के पिछली कक्षा के सवाल लाता है। सहपाठियों को कभी पता नहीं चलता। आत्मविश्वास बना रहता है।',
+    'how.s3k':'महारत', 'how.s3h':'प्रमाण के साथ चढ़ें',
+    'how.s3p':'हर सही जवाब आपका महारत मीटर बढ़ाता है। पुल पर लगातार तीन सही — और आप वापस अपनी कक्षा में।',
+    'how.s4k':'अनलॉक', 'how.s4h':'फ़ाइनल कमाएँ',
+    'how.s4p':'अध्याय की परीक्षा 80% महारत तक बंद रहती है — ताकि पास होने का मतलब सच में कुछ हो।',
+    'sess.title':'यह कमी दूर करें · भिन्न',
+    'sess.mastery':'उपचारात्मक महारत',
+    'sess.hint':'संकेत', 'sess.skip':'छोड़ें', 'sess.next':'अगला सवाल',
+    'rail.ladder':'कक्षा सीढ़ी',
+    'rail.cl7':'कक्षा 7 · भिन्न और दशमलव', 'rail.cl6':'कक्षा 6 · अध्याय 7 भिन्न',
+    'rail.cl5':'कक्षा 5 · अंश और पूर्ण', 'rail.cl4':'कक्षा 4 · आधा और चौथाई',
+    'rail.you':'आप', 'rail.bridge':'पुल',
+    'rail.note':'PAL 4 कक्षाएँ नीचे तक जा सकता है — और आपके सिवा किसी को पता नहीं चलेगा।',
+    'rail.session':'यह सत्र',
+    'rail.hints':'संकेत शेष', 'rail.skips':'स्किप शेष',
+    'rail.answered':'जवाब दिए', 'rail.correct':'सही', 'rail.streak':'स्ट्रीक',
+    'gate.lockedH':'फ़ाइनल क्विज़ · बंद',
+    'gate.lockedP1':'महारत', 'gate.lockedP2':'के पार ले जाएँ और PAL अध्याय का फ़ाइनल खोल देगा। अभी आप',
+    'gate.lockedP3':' पर हैं। चलते रहें — हर पुल मायने रखता है।',
+    'gate.openH':'फ़ाइनल क्विज़ · खुला',
+    'gate.openP':'अब महारत असली है। लेवल 3 · ACHIEVER और आपके बीच सिर्फ़ तीन सवाल हैं। कोई दबाव नहीं — गेट खुला रहेगा।',
+    'gate.btn':'फ़ाइनल दें', 'gate.btnDone':'लेवल 3 हासिल ✦',
+    'foot.tag':'भारत के लिए बना। 11 भाषाएँ। पूरी तरह ऑफ़लाइन।',
+    'foot.login':'साइन इन',
+    'track.on':'कक्षा 7 · अपनी कक्षा', 'track.bridge':'कक्षा 6 · पुल', 'track.final':'अध्याय फ़ाइनल',
+    'say.start':'<b>PAL:</b> वहीं से शुरू करते हैं जहाँ पिछला टेस्ट डगमगाया था — भिन्न का भाग। संकेत चाहिए तो मैं यहीं हूँ।',
+    'say.right':'<b>PAL:</b> बिल्कुल सही। महारत बढ़ रही है — यही लय बनाए रखें।',
+    'say.rightBridge':'<b>PAL:</b> नींव मज़बूत हो रही है। एक और ऐसा ही — और पुल आसान लगने लगेगा।',
+    'say.wrong':'<b>PAL:</b> ईमानदारी के अंक नहीं कटते। संकेत देखें, या अगला सवाल आज़माएँ।',
+    'say.down':'<b>PAL:</b> चलिए थोड़ी देर के लिए कक्षा 6, अध्याय 7 पर चलते हैं। यह पीछे जाना नहीं — दौड़ने से पहले की तैयारी है।',
+    'say.up':'<b>PAL:</b> पुल पार! वापस कक्षा 7 — यह चढ़ाई आपने कमाई है।',
+    'say.hint':'<b>PAL:</b> यह रहा एक इशारा। संकेत से महारत कभी नहीं घटती।',
+    'say.skip':'<b>PAL:</b> छोड़ दिया, कोई दंड नहीं। कुछ दिन कोई सवाल बस आपका नहीं होता।',
+    'say.unlock':'<b>PAL:</b> 80% पार — फ़ाइनल क्विज़ खुल गया। जब तैयार महसूस करें, तब दें।',
+    'say.finalStart':'<b>PAL:</b> अध्याय फ़ाइनल। तीन सवाल, न संकेत, न स्किप — बस आप और आपकी मेहनत।',
+    'say.finalPass':'<b>PAL:</b> लेवल 3 · ACHIEVER! जिस कमी से यह सब शुरू हुआ था, वह आधिकारिक रूप से बंद। मैंने आपके डैशबोर्ड को बता दिया है।',
+    'say.finalFail':'<b>PAL:</b> बहुत क़रीब। गेट खुला रहेगा — पुल दोहराएँ और तैयार होकर लौटें।'
+  }
+};
+
+/* ------------------------------------------------------------
+   QUESTION BANK — Class 7 on-level · Class 6 bridge · final
+------------------------------------------------------------ */
+var BANK = {
+  on: [
+    { q:{en:'What is 2⁄5 ÷ 3?', hi:'2⁄5 ÷ 3 कितना है?'},
+      o:['2⁄15','6⁄5','3⁄10','5⁄6'], a:0,
+      h:{en:'Dividing by a whole number means multiplying by its reciprocal: 2⁄5 × 1⁄3.',
+         hi:'पूर्ण संख्या से भाग = उसके व्युत्क्रम से गुणा: 2⁄5 × 1⁄3।'} },
+    { q:{en:'What is 3⁄4 × 2⁄5?', hi:'3⁄4 × 2⁄5 कितना है?'},
+      o:['3⁄10','6⁄9','5⁄9','2⁄3'], a:0,
+      h:{en:'Multiply tops together, bottoms together: (3×2)⁄(4×5), then simplify.',
+         hi:'अंश×अंश, हर×हर: (3×2)⁄(4×5), फिर सरल करें।'} },
+    { q:{en:'How many 1⁄8s are there in 1 1⁄2?', hi:'1 1⁄2 में कितने 1⁄8 हैं?'},
+      o:['12','8','6','16'], a:0,
+      h:{en:'1 1⁄2 = 12⁄8. Count the eighths.', hi:'1 1⁄2 = 12⁄8। आठवें हिस्से गिनें।'} },
+    { q:{en:'What is 5⁄6 ÷ 1⁄3?', hi:'5⁄6 ÷ 1⁄3 कितना है?'},
+      o:['2 1⁄2','5⁄18','3 1⁄3','5⁄2 × 1⁄3'], a:0,
+      h:{en:'Flip the second fraction: 5⁄6 × 3⁄1 = 15⁄6.', hi:'दूसरी भिन्न पलटें: 5⁄6 × 3⁄1 = 15⁄6।'} },
+    { q:{en:'What is the reciprocal of 7⁄9?', hi:'7⁄9 का व्युत्क्रम क्या है?'},
+      o:['9⁄7','7⁄9','−7⁄9','1'], a:0,
+      h:{en:'The reciprocal swaps numerator and denominator.', hi:'व्युत्क्रम में अंश और हर बदल जाते हैं।'} },
+    { q:{en:'What is 2⁄3 of 45?', hi:'45 का 2⁄3 कितना है?'},
+      o:['30','15','27','33'], a:0,
+      h:{en:'“Of” means multiply: 45 ÷ 3 = 15, then × 2.', hi:'"का" मतलब गुणा: 45 ÷ 3 = 15, फिर × 2।'} },
+    { q:{en:'What is 2 1⁄2 × 4⁄5?', hi:'2 1⁄2 × 4⁄5 कितना है?'},
+      o:['2','3','1 3⁄5','2 2⁄5'], a:0,
+      h:{en:'Convert first: 2 1⁄2 = 5⁄2. Then 5⁄2 × 4⁄5.', hi:'पहले बदलें: 2 1⁄2 = 5⁄2। फिर 5⁄2 × 4⁄5।'} }
+  ],
+  bridge: [
+    { q:{en:'Which fraction is equivalent to 1⁄2?', hi:'कौन-सी भिन्न 1⁄2 के बराबर है?'},
+      o:['3⁄6','2⁄6','3⁄4','1⁄4'], a:0,
+      h:{en:'Multiply top and bottom by the same number: 1×3 over 2×3.',
+         hi:'अंश और हर को एक ही संख्या से गुणा करें: 1×3 / 2×3।'} },
+    { q:{en:'What is 3⁄8 + 1⁄8?', hi:'3⁄8 + 1⁄8 कितना है?'},
+      o:['1⁄2','4⁄16','3⁄16','5⁄8'], a:0,
+      h:{en:'Same denominator — just add the tops: 4⁄8, then simplify.',
+         hi:'हर समान है — बस अंश जोड़ें: 4⁄8, फिर सरल करें।'} },
+    { q:{en:'Which is larger: 2⁄3 or 3⁄5?', hi:'कौन बड़ा है: 2⁄3 या 3⁄5?'},
+      o:['2⁄3','3⁄5','Equal','Cannot compare'], a:0,
+      h:{en:'Make denominators equal: 10⁄15 vs 9⁄15.', hi:'हर बराबर करें: 10⁄15 बनाम 9⁄15।'} },
+    { q:{en:'Simplify 6⁄12 to its lowest form.', hi:'6⁄12 को सरलतम रूप में लिखें।'},
+      o:['1⁄2','2⁄4','3⁄6','6⁄12'], a:0,
+      h:{en:'Divide both by their HCF, which is 6.', hi:'दोनों को म.स. (6) से भाग दें।'} },
+    { q:{en:'What is 1⁄4 of 20?', hi:'20 का 1⁄4 कितना है?'},
+      o:['5','4','10','15'], a:0,
+      h:{en:'Split 20 into 4 equal parts.', hi:'20 को 4 बराबर हिस्सों में बाँटें।'} },
+    { q:{en:'What is 1 − 2⁄5?', hi:'1 − 2⁄5 कितना है?'},
+      o:['3⁄5','2⁄5','1⁄5','5⁄3'], a:0,
+      h:{en:'Write 1 as 5⁄5, then subtract.', hi:'1 को 5⁄5 लिखें, फिर घटाएँ।'} }
+  ],
+  fin: [
+    { q:{en:'Final 1 of 3 — What is 4⁄7 ÷ 2?', hi:'फ़ाइनल 1/3 — 4⁄7 ÷ 2 कितना है?'},
+      o:['2⁄7','8⁄7','4⁄14 × 2','7⁄8'], a:0, h:null },
+    { q:{en:'Final 2 of 3 — A ribbon of 3⁄4 m is cut into pieces of 1⁄8 m. How many pieces?', hi:'फ़ाइनल 2/3 — 3⁄4 मी. का रिबन 1⁄8 मी. के टुकड़ों में काटा गया। कितने टुकड़े?'},
+      o:['6','8','4','12'], a:0, h:null },
+    { q:{en:'Final 3 of 3 — What is 1 2⁄3 × 3⁄5?', hi:'फ़ाइनल 3/3 — 1 2⁄3 × 3⁄5 कितना है?'},
+      o:['1','5⁄3','3⁄5','1 1⁄5'], a:0, h:null }
+  ]
+};
+
+/* ------------------------------------------------------------
+   ENGINE STATE
+------------------------------------------------------------ */
+var LVL_NAMES = ['SPARK','EXPLORER','ACHIEVER','CHAMPION'];
+var GATE_AT = 80;
+var mode = 'on';            // 'on' | 'bridge' | 'final'
+var wrongStreak = 0, correctStreak = 0;
+var answered = 0, correct = 0;
+var qIdx = { on:0, bridge:0, fin:0 };
+var current = null;
+var order = {};             // shuffled option order per question render
+var finScore = 0;
+var locked = false;         // options locked after answering
+
+/* ------------------------------------------------------------
+   RENDER HELPERS
+------------------------------------------------------------ */
+function t(key){ return (I18N[LANG] && I18N[LANG][key]) || I18N.en[key] || key; }
+
+function applyLang(lang){
+  LANG = (lang === 'hi') ? 'hi' : 'en';
+  $$('[data-i18n]').forEach(function(el){
+    var key = el.getAttribute('data-i18n');
+    var dict = I18N[LANG];
+    if (dict[key] !== undefined) el.textContent = dict[key];
+  });
+  document.documentElement.lang = LANG;
+  $('#langEn').classList.toggle('on', LANG === 'en');
+  $('#langHi').classList.toggle('on', LANG === 'hi');
+  $('#langEn').setAttribute('aria-pressed', String(LANG === 'en'));
+  $('#langHi').setAttribute('aria-pressed', String(LANG === 'hi'));
+  renderTrack();
+  renderQuestionText();
+  renderDial();
+  renderGate();
+  savePal();
+}
+
+function renderDial(){
+  var m = PAL.remedialMastery;
+  var C = 603.2; // 2πr, r=96
+  $('#dialArc').style.strokeDashoffset = String(C - (C * m / 100));
+  $('#dialNum').textContent = m;
+  $('#mbarFill').style.width = m + '%';
+  $('#mbarPct').textContent = m;
+  $('#gatePct').textContent = m;
+  var lvl = Math.max(1, Math.min(4, PAL.level || 1));
+  $('#dialLevel').textContent = 'PAL · LEVEL ' + lvl + ' · ' + LVL_NAMES[lvl - 1];
+  var dots = $('#dialDots');
+  dots.innerHTML = '';
+  for (var i = 0; i < 4; i++){
+    var d = document.createElement('i');
+    if (i < lvl) d.className = 'f';
+    dots.appendChild(d);
+  }
+  var gateEl = $('#dialGate');
+  gateEl.classList.toggle('open', !!PAL.finalUnlocked);
+  $('#dialGateTxt').textContent = PAL.finalUnlocked ? t('dial.open') : t('dial.locked');
+}
+
+function renderTrack(){
+  var badge = $('#trackBadge');
+  badge.classList.toggle('bridge', mode === 'bridge');
+  $('#trackTxt').textContent = mode === 'bridge' ? t('track.bridge') : (mode === 'final' ? t('track.final') : t('track.on'));
+  $$('.rung').forEach(function(r){
+    var cl = r.getAttribute('data-cl');
+    r.classList.toggle('here', cl === '7' && mode !== 'bridge');
+    r.classList.toggle('bridge-here', cl === '6' && mode === 'bridge');
+  });
+}
+
+function renderInventory(){
+  $('#hintCnt').textContent = '×' + PAL.hints;
+  $('#skipCnt').textContent = '×' + PAL.skips;
+  $('#invHints').textContent = PAL.hints;
+  $('#invSkips').textContent = PAL.skips;
+  $('#hintBtn').disabled = PAL.hints <= 0 || mode === 'final' || locked;
+  $('#skipBtn').disabled = PAL.skips <= 0 || mode === 'final' || locked;
+  $('#stAnswered').textContent = answered;
+  $('#stCorrect').textContent = correct;
+  $('#stStreak').textContent = correctStreak;
+}
+
+function say(key){ $('#palSay').innerHTML = t(key); }
+
+/* Fisher–Yates over a fixed seed-ish walk (no Math.random needed:
+   rotate options by question index so the right answer moves around) */
+function optionOrder(q, idx){
+  var n = q.o.length;
+  var rot = (idx * 2 + 1) % n;
+  var ord = [];
+  for (var i = 0; i < n; i++) ord.push((i + rot) % n);
+  return ord;
+}
+
+function renderQuestionText(){
+  if (!current) return;
+  $('#qText').textContent = current.q[LANG] || current.q.en;
+  var btns = $$('.opt');
+  btns.forEach(function(b, i){
+    var src = current.o[order[i]];
+    $('.val', b).textContent = src;
+  });
+  if ($('#hintBox').classList.contains('show') && current.h){
+    $('#hintTxt').textContent = current.h[LANG] || current.h.en;
+  }
+}
+
+function nextQuestion(){
+  var pool = mode === 'final' ? BANK.fin : (mode === 'bridge' ? BANK.bridge : BANK.on);
+  var key  = mode === 'final' ? 'fin' : (mode === 'bridge' ? 'bridge' : 'on');
+  var i = qIdx[key] % pool.length;
+  qIdx[key]++;
+  current = pool[i];
+  locked = false;
+
+  var ord = optionOrder(current, i + answered);
+  order = {};
+  var zone = $('#qZone');
+  zone.classList.add('swap');
+
+  setTimeout(function(){
+    $('#qText').textContent = current.q[LANG] || current.q.en;
+    var html = '';
+    var keys = ['A','B','C','D'];
+    for (var k = 0; k < current.o.length; k++){
+      order[k] = ord[k];
+      html += '<button class="opt" data-i="' + k + '">' +
+              '<span class="key">' + keys[k] + '</span>' +
+              '<span class="val">' + current.o[ord[k]] + '</span></button>';
+    }
+    $('#opts').innerHTML = html;
+    $$('.opt').forEach(function(b){
+      b.addEventListener('click', function(){ answer(parseInt(b.getAttribute('data-i'), 10), b); });
+    });
+    $('#hintBox').classList.remove('show');
+    $('#nextBtn').classList.remove('show');
+    zone.classList.remove('swap');
+    renderInventory();
+  }, 280);
+}
+
+/* ------------------------------------------------------------
+   ANSWER FLOW — the adaptive core
+------------------------------------------------------------ */
+function setMastery(m){
+  PAL.remedialMastery = Math.max(0, Math.min(100, m));
+  var wasLocked = !PAL.finalUnlocked;
+  if (PAL.remedialMastery >= GATE_AT && wasLocked){
+    PAL.finalUnlocked = true;
+    say('say.unlock');
+    surge();
+  }
+  renderDial();
+  renderGate();
+  savePal();
+}
+
+function surge(){
+  var card = $('#dialCard');
+  card.classList.add('surge');
+  setTimeout(function(){ card.classList.remove('surge'); }, 1400);
+}
+
+function answer(displayIdx, btn){
+  if (locked) return;
+  locked = true;
+  var pickedSrc = order[displayIdx];
+  var isRight = pickedSrc === current.a;
+  answered++;
+
+  $$('.opt').forEach(function(b){
+    b.disabled = true;
+    var src = order[parseInt(b.getAttribute('data-i'), 10)];
+    if (src === current.a) b.classList.add('right');
+    else if (b === btn) b.classList.add('wrong');
+    else b.classList.add('dim');
+  });
+
+  if (mode === 'final'){
+    if (isRight){ finScore++; correct++; }
+    renderInventory();
+    if (qIdx.fin >= 3 || qIdx.fin % 3 === 0){
+      setTimeout(finishFinal, 900);
+    } else {
+      $('#nextBtn').classList.add('show');
+    }
+    return;
+  }
+
+  if (isRight){
+    correct++;
+    correctStreak++;
+    wrongStreak = 0;
+    setMastery(PAL.remedialMastery + (mode === 'bridge' ? 5 : 8));
+    if (mode === 'bridge' && correctStreak >= 3){
+      mode = 'on';
+      correctStreak = 0;
+      say('say.up');
+      renderTrack();
+    } else if (!PAL.finalUnlocked || PAL.remedialMastery < GATE_AT){
+      say(mode === 'bridge' ? 'say.rightBridge' : 'say.right');
+    }
+  } else {
+    wrongStreak++;
+    correctStreak = 0;
+    setMastery(PAL.remedialMastery - 3);
+    if (mode === 'on' && wrongStreak >= 2){
+      mode = 'bridge';
+      wrongStreak = 0;
+      say('say.down');
+      renderTrack();
+    } else {
+      say('say.wrong');
+    }
+  }
+  renderInventory();
+  $('#nextBtn').classList.add('show');
+}
+
+/* ------------------------------------------------------------
+   HINT + SKIP
+------------------------------------------------------------ */
+$('#hintBtn').addEventListener('click', function(){
+  if (PAL.hints <= 0 || locked || !current || !current.h) return;
+  PAL.hints--;
+  $('#hintTxt').textContent = current.h[LANG] || current.h.en;
+  $('#hintBox').classList.add('show');
+  say('say.hint');
+  renderInventory();
+  savePal();
+});
+
+$('#skipBtn').addEventListener('click', function(){
+  if (PAL.skips <= 0 || locked) return;
+  PAL.skips--;
+  say('say.skip');
+  renderInventory();
+  savePal();
+  nextQuestion();
+});
+
+$('#nextBtn').addEventListener('click', nextQuestion);
+
+/* ------------------------------------------------------------
+   FINAL GATE
+------------------------------------------------------------ */
+function renderGate(){
+  var gate = $('#gateCard');
+  var btn = $('#gateBtn');
+  var open = !!PAL.finalUnlocked;
+  gate.classList.toggle('open', open);
+  if (open){
+    $('#gateH').textContent = PAL.level >= 3 ? t('gate.btnDone') : t('gate.openH');
+    $('#gateP').textContent = t('gate.openP');
+    $('#lockIco').innerHTML = '<rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V7a4 4 0 0 1 8 0"/>';
+    $('#lockIco').setAttribute('stroke', 'var(--teal)');
+    btn.disabled = PAL.level >= 3;
+    btn.style.opacity = PAL.level >= 3 ? '.5' : '1';
+    btn.style.cursor = PAL.level >= 3 ? 'default' : 'pointer';
+    if (PAL.level >= 3) $('span', btn).textContent = t('gate.btnDone');
+    buildBurst();
+  } else {
+    $('#gateH').textContent = t('gate.lockedH');
+    btn.disabled = true;
+    btn.style.opacity = '.35';
+    btn.style.cursor = 'not-allowed';
+  }
+}
+
+function buildBurst(){
+  var burst = $('#burst');
+  if (burst.children.length) return;
+  var colors = ['#3DE8C5','#7C9BFF','#FFB454','#FF7AA2','#C2A8FF'];
+  for (var i = 0; i < 26; i++){
+    var p = document.createElement('i');
+    p.style.left = (4 + (i * 89) % 92) + '%';
+    p.style.top = (55 + (i * 31) % 35) + '%';
+    p.style.background = colors[i % colors.length];
+    p.style.setProperty('--bx', (((i * 53) % 120) - 60) + 'px');
+    p.style.setProperty('--by', (-(40 + (i * 37) % 110)) + 'px');
+    p.style.setProperty('--bd', ((i * 43) % 500) + 'ms');
+    burst.appendChild(p);
+  }
+}
+
+$('#gateBtn').addEventListener('click', function(){
+  if (!PAL.finalUnlocked || PAL.level >= 3) return;
+  mode = 'final';
+  finScore = 0;
+  qIdx.fin = 0;
+  say('say.finalStart');
+  renderTrack();
+  renderInventory();
+  nextQuestion();
+  $('#qZone').scrollIntoView({ behavior:'smooth', block:'center' });
+});
+
+function finishFinal(){
+  if (finScore >= 2){
+    PAL.level = Math.max(PAL.level, 3);
+    say('say.finalPass');
+    surge();
+  } else {
+    say('say.finalFail');
+  }
+  mode = 'on';
+  savePal();
+  renderDial();
+  renderGate();
+  renderTrack();
+  nextQuestion();
+}
+
+/* ------------------------------------------------------------
+   SCROLL REVEAL + LANG + BOOT
+------------------------------------------------------------ */
+var io = new IntersectionObserver(function(entries){
+  entries.forEach(function(en){
+    if (en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+  });
+}, { threshold:.12 });
+$$('.rv').forEach(function(el){ io.observe(el); });
+
+$('#langEn').addEventListener('click', function(){ applyLang('en'); });
+$('#langHi').addEventListener('click', function(){ applyLang('hi'); });
+
+applyLang(LANG);
+renderTrack();
+renderInventory();
+renderGate();
+nextQuestion();
+say('say.start');
+/* dial animates in after first paint */
+setTimeout(renderDial, 350);
+
+})();
+</script>
+<script src="../theme.js"></script>
+</body>
+</html>
