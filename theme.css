@@ -1,0 +1,217 @@
+/* Universal Dark Mode Styles */
+
+:root {
+  --dm-bg-primary: #FFFFFF;
+  --dm-text-primary: #1A1F36;
+  --dm-text-secondary: #6B7280;
+  --dm-border-color: rgba(0, 0, 0, 0.08);
+  --dm-navbar-bg: rgba(255, 255, 255, 0.95);
+  --dm-card-bg: rgba(255, 255, 255, 0.5);
+  --dm-transition: 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html.dark-mode {
+  --dm-bg-primary: #0F172A;
+  --dm-text-primary: #F5F7FA;
+  --dm-text-secondary: #CBD5E1;
+  --dm-border-color: rgba(255, 255, 255, 0.1);
+  --dm-navbar-bg: rgba(15, 23, 42, 0.95);
+  --dm-card-bg: rgba(30, 41, 59, 0.5);
+}
+
+/* Force immediate theme application */
+html {
+  background-color: var(--dm-bg-primary) !important;
+  color: var(--dm-text-primary) !important;
+}
+
+body {
+  background-color: var(--dm-bg-primary) !important;
+  color: var(--dm-text-primary) !important;
+  transition: background-color var(--dm-transition), color var(--dm-transition);
+}
+
+/* Smooth transitions */
+body, html, * {
+  transition: background-color var(--dm-transition), color var(--dm-transition), border-color var(--dm-transition);
+}
+
+/* Theme toggle button styles */
+.theme-toggle, [data-theme-toggle] {
+  width: 44px;
+  height: 44px;
+  border: 1.5px solid var(--dm-border-color) !important;
+  background: transparent !important;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all var(--dm-transition) !important;
+  color: var(--dm-text-primary) !important;
+  padding: 8px !important;
+  z-index: 9999 !important;
+}
+
+.theme-toggle:hover, [data-theme-toggle]:hover {
+  background: rgba(61, 232, 197, 0.1) !important;
+  border-color: #3DE8C5 !important;
+  transform: scale(1.05);
+}
+
+/* Text color transitions */
+h1, h2, h3, h4, h5, h6, p, span, div, li, a, button {
+  color: var(--dm-text-primary);
+}
+
+p, .text-secondary, .subtitle {
+  color: var(--dm-text-secondary);
+}
+
+/* Common navbar styles */
+nav, .navbar, header {
+  background: var(--dm-navbar-bg) !important;
+  border-bottom-color: var(--dm-border-color) !important;
+  color: var(--dm-text-primary) !important;
+}
+
+/* Common card styles */
+.card, .feature-card, .lesson-card, .course-card, .content {
+  background: var(--dm-card-bg) !important;
+  border-color: var(--dm-border-color) !important;
+  color: var(--dm-text-primary) !important;
+}
+
+/* Input fields */
+input, textarea, select {
+  background: rgba(0, 0, 0, 0.03) !important;
+  border-color: var(--dm-border-color) !important;
+  color: var(--dm-text-primary) !important;
+  transition: all var(--dm-transition);
+}
+
+html.dark-mode input,
+html.dark-mode textarea,
+html.dark-mode select {
+  background: rgba(255, 255, 255, 0.03) !important;
+  color: var(--dm-text-primary) !important;
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--dm-text-secondary);
+}
+
+input:focus, textarea:focus, select:focus {
+  background: rgba(0, 0, 0, 0.05) !important;
+  border-color: #3DE8C5 !important;
+}
+
+html.dark-mode input:focus,
+html.dark-mode textarea:focus,
+html.dark-mode select:focus {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-color: #3DE8C5 !important;
+}
+
+/* Buttons */
+button {
+  transition: all var(--dm-transition);
+}
+
+button:not([data-theme-toggle]) {
+  border-color: var(--dm-border-color);
+}
+
+/* Links */
+a {
+  color: var(--dm-text-primary);
+  transition: color var(--dm-transition);
+}
+
+/* Tables */
+table, th, td {
+  border-color: var(--dm-border-color) !important;
+  color: var(--dm-text-primary) !important;
+}
+
+html.dark-mode table {
+  background: var(--dm-card-bg) !important;
+}
+
+/* Common section backgrounds */
+section {
+  transition: background-color var(--dm-transition), color var(--dm-transition);
+}
+
+/* Footer */
+footer {
+  background: var(--dm-navbar-bg) !important;
+  border-top-color: var(--dm-border-color) !important;
+  color: var(--dm-text-secondary) !important;
+}
+
+/* Modals and overlays */
+.modal, .dialog, .overlay, .popup {
+  background: var(--dm-bg-primary) !important;
+  color: var(--dm-text-primary) !important;
+  border-color: var(--dm-border-color) !important;
+}
+
+.modal-backdrop {
+  background: rgba(0, 0, 0, 0.5) !important;
+}
+
+html.dark-mode .modal-backdrop {
+  background: rgba(0, 0, 0, 0.7) !important;
+}
+
+/* Text selections */
+::selection {
+  background: rgba(61, 232, 197, 0.2);
+  color: var(--dm-text-primary);
+}
+
+html.dark-mode ::selection {
+  background: rgba(61, 232, 197, 0.3);
+}
+
+/* Container backgrounds */
+.container, .content-wrapper, main {
+  background-color: var(--dm-bg-primary);
+}
+
+/* Alert boxes */
+.alert, .notification {
+  background: var(--dm-card-bg) !important;
+  border-color: var(--dm-border-color) !important;
+  color: var(--dm-text-primary) !important;
+}
+
+/* Ensure theme persists on page load */
+html.dark-mode * {
+  color: var(--dm-text-primary) !important;
+}
+
+html.dark-mode body {
+  background-color: var(--dm-bg-primary) !important;
+}
+
+/* Scroll bar styling */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--dm-bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(61, 232, 197, 0.3);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(61, 232, 197, 0.5);
+}

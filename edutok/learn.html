@@ -1,0 +1,1859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learn — EduLearn · Browse every class, every chapter</title>
+<meta name="description" content="EduLearn course browser. CBSE / NCERT + 20 state boards. Classes 6–9, five subjects, 9,000+ lessons. Made for Bharat.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&family=Fragment+Mono:ital@0;1&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   EDULEARN · LEARN — design tokens
+   ============================================================ */
+:root{
+  --ink:#FFFFFF;
+  --deep:#F8F9FA;
+  --card:#FFFFFF;
+  --card2:#F5F7FA;
+  --line:rgba(0,0,0,.08);
+  --cream:#1A1F36;
+  --muted:#6B7280;
+  --teal:#3DE8C5;
+  --peri:#7C9BFF;
+  --amber:#FFB454;
+  --rose:#FF7AA2;
+  --aurora:linear-gradient(115deg,#3DE8C5 0%,#7C9BFF 48%,#FFB454 100%);
+  --ease:cubic-bezier(.22,1,.36,1);
+  --c6:#3DE8C5;
+  --c7:#FFB454;
+  --c8:#7C9BFF;
+  --c9:#FF7AA2;
+}
+
+/* Dark mode overrides for learn page */
+html.dark-mode {
+  --ink: #0F172A;
+  --deep: #1a2847;
+  --card: #1a2847;
+  --card2: #253556;
+  --line: rgba(255,255,255,.1);
+  --cream: #F5F7FA;
+  --muted: #CBD5E1;
+}
+
+/* ============================================================
+   Reset + base
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--ink);
+  color:var(--cream);
+  font-family:'Schibsted Grotesk',sans-serif;
+  font-size:16px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  min-height:100vh;
+}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;color:inherit;background:none;border:none;cursor:pointer}
+input{font-family:inherit;color:inherit}
+::selection{background:rgba(61,232,197,.3);color:var(--cream)}
+.mono{
+  font-family:'Fragment Mono',monospace;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  font-size:11px;
+}
+
+/* ============================================================
+   Atmosphere — aurora blobs + grain
+   ============================================================ */
+.blobs{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.blob{
+  position:absolute;
+  border-radius:50%;
+  filter:blur(90px);
+  will-change:transform;
+}
+.blob--teal{
+  width:780px;height:780px;
+  left:-240px;top:-260px;
+  background:radial-gradient(circle at 50% 50%, rgba(61,232,197,.08), transparent 65%);
+  animation:drift1 26s var(--ease) infinite alternate;
+}
+.blob--peri{
+  width:880px;height:880px;
+  right:-320px;top:14%;
+  background:radial-gradient(circle at 50% 50%, rgba(124,155,255,.07), transparent 65%);
+  animation:drift2 32s var(--ease) infinite alternate;
+}
+.blob--amber{
+  width:720px;height:720px;
+  left:28%;bottom:-380px;
+  background:radial-gradient(circle at 50% 50%, rgba(255,180,84,.06), transparent 65%);
+  animation:drift3 38s var(--ease) infinite alternate;
+}
+@keyframes drift1{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(120px,80px,0) scale(1.12)}}
+@keyframes drift2{from{transform:translate3d(0,0,0) scale(1.05)}to{transform:translate3d(-140px,110px,0) scale(.94)}}
+@keyframes drift3{from{transform:translate3d(0,0,0)}to{transform:translate3d(160px,-90px,0) scale(1.08)}}
+
+.grain{
+  position:fixed;inset:0;
+  z-index:90;
+  pointer-events:none;
+  opacity:.02;
+  mix-blend-mode:overlay;
+}
+
+/* ============================================================
+   Page-load reveal + scroll reveal
+   ============================================================ */
+@keyframes rise{
+  from{opacity:0;transform:translateY(24px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.rv{opacity:0;animation:rise .7s var(--ease) forwards}
+.io{opacity:0;transform:translateY(24px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.io.in{opacity:1;transform:translateY(0)}
+
+/* ============================================================
+   Nav — sticky glass
+   ============================================================ */
+.nav{
+  position:sticky;top:0;z-index:80;
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  background:rgba(255,255,255,.95);
+  border-bottom:1px solid var(--line);
+}
+.nav__inner{
+  max-width:1320px;margin:0 auto;
+  padding:0 40px;
+  height:72px;
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+}
+.brand{display:flex;align-items:center;gap:10px}
+.brand__mark{display:block}
+.brand__word{
+  font-family:'Fraunces',serif;
+  font-weight:600;font-size:22px;
+  letter-spacing:-.01em;
+}
+.nav__links{display:flex;align-items:center;gap:30px}
+.nav__link{
+  font-size:14.5px;font-weight:500;
+  color:var(--muted);
+  position:relative;
+  padding:6px 2px;
+  transition:color .3s var(--ease);
+}
+.nav__link:hover{color:var(--cream)}
+.nav__link.is-current{color:var(--cream)}
+.nav__link.is-current::after{
+  content:"";
+  position:absolute;left:50%;bottom:-4px;
+  width:18px;height:3px;border-radius:3px;
+  transform:translateX(-50%);
+  background:var(--aurora);
+}
+.nav__right{display:flex;align-items:center;gap:16px}
+
+.lang{
+  display:flex;align-items:center;
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:3px;
+  background:rgba(255,255,255,.03);
+}
+.lang__opt{
+  font-family:'Fragment Mono',monospace;
+  font-size:11px;letter-spacing:.1em;
+  padding:5px 12px;border-radius:999px;
+  color:var(--muted);
+  transition:all .35s var(--ease);
+}
+.lang__opt:hover{color:var(--cream)}
+.lang__opt.is-on{
+  background:var(--cream);color:var(--ink);font-weight:700;
+}
+
+.btn-primary{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--aurora);
+  color:var(--ink);
+  font-weight:700;font-size:14.5px;
+  padding:11px 22px;border-radius:999px;
+  box-shadow:0 8px 32px rgba(61,232,197,.35);
+  transition:transform .4s var(--ease),box-shadow .4s var(--ease);
+}
+.btn-primary:hover{
+  transform:translateY(-2px);
+  box-shadow:0 14px 44px rgba(61,232,197,.5);
+}
+.btn-ghost{
+  display:inline-flex;align-items:center;gap:8px;
+  border:1px solid var(--line);
+  color:var(--cream);
+  font-weight:600;font-size:14px;
+  padding:10px 20px;border-radius:999px;
+  transition:background .35s var(--ease),transform .35s var(--ease);
+}
+.btn-ghost:hover{background:rgba(255,255,255,.05);transform:translateY(-1px)}
+
+/* ============================================================
+   Layout shell
+   ============================================================ */
+.wrap{max-width:1320px;margin:0 auto;padding:0 40px;position:relative;z-index:2}
+
+/* ============================================================
+   Hero strip
+   ============================================================ */
+.hero{padding:56px 0 18px}
+.hero__crumb{color:var(--muted);margin-bottom:22px;display:flex;align-items:center;gap:10px}
+.hero__crumb a{transition:color .3s var(--ease)}
+.hero__crumb a:hover{color:var(--teal)}
+.hero__crumb .sep{opacity:.4}
+.hero__row{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  gap:40px;flex-wrap:wrap;
+}
+.hero__title{
+  font-family:'Fraunces',serif;
+  font-weight:500;
+  font-size:clamp(44px,5.4vw,76px);
+  line-height:1.02;
+  letter-spacing:-.025em;
+  max-width:640px;
+}
+.hero__title em{
+  font-style:italic;
+  font-weight:600;
+  background:var(--aurora);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  color:transparent;
+}
+.hero__chips{display:flex;flex-direction:column;gap:10px;align-items:flex-start;padding-bottom:8px}
+.chip{
+  display:inline-flex;align-items:center;gap:10px;
+  border:1px solid var(--line);
+  background:rgba(13,22,38,.7);
+  border-radius:999px;
+  padding:9px 18px 9px 13px;
+  font-size:13.5px;font-weight:500;
+  color:var(--cream);
+  transition:border-color .35s var(--ease),transform .35s var(--ease);
+}
+.chip:hover{border-color:rgba(61,232,197,.4);transform:translateX(-3px)}
+.chip svg{flex:none}
+.chip--gold{color:var(--amber)}
+.chip--gold svg{color:var(--amber)}
+.chip--soft{color:var(--muted)}
+.chip--soft svg{color:var(--peri)}
+
+/* ============================================================
+   Class switcher — 4 giant pill tabs
+   ============================================================ */
+.classes{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+  margin:38px 0 12px;
+}
+.ctab{
+  --cc:var(--teal);
+  position:relative;
+  display:flex;align-items:center;gap:14px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:14px 24px;
+  background:rgba(13,22,38,.5);
+  overflow:hidden;
+  transition:all .45s var(--ease);
+  text-align:left;
+}
+.ctab .ctab__num{
+  font-family:'Fraunces',serif;
+  font-weight:600;font-size:34px;line-height:1;
+  color:var(--cc);
+  transition:color .45s var(--ease);
+}
+.ctab .ctab__meta{display:flex;flex-direction:column;gap:2px}
+.ctab .ctab__label{font-size:13.5px;font-weight:600;color:var(--cream);transition:color .45s var(--ease)}
+.ctab .ctab__count{font-family:'Fragment Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);transition:color .45s var(--ease)}
+.ctab:hover{transform:translateY(-3px);border-color:var(--cc);box-shadow:0 10px 36px rgba(0,0,0,.4)}
+.ctab.is-active{
+  background:var(--cc);
+  border-color:var(--cc);
+  box-shadow:0 12px 42px color-mix(in srgb, var(--cc) 35%, transparent);
+}
+.ctab.is-active .ctab__num,
+.ctab.is-active .ctab__label{color:var(--ink)}
+.ctab.is-active .ctab__count{color:rgba(5,8,15,.65)}
+.ctab[data-class="6"]{--cc:var(--c6)}
+.ctab[data-class="7"]{--cc:var(--c7)}
+.ctab[data-class="8"]{--cc:var(--c8)}
+.ctab[data-class="9"]{--cc:var(--c9)}
+
+/* ============================================================
+   Main split: browser + sticky panel
+   ============================================================ */
+.split{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 332px;
+  gap:36px;
+  align-items:start;
+  padding:26px 0 90px;
+}
+
+/* ============================================================
+   Subject rail
+   ============================================================ */
+.rail{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:12px;
+  margin-bottom:26px;
+}
+.subj{
+  --sa:var(--teal);
+  position:relative;
+  border:1px solid var(--line);
+  border-radius:20px;
+  background:var(--card);
+  padding:18px 16px 15px;
+  display:flex;flex-direction:column;gap:10px;
+  text-align:left;
+  transition:all .45s var(--ease);
+  overflow:hidden;
+}
+.subj::after{
+  content:"";
+  position:absolute;left:16px;right:16px;bottom:0;
+  height:2px;border-radius:2px 2px 0 0;
+  background:var(--sa);
+  transform:scaleX(0);
+  transform-origin:left;
+  transition:transform .5s var(--ease);
+}
+.subj:hover{transform:translateY(-4px);border-color:rgba(242,237,227,.18)}
+.subj:hover::after{transform:scaleX(.45)}
+.subj.is-active{
+  background:var(--card2);
+  border-color:color-mix(in srgb, var(--sa) 55%, transparent);
+  box-shadow:0 14px 40px rgba(0,0,0,.45), 0 0 0 1px color-mix(in srgb, var(--sa) 25%, transparent) inset;
+}
+.subj.is-active::after{transform:scaleX(1)}
+.subj__icon{color:var(--sa);height:26px;display:flex;align-items:center}
+.subj__name{font-size:14px;font-weight:600;line-height:1.25}
+.subj__count{
+  font-family:'Fragment Mono',monospace;
+  font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted);
+}
+
+/* ============================================================
+   Search
+   ============================================================ */
+.listhead{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:20px;margin-bottom:16px;flex-wrap:wrap;
+}
+.listhead__title{
+  font-family:'Fraunces',serif;
+  font-weight:600;font-size:26px;letter-spacing:-.01em;
+}
+.listhead__title .subj-accent{font-style:italic}
+.search{
+  position:relative;flex:1;max-width:380px;min-width:240px;
+}
+.search svg{
+  position:absolute;left:16px;top:50%;transform:translateY(-50%);
+  color:var(--muted);pointer-events:none;
+  transition:color .3s var(--ease);
+}
+.search:focus-within svg{color:var(--teal)}
+.search input{
+  width:100%;
+  background:rgba(13,22,38,.7);
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:12px 18px 12px 44px;
+  font-family:'Fragment Mono',monospace;
+  font-size:12px;letter-spacing:.06em;
+  color:var(--cream);
+  outline:none;
+  transition:border-color .35s var(--ease),box-shadow .35s var(--ease);
+}
+.search input::placeholder{color:var(--muted);text-transform:uppercase;letter-spacing:.1em;font-size:11px}
+.search input:focus{
+  border-color:rgba(61,232,197,.45);
+  box-shadow:0 0 0 4px rgba(61,232,197,.08);
+}
+
+/* ============================================================
+   Chapter rows
+   ============================================================ */
+.chapters{display:flex;flex-direction:column;gap:10px;min-height:320px}
+.chrow{
+  --cc:var(--c7);
+  position:relative;
+  display:grid;
+  grid-template-columns:64px minmax(0,1fr) auto;
+  gap:18px;align-items:center;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:18px 22px 18px 18px;
+  transition:transform .4s var(--ease),border-color .4s var(--ease),box-shadow .4s var(--ease);
+  overflow:hidden;
+}
+.chrow::before{
+  content:"";
+  position:absolute;left:0;top:14px;bottom:14px;
+  width:3px;border-radius:0 3px 3px 0;
+  background:var(--aurora);
+  transform:scaleY(0);
+  transform-origin:center;
+  transition:transform .45s var(--ease);
+}
+.chrow:hover{
+  transform:translateY(-3px);
+  border-color:rgba(242,237,227,.18);
+  box-shadow:0 16px 44px rgba(0,0,0,.45);
+}
+.chrow:hover::before{transform:scaleY(1)}
+.chrow__num{
+  font-family:'Fraunces',serif;
+  font-weight:300;font-style:italic;
+  font-size:34px;line-height:1;
+  color:var(--cc);
+  text-align:center;
+}
+.chrow__body{display:flex;flex-direction:column;gap:8px;min-width:0}
+.chrow__name{
+  font-size:16.5px;font-weight:600;letter-spacing:-.005em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.chrow__name mark{
+  background:transparent;
+  color:var(--teal);
+  border-bottom:2px solid rgba(61,232,197,.55);
+  padding-bottom:1px;
+}
+.chrow__subjtag{
+  font-family:'Fragment Mono',monospace;
+  font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink);
+  background:var(--cc);
+  border-radius:4px;
+  padding:2px 7px;
+  margin-right:10px;
+  vertical-align:2px;
+  display:inline-block;
+}
+.chrow__meta{display:flex;align-items:center;gap:14px}
+.mods{display:flex;align-items:center;gap:7px}
+.mod{
+  position:relative;
+  display:flex;align-items:center;justify-content:center;
+  width:24px;height:24px;border-radius:7px;
+  color:var(--muted);
+  background:rgba(255,255,255,.04);
+  transition:color .3s var(--ease),background .3s var(--ease);
+}
+.mod:hover{color:var(--cream);background:rgba(255,255,255,.1)}
+.mod::after{
+  content:attr(data-tip);
+  position:absolute;bottom:calc(100% + 8px);left:50%;
+  transform:translateX(-50%) translateY(4px);
+  font-family:'Fragment Mono',monospace;
+  font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;
+  background:var(--cream);color:var(--ink);
+  padding:4px 9px;border-radius:6px;
+  white-space:nowrap;
+  opacity:0;pointer-events:none;
+  transition:opacity .25s var(--ease),transform .25s var(--ease);
+  z-index:5;
+}
+.mod:hover::after{opacity:1;transform:translateX(-50%) translateY(0)}
+.pbar{
+  flex:1;max-width:200px;min-width:90px;
+  height:4px;border-radius:4px;
+  background:rgba(255,255,255,.07);
+  overflow:hidden;
+}
+.pbar__fill{
+  height:100%;border-radius:4px;
+  background:var(--cc);
+  transition:width .8s var(--ease);
+}
+.pbar__fill.is-zero{background:transparent}
+.chrow__pct{
+  font-family:'Fragment Mono',monospace;
+  font-size:10px;letter-spacing:.1em;color:var(--muted);
+  min-width:34px;
+}
+.chrow__right{
+  display:flex;flex-direction:column;align-items:flex-end;gap:8px;
+}
+.chrow__dur{
+  font-family:'Fragment Mono',monospace;
+  font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted);
+}
+.badge-mastered{
+  display:inline-flex;align-items:center;gap:5px;
+  font-family:'Fragment Mono',monospace;
+  font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--teal);
+  border:1px solid rgba(61,232,197,.35);
+  background:rgba(61,232,197,.08);
+  border-radius:999px;
+  padding:3px 10px;
+}
+.chrow__arrow{
+  color:var(--muted);
+  transition:transform .35s var(--ease),color .35s var(--ease);
+}
+.chrow:hover .chrow__arrow{transform:translateX(4px);color:var(--teal)}
+
+/* ============================================================
+   Empty state — Tokky
+   ============================================================ */
+.empty{
+  display:none;
+  flex-direction:column;align-items:center;justify-content:center;
+  gap:18px;
+  padding:64px 20px 70px;
+  border:1px dashed var(--line);
+  border-radius:24px;
+  text-align:center;
+}
+.empty.is-show{display:flex}
+.empty__title{
+  font-family:'Fraunces',serif;
+  font-weight:500;font-size:26px;
+}
+.empty__hint{color:var(--muted);font-size:14.5px}
+.empty__hint button{
+  color:var(--teal);font-weight:600;font-size:14.5px;
+  border-bottom:1px solid rgba(61,232,197,.5);
+  transition:opacity .3s var(--ease);
+}
+.empty__hint button:hover{opacity:.75}
+
+/* ============================================================
+   Tokky mascot
+   ============================================================ */
+.tokky{animation:tokkyFloat 3s ease-in-out infinite alternate}
+@keyframes tokkyFloat{from{transform:translateY(0)}to{transform:translateY(-7px)}}
+.tokky .tokky-eye{
+  animation:tokkyBlink 4.2s infinite;
+  transform-box:fill-box;transform-origin:center;
+}
+@keyframes tokkyBlink{
+  0%,91%,100%{transform:scaleY(1)}
+  94%,96%{transform:scaleY(.08)}
+}
+.tokky .tokky-tip{animation:tokkyPulse 2.2s ease-in-out infinite}
+.tokky .tokky-halo{animation:tokkyHalo 2.2s ease-in-out infinite}
+@keyframes tokkyPulse{0%,100%{opacity:1}50%{opacity:.55}}
+@keyframes tokkyHalo{0%,100%{opacity:.35;transform:scale(1)}50%{opacity:.08;transform:scale(1.7)}}
+.tokky .tokky-halo{transform-box:fill-box;transform-origin:center}
+
+/* ============================================================
+   Side panel (sticky)
+   ============================================================ */
+.panel{
+  position:sticky;top:96px;
+  display:flex;flex-direction:column;gap:18px;
+}
+.pcard{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:24px;
+  position:relative;
+  overflow:hidden;
+}
+.pcard__eyebrow{
+  font-family:'Fragment Mono',monospace;
+  font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:16px;
+  display:flex;align-items:center;gap:8px;
+}
+.pcard__eyebrow::before{
+  content:"";width:8px;height:8px;border-radius:50%;
+  background:var(--aurora);flex:none;
+}
+.continue{display:flex;align-items:center;gap:18px}
+.ring{position:relative;width:84px;height:84px;flex:none}
+.ring svg{transform:rotate(-90deg)}
+.ring__pct{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fraunces',serif;
+  font-weight:600;font-size:20px;
+}
+.continue__body{min-width:0}
+.continue__class{
+  font-family:'Fragment Mono',monospace;
+  font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--amber);
+  margin-bottom:4px;
+}
+.continue__name{
+  font-family:'Fraunces',serif;
+  font-weight:600;font-size:19px;line-height:1.2;
+  margin-bottom:12px;
+}
+.btn-resume{
+  display:inline-flex;align-items:center;gap:7px;
+  background:var(--aurora);
+  color:var(--ink);
+  font-weight:700;font-size:13px;
+  padding:9px 18px;border-radius:999px;
+  box-shadow:0 8px 32px rgba(61,232,197,.35);
+  transition:transform .4s var(--ease),box-shadow .4s var(--ease);
+}
+.btn-resume:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(61,232,197,.5)}
+
+.beyond{display:flex;flex-direction:column}
+.beyond__row{
+  display:flex;align-items:center;gap:14px;
+  padding:12px 6px;
+  border-bottom:1px solid var(--line);
+  border-radius:10px;
+  transition:background .3s var(--ease),transform .3s var(--ease);
+}
+.beyond__row:last-child{border-bottom:none}
+.beyond__row:hover{background:rgba(255,255,255,.04);transform:translateX(3px)}
+.beyond__icon{
+  width:34px;height:34px;border-radius:11px;
+  display:flex;align-items:center;justify-content:center;
+  flex:none;
+  background:rgba(255,255,255,.05);
+}
+.beyond__name{font-size:14px;font-weight:600;flex:1}
+.beyond__row svg.chev{color:var(--muted);transition:transform .3s var(--ease)}
+.beyond__row:hover svg.chev{transform:translateX(3px);color:var(--cream)}
+
+.pcard--tokky{
+  display:flex;align-items:center;gap:16px;
+  background:linear-gradient(135deg, rgba(61,232,197,.07), rgba(124,155,255,.07));
+}
+.pcard--tokky p{font-size:13px;color:var(--muted);line-height:1.5}
+.pcard--tokky p strong{color:var(--cream)}
+
+/* ============================================================
+   Footer
+   ============================================================ */
+.footer{
+  position:relative;z-index:2;
+  border-top:1px solid var(--line);
+  margin-top:40px;
+  overflow:hidden;
+  background:linear-gradient(180deg, transparent, rgba(248,249,250,.6));
+}
+.footer__inner{
+  max-width:1320px;margin:0 auto;
+  padding:70px 40px 40px;
+  position:relative;
+}
+.footer__mark{
+  position:absolute;
+  left:10px;bottom:-44px;
+  font-family:'Fraunces',serif;
+  font-weight:600;
+  font-size:clamp(96px,15vw,230px);
+  line-height:1;
+  letter-spacing:-.03em;
+  color:rgba(242,237,227,.08);
+  pointer-events:none;
+  user-select:none;
+  white-space:nowrap;
+}
+.footer__cols{
+  display:grid;
+  grid-template-columns:1.4fr 1fr 1fr 1fr 1fr;
+  gap:32px;
+  position:relative;z-index:2;
+  margin-bottom:64px;
+}
+.footer__brandcol{display:flex;flex-direction:column;gap:16px;align-items:flex-start}
+.footer__tag{font-size:14.5px;color:var(--muted);max-width:260px;line-height:1.6}
+.footer__boards{
+  font-family:'Fragment Mono',monospace;
+  font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);
+}
+.fcol h4{
+  font-family:'Fragment Mono',monospace;
+  font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+  font-weight:400;
+  color:var(--muted);
+  margin-bottom:16px;
+}
+.fcol ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+.fcol a,.fcol span{
+  font-size:14px;color:var(--cream);
+  opacity:.8;
+  transition:opacity .3s var(--ease),color .3s var(--ease);
+}
+.fcol a:hover{opacity:1;color:var(--teal)}
+.footer__base{
+  position:relative;z-index:2;
+  display:flex;justify-content:space-between;align-items:center;gap:20px;
+  padding-top:24px;
+  border-top:1px solid var(--line);
+  flex-wrap:wrap;
+}
+.footer__base .mono{color:var(--muted);font-size:10.5px}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width:1180px){
+  .split{grid-template-columns:minmax(0,1fr) 300px;gap:26px}
+  .nav__links{gap:20px}
+}
+@media (max-width:1024px){
+  .split{grid-template-columns:1fr}
+  .panel{position:static;flex-direction:row;flex-wrap:wrap}
+  .panel .pcard{flex:1;min-width:300px}
+  .rail{grid-template-columns:repeat(5,minmax(150px,1fr));overflow-x:auto;padding-bottom:6px}
+  .classes{grid-template-columns:repeat(2,1fr)}
+  .footer__cols{grid-template-columns:1.4fr 1fr 1fr;row-gap:40px}
+  .nav__links{display:none}
+}
+@media (max-width:760px){
+  .wrap{padding:0 22px}
+  .nav__inner{padding:0 22px}
+  .hero__title{font-size:clamp(36px,9vw,52px)}
+  .chrow{grid-template-columns:44px minmax(0,1fr)}
+  .chrow__right{display:none}
+  .footer__cols{grid-template-columns:1fr 1fr}
+}
+
+/* ============================================================
+   Reduced motion
+   ============================================================ */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+  }
+  html{scroll-behavior:auto}
+  .rv{opacity:1;animation:none}
+  .io{opacity:1;transform:none}
+  .blob{animation:none}
+  .tokky,.tokky *{animation:none}
+}
+
+/* Dark mode theme toggle button */
+[data-theme-toggle] {
+  position: fixed !important;
+  top: 20px !important;
+  right: 20px !important;
+  z-index: 9999 !important;
+  width: 48px !important;
+  height: 48px !important;
+  border: 2px solid var(--dm-border-color) !important;
+  background: var(--dm-navbar-bg) !important;
+  border-radius: 12px !important;
+  cursor: pointer !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1) !important;
+  color: var(--dm-text-primary) !important;
+  padding: 10px !important;
+}
+
+[data-theme-toggle]:hover {
+  background: rgba(61, 232, 197, 0.1) !important;
+  border-color: #3DE8C5 !important;
+  transform: scale(1.08) !important;
+  box-shadow: 0 4px 12px rgba(61, 232, 197, 0.2) !important;
+}
+
+[data-theme-toggle]:active {
+  transform: scale(0.95) !important;
+}
+</style>
+  <link rel="stylesheet" href="../theme.css">
+</head>
+<body>
+
+  <button data-theme-toggle>Dark</button>
+
+<!-- ===== shared SVG defs (aurora gradient referenced everywhere) ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="auroraGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3DE8C5"/>
+      <stop offset="48%" stop-color="#7C9BFF"/>
+      <stop offset="100%" stop-color="#FFB454"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<!-- ===== atmosphere ===== -->
+<div class="blobs" aria-hidden="true">
+  <div class="blob blob--teal"></div>
+  <div class="blob blob--peri"></div>
+  <div class="blob blob--amber"></div>
+</div>
+<svg class="grain" aria-hidden="true" width="100%" height="100%">
+  <filter id="grainF">
+    <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/>
+    <feColorMatrix type="saturate" values="0"/>
+  </filter>
+  <rect width="100%" height="100%" filter="url(#grainF)"/>
+</svg>
+
+<!-- ============================================================
+     NAV
+     ============================================================ -->
+<nav class="nav">
+  <div class="nav__inner">
+    <a class="brand" href="index.html" aria-label="EduLearn home">
+      <svg class="brand__mark" width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 1.5 L14.6 9.4 L22.5 12 L14.6 14.6 L12 22.5 L9.4 14.6 L1.5 12 L9.4 9.4 Z" fill="url(#auroraGrad)"/>
+      </svg>
+      <span class="brand__word">EduLearn</span>
+    </a>
+    <div class="nav__links">
+      <a class="nav__link" href="index.html" data-i18n="nav_home">Home</a>
+      <a class="nav__link is-current" href="learn.html" data-i18n="nav_learn">Learn</a>
+      <a class="nav__link" href="pal.html" data-i18n="nav_pal">PAL Adaptive AI</a>
+      <a class="nav__link" href="dashboard.html" data-i18n="nav_dash">Dashboard</a>
+    </div>
+    <div class="nav__right">
+      <div class="lang" role="group" aria-label="Language">
+        <button class="lang__opt" id="langEn" type="button">EN</button>
+        <button class="lang__opt" id="langHi" type="button">हिं</button>
+      </div>
+      <a class="btn-primary" href="login.html" data-i18n="nav_cta">Start free</a>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- ============================================================
+       HERO STRIP
+       ============================================================ -->
+  <section class="hero">
+    <div class="hero__crumb mono rv" style="animation-delay:.05s">
+      <a href="index.html">Home</a><span class="sep">/</span><span style="color:var(--cream)">Learn</span>
+    </div>
+    <div class="hero__row">
+      <h2 class="hero__title rv" style="animation-delay:.12s" data-i18n="hero_title">Choose your <em>battlefield.</em></h2>
+      <div class="hero__chips">
+        <div class="chip chip--gold rv" style="animation-delay:.22s">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="11" width="18" height="10" rx="2.5"/>
+            <path d="M7 11 V7 a5 5 0 0 1 9.9 -1"/>
+            <circle cx="12" cy="16" r="1.4" fill="currentColor" stroke="none"/>
+          </svg>
+          <span data-i18n="chip1">One subscription — all classes unlocked</span>
+        </div>
+        <div class="chip chip--soft rv" style="animation-delay:.3s">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 12 h6 m6 0 h6"/>
+            <path d="M9 12 a3 3 0 0 1 6 0 a3 3 0 0 1 -6 0"/>
+            <path d="M12 3 v3 m0 12 v3"/>
+          </svg>
+          <span data-i18n="chip2">Study ahead or revisit any class — no stigma</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- class switcher -->
+    <div class="classes rv" style="animation-delay:.38s" id="classTabs" role="tablist" aria-label="Class"></div>
+  </section>
+
+  <!-- ============================================================
+       SPLIT: browser + sticky panel
+       ============================================================ -->
+  <section class="split">
+    <div id="contentArea">
+      <!-- subject rail -->
+      <div class="rail" id="subjectRail" role="tablist" aria-label="Subject"></div>
+
+      <!-- list head + search -->
+      <div class="listhead">
+        <h3 class="listhead__title" id="listTitle"></h3>
+        <div class="search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"/>
+            <path d="M21 21 l-4.3 -4.3"/>
+          </svg>
+          <input type="text" id="searchInput" data-i18n-ph="search_ph" placeholder="Search 9,000+ lessons..." aria-label="Search lessons" autocomplete="off">
+        </div>
+      </div>
+
+      <!-- chapter rows -->
+      <div class="chapters" id="chapterList"></div>
+
+      <!-- empty state -->
+      <div class="empty" id="emptyState">
+        <div id="emptyTokky"></div>
+        <div>
+          <div class="empty__title" data-i18n="empty_title">No chapters found</div>
+          <div class="empty__hint">
+            <span data-i18n="empty_pre">Tokky suggests —</span>
+            <button type="button" id="tryFractions" data-i18n="empty_hint">try Fractions?</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== sticky side panel ===== -->
+    <aside class="panel">
+      <div class="pcard io" id="continueCard">
+        <div class="pcard__eyebrow" data-i18n="continue_title">Continue learning</div>
+        <div class="continue" id="continueBody"></div>
+      </div>
+
+      <div class="pcard io" style="transition-delay:.1s">
+        <div class="pcard__eyebrow" data-i18n="beyond_title">Beyond academics</div>
+        <div class="beyond" id="beyondList"></div>
+      </div>
+
+      <div class="pcard pcard--tokky io" style="transition-delay:.2s">
+        <div id="panelTokky"></div>
+        <p><strong data-i18n="tokky_name">Tokky says:</strong> <span data-i18n="tokky_tip">"Ananya from Indore finished Heat in 2 sittings. You're 65% there!"</span></p>
+      </div>
+    </aside>
+  </section>
+</main>
+
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__mark" aria-hidden="true">EduLearn</div>
+    <div class="footer__cols io">
+      <div class="footer__brandcol">
+        <a class="brand" href="index.html">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 1.5 L14.6 9.4 L22.5 12 L14.6 14.6 L12 22.5 L9.4 14.6 L1.5 12 L9.4 9.4 Z" fill="url(#auroraGrad)"/>
+          </svg>
+          <span class="brand__word" style="font-size:19px">EduLearn</span>
+        </a>
+        <p class="footer__tag" data-i18n="footer_tag">Made for Bharat. 11 languages. Works fully offline.</p>
+        <p class="footer__boards">CBSE · NCERT · 20+ State Boards</p>
+      </div>
+      <div class="fcol">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="learn.html" data-i18n="nav_learn">Learn</a></li>
+          <li><a href="pal.html" data-i18n="nav_pal">PAL Adaptive AI</a></li>
+          <li><a href="lesson.html">Lessons</a></li>
+          <li><a href="dashboard.html" data-i18n="nav_dash">Dashboard</a></li>
+          <li><a href="index.html">Pricing — ₹299/mo</a></li>
+        </ul>
+      </div>
+      <div class="fcol">
+        <h4>Classes</h4>
+        <ul>
+          <li><a href="learn.html?class=6">Class 6</a></li>
+          <li><a href="learn.html?class=7">Class 7</a></li>
+          <li><a href="learn.html?class=8">Class 8</a></li>
+          <li><a href="learn.html?class=9">Class 9</a></li>
+        </ul>
+      </div>
+      <div class="fcol">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="index.html">About us</a></li>
+          <li><a href="index.html">Careers</a></li>
+          <li><a href="index.html">For schools</a></li>
+          <li><a href="index.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="fcol">
+        <h4>Languages</h4>
+        <ul>
+          <li><span>हिंदी</span></li>
+          <li><span>தமிழ்</span></li>
+          <li><span>తెలుగు</span></li>
+          <li><span>বাংলা</span></li>
+          <li><span>मराठी</span></li>
+          <li><span>ગુજરાતી</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__base">
+      <span class="mono">© 2026 EduLearn Learning Pvt. Ltd. · Bengaluru, Bharat</span>
+      <span class="mono">CBSE · NCERT · 20+ State Boards</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ============================================================
+   EDULEARN · LEARN — application script
+   ============================================================ */
+(function(){
+'use strict';
+
+/* ------------------------------------------------------------
+   1 · SHARED STATE  (localStorage "edulearn_state")
+   ------------------------------------------------------------ */
+var STATE_KEY = 'edulearn_state';
+
+var STATE_DEFAULTS = {
+  lang: 'en',
+  streak: 12,
+  minutes: [34, 52, 41, 68, 45, 72, 58],
+  badges: ['photosynthesis', 'fractions', 'electricity'],
+  chapters: {
+    'c7-sci-photosynthesis':      { video: 100, practice: 100, test: 92, mastered: true  },
+    'c7-sci-electric-current':    { video: 100, practice: 100, test: 88, mastered: true  },
+    'c6-math-fractions':          { video: 100, practice: 100, test: 85, mastered: true  },
+    'c7-sci-heat':                { video: 65,  practice: 30,  test: null, mastered: false },
+    'c7-math-fractions-decimals': { video: 60,  practice: 20,  test: null, mastered: false },
+    'c7-sci-acids-bases-salts':   { video: 40,  practice: 0,   test: null, mastered: false },
+    'c7-sst-mughal-empire':       { video: 25,  practice: 0,   test: null, mastered: false },
+    'c8-sci-force-pressure':      { video: 50,  practice: 20,  test: null, mastered: false },
+    'c9-math-polynomials':        { video: 30,  practice: 0,   test: null, mastered: false }
+  },
+  pal: { level: 2, remedialMastery: 46, finalUnlocked: false, hints: 3, skips: 1 }
+};
+
+function cloneObj(o){ return JSON.parse(JSON.stringify(o)); }
+
+function loadState(){
+  var base = cloneObj(STATE_DEFAULTS);
+  try{
+    var raw = localStorage.getItem(STATE_KEY);
+    if(!raw){
+      localStorage.setItem(STATE_KEY, JSON.stringify(base));
+      return base;
+    }
+    var saved = JSON.parse(raw);
+    if(!saved || typeof saved !== 'object') return base;
+    // merge over defaults, defensively
+    var merged = base;
+    Object.keys(saved).forEach(function(k){
+      if(k === 'chapters' && saved.chapters && typeof saved.chapters === 'object'){
+        Object.keys(saved.chapters).forEach(function(id){
+          merged.chapters[id] = saved.chapters[id];
+        });
+      } else if(k === 'pal' && saved.pal && typeof saved.pal === 'object'){
+        Object.keys(saved.pal).forEach(function(p){ merged.pal[p] = saved.pal[p]; });
+      } else {
+        merged[k] = saved[k];
+      }
+    });
+    return merged;
+  }catch(e){
+    return base;
+  }
+}
+
+function saveState(st){
+  try{ localStorage.setItem(STATE_KEY, JSON.stringify(st)); }catch(e){ /* private mode etc. */ }
+}
+
+var state = loadState();
+
+/* ------------------------------------------------------------
+   2 · i18n
+   ------------------------------------------------------------ */
+var I18N = {
+  en: {
+    nav_home: 'Home',
+    nav_learn: 'Learn',
+    nav_pal: 'PAL Adaptive AI',
+    nav_dash: 'Dashboard',
+    nav_cta: 'Start free',
+    hero_title: 'Choose your <em>battlefield.</em>',
+    chip1: 'One subscription — all classes unlocked',
+    chip2: 'Study ahead or revisit any class — no stigma',
+    class_word: 'Class',
+    chapters_word: 'chapters',
+    search_ph: 'Search 9,000+ lessons...',
+    results_for: 'Results across Class',
+    continue_title: 'Continue learning',
+    resume: 'Resume',
+    beyond_title: 'Beyond academics',
+    mastered: 'Mastered',
+    empty_title: 'No chapters found',
+    empty_pre: 'Tokky suggests —',
+    empty_hint: 'try Fractions?',
+    footer_tag: 'Made for Bharat. 11 languages. Works fully offline.',
+    tokky_name: 'Tokky says:',
+    tokky_tip: '"Ananya from Indore finished Heat in 2 sittings. You’re 65% there!"',
+    beyond_yoga: 'Yoga & Mindfulness',
+    beyond_fin: 'Financial Literacy',
+    beyond_music: 'Music',
+    beyond_career: 'Career Orientation'
+  },
+  hi: {
+    nav_home: 'होम',
+    nav_learn: 'सीखें',
+    nav_pal: 'PAL अनुकूली AI',
+    nav_dash: 'डैशबोर्ड',
+    nav_cta: 'मुफ़्त शुरू करें',
+    hero_title: 'अपना <em>रणक्षेत्र</em> चुनें।',
+    chip1: 'एक सब्सक्रिप्शन — सभी कक्षाएँ अनलॉक',
+    chip2: 'आगे पढ़ें या कोई भी कक्षा दोहराएँ — बिना झिझक',
+    class_word: 'कक्षा',
+    chapters_word: 'अध्याय',
+    search_ph: '9,000+ पाठ खोजें...',
+    results_for: 'परिणाम — कक्षा',
+    continue_title: 'सीखना जारी रखें',
+    resume: 'फिर शुरू करें',
+    beyond_title: 'पढ़ाई से आगे',
+    mastered: 'महारत',
+    empty_title: 'कोई अध्याय नहीं मिला',
+    empty_pre: 'Tokky का सुझाव —',
+    empty_hint: 'भिन्न आज़माएँ?',
+    footer_tag: 'भारत के लिए बना। 11 भाषाएँ। पूरी तरह ऑफ़लाइन चलता है।',
+    tokky_name: 'Tokky कहता है:',
+    tokky_tip: '"इंदौर की अनन्या ने ऊष्मा 2 बैठकों में पूरा किया। आप 65% पहुँच गए!"',
+    beyond_yoga: 'योग और माइंडफुलनेस',
+    beyond_fin: 'वित्तीय साक्षरता',
+    beyond_music: 'संगीत',
+    beyond_career: 'करियर मार्गदर्शन'
+  }
+};
+
+function t(key){
+  var dict = I18N[state.lang] || I18N.en;
+  return dict[key] !== undefined ? dict[key] : (I18N.en[key] || key);
+}
+
+function applyI18n(){
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    el.innerHTML = t(el.getAttribute('data-i18n'));
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(function(el){
+    el.setAttribute('placeholder', t(el.getAttribute('data-i18n-ph')));
+  });
+  document.documentElement.lang = state.lang === 'hi' ? 'hi' : 'en';
+  var en = document.getElementById('langEn');
+  var hi = document.getElementById('langHi');
+  en.classList.toggle('is-on', state.lang === 'en');
+  hi.classList.toggle('is-on', state.lang === 'hi');
+}
+
+function setLang(lang){
+  if(state.lang === lang) return;
+  state.lang = lang;
+  saveState(state);
+  applyI18n();
+  renderAll(false);
+}
+
+/* ------------------------------------------------------------
+   3 · SVG ICON LIBRARY (all hand-built, 1.5px stroke, round caps)
+   ------------------------------------------------------------ */
+var STROKE = 'fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"';
+
+var ICONS = {
+  /* subject icons — bespoke */
+  maths: '<svg width="24" height="24" viewBox="0 0 24 24" ' + STROKE + ' aria-hidden="true">' +
+         '<path d="M2.5 21.5 L8 16" opacity=".55"/>' +
+         '<path d="M4.2 19.8 l1.1 1.1 M6 18 l1.1 1.1" opacity=".55"/>' +
+         '<circle cx="13.5" cy="4.5" r="1.8"/>' +
+         '<path d="M12.6 6.1 L8 20.5 M14.4 6.1 L19 20.5"/>' +
+         '<path d="M9.9 14.5 a7.5 7.5 0 0 0 7.2 0"/>' +
+         '</svg>',
+  science: '<svg width="24" height="24" viewBox="0 0 24 24" ' + STROKE + ' aria-hidden="true">' +
+         '<ellipse cx="12" cy="12" rx="9.5" ry="3.8"/>' +
+         '<ellipse cx="12" cy="12" rx="9.5" ry="3.8" transform="rotate(60 12 12)"/>' +
+         '<ellipse cx="12" cy="12" rx="9.5" ry="3.8" transform="rotate(-60 12 12)"/>' +
+         '<circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/>' +
+         '</svg>',
+  social: '<svg width="24" height="24" viewBox="0 0 24 24" ' + STROKE + ' aria-hidden="true">' +
+         '<circle cx="12" cy="12" r="9.5"/>' +
+         '<ellipse cx="12" cy="12" rx="4.2" ry="9.5"/>' +
+         '<path d="M2.5 12 h19 M4 7 h16 M4 17 h16"/>' +
+         '</svg>',
+  english: '<svg width="24" height="24" viewBox="0 0 24 24" ' + STROKE + ' aria-hidden="true">' +
+         '<path d="M2.5 4.5 h6 a3.5 3.5 0 0 1 3.5 3.5 v12 a2.8 2.8 0 0 0 -2.8 -2.8 h-6.7 Z"/>' +
+         '<path d="M21.5 4.5 h-6 a3.5 3.5 0 0 0 -3.5 3.5 v12 a2.8 2.8 0 0 1 2.8 -2.8 h6.7 Z"/>' +
+         '</svg>',
+  hindi: '<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">' +
+         '<path d="M3 4.5 h18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' +
+         '<text x="12" y="19" text-anchor="middle" font-size="15" font-weight="600" fill="currentColor" font-family="\'Schibsted Grotesk\',sans-serif">अ</text>' +
+         '</svg>',
+  /* modality icons — tiny */
+  video: '<svg width="13" height="13" viewBox="0 0 24 24" ' + STROKE + '>' +
+         '<rect x="2.5" y="4.5" width="19" height="15" rx="3.5"/>' +
+         '<path d="M10 9 l5.5 3 L10 15 Z"/>' +
+         '</svg>',
+  practice: '<svg width="13" height="13" viewBox="0 0 24 24" ' + STROKE + '>' +
+         '<path d="M16.8 3.7 a2.4 2.4 0 0 1 3.4 3.4 L7.5 19.8 L3 21 l1.2 -4.5 Z"/>' +
+         '<path d="M14.5 6 l3.4 3.4"/>' +
+         '</svg>',
+  notes: '<svg width="13" height="13" viewBox="0 0 24 24" ' + STROKE + '>' +
+         '<path d="M14 2.5 H7 a2 2 0 0 0 -2 2 v15 a2 2 0 0 0 2 2 h10 a2 2 0 0 0 2 -2 V7.5 Z"/>' +
+         '<path d="M14 2.5 V7.5 H19 M9 12 h6 M9 16 h4"/>' +
+         '</svg>',
+  book: '<svg width="13" height="13" viewBox="0 0 24 24" ' + STROKE + '>' +
+         '<path d="M4 19.2 a2.3 2.3 0 0 1 2.3 -2.3 H20 V2.5 H6.3 A2.3 2.3 0 0 0 4 4.8 Z"/>' +
+         '<path d="M4 19.2 a2.3 2.3 0 0 0 2.3 2.3 H20 v-4.6"/>' +
+         '</svg>',
+  test: '<svg width="13" height="13" viewBox="0 0 24 24" ' + STROKE + '>' +
+         '<rect x="4.5" y="3.5" width="15" height="18" rx="2.5"/>' +
+         '<path d="M9 3.5 a3 3 0 0 1 6 0"/>' +
+         '<path d="M8.5 13.5 l2.4 2.4 L16 11"/>' +
+         '</svg>',
+  /* misc */
+  check: '<svg width="10" height="10" viewBox="0 0 24 24" ' + STROKE + '><path d="M4 12.5 l5.5 5.5 L20 7"/></svg>',
+  arrow: '<svg width="17" height="17" viewBox="0 0 24 24" ' + STROKE + '><path d="M4 12 h16 M13 5 l7 7 -7 7"/></svg>',
+  play:  '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5 L19.5 12 L7 19.5 Z"/></svg>',
+  chev:  '<svg class="chev" width="14" height="14" viewBox="0 0 24 24" ' + STROKE + '><path d="M9 5 l7 7 -7 7"/></svg>',
+  /* beyond academics */
+  yoga: '<svg width="17" height="17" viewBox="0 0 24 24" ' + STROKE + '>' +
+        '<circle cx="12" cy="4.8" r="2.2"/>' +
+        '<path d="M12 7.5 v5"/>' +
+        '<path d="M12 12.5 c-2.6 0 -4.6 1.6 -5.4 4 M12 12.5 c2.6 0 4.6 1.6 5.4 4"/>' +
+        '<path d="M3.5 19.5 c2.5 -1.8 6 -2.6 8.5 -2.6 s6 .8 8.5 2.6"/>' +
+        '</svg>',
+  fin:  '<svg width="17" height="17" viewBox="0 0 24 24" ' + STROKE + '>' +
+        '<path d="M6 3.5 h12 M6 8 h12 M6 3.5 c5 0 7 2 7 4.5 s-2 4.5 -7 4.5 l7 8"/>' +
+        '</svg>',
+  music:'<svg width="17" height="17" viewBox="0 0 24 24" ' + STROKE + '>' +
+        '<path d="M9 18.5 V5.5 l11.5 -2 v13"/>' +
+        '<circle cx="6.2" cy="18.5" r="2.8"/>' +
+        '<circle cx="17.7" cy="16.5" r="2.8"/>' +
+        '</svg>',
+  career:'<svg width="17" height="17" viewBox="0 0 24 24" ' + STROKE + '>' +
+        '<circle cx="12" cy="12" r="9.5"/>' +
+        '<path d="M15.8 8.2 l-2.2 5.4 -5.4 2.2 2.2 -5.4 Z"/>' +
+        '</svg>'
+};
+
+/* Tokky the spark-bot — reusable */
+function tokkySVG(size){
+  return '<svg class="tokky" width="' + size + '" height="' + size + '" viewBox="0 0 100 100" aria-hidden="true">' +
+    '<circle class="tokky-halo" cx="50" cy="9" r="7" fill="#3DE8C5"/>' +
+    '<line x1="50" y1="21" x2="50" y2="12" stroke="#7C9BFF" stroke-width="2.5" stroke-linecap="round"/>' +
+    '<circle class="tokky-tip" cx="50" cy="9" r="4" fill="#3DE8C5"/>' +
+    '<circle cx="50" cy="56" r="34" fill="#121C30" stroke="url(#auroraGrad)" stroke-width="2.5"/>' +
+    '<rect class="tokky-eye" x="36" y="44" width="8" height="14" rx="4" fill="#F2EDE3"/>' +
+    '<rect class="tokky-eye" x="56" y="44" width="8" height="14" rx="4" fill="#F2EDE3"/>' +
+    '<path d="M42 67 q8 7 16 0" fill="none" stroke="#F2EDE3" stroke-width="2.5" stroke-linecap="round"/>' +
+    '<circle cx="30" cy="62" r="3" fill="#FF7AA2" opacity=".45"/>' +
+    '<circle cx="70" cy="62" r="3" fill="#FF7AA2" opacity=".45"/>' +
+    '</svg>';
+}
+
+/* ------------------------------------------------------------
+   4 · CURRICULUM DATA — 4 classes × 5 subjects, real NCERT names
+       chapter = [slug, name, minutes]
+   ------------------------------------------------------------ */
+var SUBJECTS = [
+  { key:'maths',   code:'math', en:'Mathematics',    hi:'गणित',           accent:'#7C9BFF', icon:'maths'   },
+  { key:'science', code:'sci',  en:'Science',         hi:'विज्ञान',         accent:'#3DE8C5', icon:'science' },
+  { key:'social',  code:'sst',  en:'Social Science',  hi:'सामाजिक विज्ञान', accent:'#FFB454', icon:'social'  },
+  { key:'english', code:'eng',  en:'English',         hi:'अंग्रेज़ी',        accent:'#FF7AA2', icon:'english' },
+  { key:'hindi',   code:'hin',  en:'Hindi',           hi:'हिंदी',           accent:'#F2EDE3', icon:'hindi'   }
+];
+
+var CLASS_COLORS = { 6:'#3DE8C5', 7:'#FFB454', 8:'#7C9BFF', 9:'#FF7AA2' };
+
+var CURRICULUM = {
+  6: {
+    maths: [
+      ['knowing-numbers','Knowing Our Numbers',24],
+      ['whole-numbers','Whole Numbers',21],
+      ['playing-numbers','Playing with Numbers',26],
+      ['geometrical-ideas','Basic Geometrical Ideas',19],
+      ['elementary-shapes','Understanding Elementary Shapes',23],
+      ['integers','Integers',20],
+      ['fractions','Fractions',28],
+      ['decimals','Decimals',22],
+      ['data-handling','Data Handling',17],
+      ['mensuration','Mensuration',25]
+    ],
+    science: [
+      ['food-sources','Food: Where Does It Come From?',16],
+      ['components-of-food','Components of Food',19],
+      ['fibre-to-fabric','Fibre to Fabric',18],
+      ['sorting-materials','Sorting Materials into Groups',17],
+      ['separation','Separation of Substances',21],
+      ['changes-around-us','Changes Around Us',15],
+      ['getting-to-know-plants','Getting to Know Plants',22],
+      ['body-movements','Body Movements',20],
+      ['living-organisms','The Living Organisms and Their Surroundings',24],
+      ['light-shadows','Light, Shadows and Reflections',23]
+    ],
+    social: [
+      ['what-where-how-when','What, Where, How and When?',18],
+      ['earliest-people','On the Trail of the Earliest People',20],
+      ['gathering-to-growing','From Gathering to Growing Food',19],
+      ['earliest-cities','In the Earliest Cities',21],
+      ['kingdoms-republic','Kingdoms, Kings and an Early Republic',23],
+      ['earth-solar-system','The Earth in the Solar System',22],
+      ['latitudes-longitudes','Globe: Latitudes and Longitudes',24],
+      ['motions-of-earth','Motions of the Earth',17],
+      ['understanding-diversity','Understanding Diversity',16]
+    ],
+    english: [
+      ['patricks-homework','Who Did Patrick’s Homework?',14],
+      ['dog-new-master','How the Dog Found Himself a New Master',15],
+      ['taros-reward','Taro’s Reward',16],
+      ['kalpana-chawla','An Indian-American Woman in Space',18],
+      ['different-school','A Different Kind of School',15],
+      ['who-i-am','Who I Am',13],
+      ['fair-play','Fair Play',14],
+      ['game-of-chance','A Game of Chance',15],
+      ['banyan-tree','The Banyan Tree',17]
+    ],
+    hindi: [
+      ['vah-chidiya','वह चिड़िया जो',12],
+      ['bachpan','बचपन',14],
+      ['nadan-dost','नादान दोस्त',15],
+      ['chand-se-gappein','चाँद से थोड़ी-सी गप्पें',13],
+      ['aksharon-ka-mahatva','अक्षरों का महत्व',16],
+      ['par-nazar-ke','पार नज़र के',15],
+      ['saathi-haath','साथी हाथ बढ़ाना',12],
+      ['ticket-album','टिकट-अलबम',14],
+      ['jhansi-ki-rani','झाँसी की रानी',18]
+    ]
+  },
+  7: {
+    maths: [
+      ['integers','Integers',22],
+      ['fractions-decimals','Fractions and Decimals',26],
+      ['data-handling','Data Handling',18],
+      ['simple-equations','Simple Equations',24],
+      ['lines-angles','Lines and Angles',21],
+      ['triangle-properties','The Triangle and its Properties',25],
+      ['congruence','Congruence of Triangles',20],
+      ['comparing-quantities','Comparing Quantities',23],
+      ['rational-numbers','Rational Numbers',24],
+      ['perimeter-area','Perimeter and Area',22]
+    ],
+    science: [
+      ['photosynthesis','Nutrition in Plants',24],
+      ['nutrition-animals','Nutrition in Animals',22],
+      ['heat','Heat',26],
+      ['acids-bases-salts','Acids, Bases and Salts',25],
+      ['physical-chemical','Physical and Chemical Changes',21],
+      ['respiration','Respiration in Organisms',23],
+      ['transportation','Transportation in Animals and Plants',22],
+      ['electric-current','Electric Current and its Effects',27],
+      ['light','Light',28],
+      ['motion-time','Motion and Time',24]
+    ],
+    social: [
+      ['thousand-years','Tracing Changes Through a Thousand Years',20],
+      ['new-kings','New Kings and Kingdoms',21],
+      ['delhi-sultans','The Delhi Sultans',23],
+      ['mughal-empire','The Mughal Empire',26],
+      ['rulers-buildings','Rulers and Buildings',19],
+      ['environment','Environment',18],
+      ['inside-our-earth','Inside Our Earth',20],
+      ['on-equality','On Equality',17],
+      ['markets-around-us','Markets Around Us',16]
+    ],
+    english: [
+      ['three-questions','Three Questions',15],
+      ['gift-of-chappals','A Gift of Chappals',16],
+      ['gopal-hilsa','Gopal and the Hilsa-Fish',14],
+      ['ashes-trees-bloom','The Ashes That Made Trees Bloom',17],
+      ['quality','Quality',15],
+      ['expert-detectives','Expert Detectives',16],
+      ['vita-wonk','The Invention of Vita-Wonk',14],
+      ['fire-friend-foe','Fire: Friend and Foe',15],
+      ['story-of-cricket','The Story of Cricket',18]
+    ],
+    hindi: [
+      ['hum-panchhi','हम पंछी उन्मुक्त गगन के',12],
+      ['dadi-maa','दादी माँ',15],
+      ['himalay-betiyan','हिमालय की बेटियाँ',14],
+      ['kathputli','कठपुतली',11],
+      ['mithaiwala','मिठाईवाला',16],
+      ['rakt-sharir','रक्त और हमारा शरीर',17],
+      ['papa-kho-gaye','पापा खो गए',15],
+      ['shaam-ek-kisan','शाम — एक किसान',12],
+      ['chidiya-ki-bachchi','चिड़िया की बच्ची',14]
+    ]
+  },
+  8: {
+    maths: [
+      ['rational-numbers','Rational Numbers',25],
+      ['linear-equations','Linear Equations in One Variable',27],
+      ['quadrilaterals','Understanding Quadrilaterals',23],
+      ['data-handling','Data Handling',19],
+      ['squares-roots','Squares and Square Roots',26],
+      ['cubes-roots','Cubes and Cube Roots',21],
+      ['comparing-quantities','Comparing Quantities',24],
+      ['algebraic-identities','Algebraic Expressions and Identities',28],
+      ['mensuration','Mensuration',25],
+      ['factorisation','Factorisation',23]
+    ],
+    science: [
+      ['crop-production','Crop Production and Management',22],
+      ['microorganisms','Microorganisms: Friend and Foe',24],
+      ['synthetic-fibres','Synthetic Fibres and Plastics',19],
+      ['metals-nonmetals','Materials: Metals and Non-Metals',23],
+      ['coal-petroleum','Coal and Petroleum',20],
+      ['combustion-flame','Combustion and Flame',21],
+      ['cell-structure','Cell — Structure and Functions',26],
+      ['force-pressure','Force and Pressure',25],
+      ['friction','Friction',22],
+      ['sound','Sound',24]
+    ],
+    social: [
+      ['how-when-where','How, When and Where',18],
+      ['trade-to-territory','From Trade to Territory',22],
+      ['ruling-countryside','Ruling the Countryside',21],
+      ['tribals-dikus','Tribals, Dikus and the Vision of a Golden Age',23],
+      ['revolt-1857','When People Rebel: 1857 and After',25],
+      ['resources','Resources',17],
+      ['land-soil-water','Land, Soil, Water, Natural Vegetation',20],
+      ['indian-constitution','The Indian Constitution',24],
+      ['judiciary','Judiciary',19]
+    ],
+    english: [
+      ['best-christmas-present','The Best Christmas Present in the World',17],
+      ['tsunami','The Tsunami',15],
+      ['glimpses-of-past','Glimpses of the Past',18],
+      ['bepin-choudhury','Bepin Choudhury’s Lapse of Memory',16],
+      ['summit-within','The Summit Within',15],
+      ['jodys-fawn','This is Jody’s Fawn',14],
+      ['visit-to-cambridge','A Visit to Cambridge',16],
+      ['monsoon-diary','A Short Monsoon Diary',13],
+      ['great-stone-face','The Great Stone Face — I',15]
+    ],
+    hindi: [
+      ['dhwani','ध्वनि',11],
+      ['lakh-ki-choodiyan','लाख की चूड़ियाँ',15],
+      ['bus-ki-yatra','बस की यात्रा',14],
+      ['deewanon-ki-hasti','दीवानों की हस्ती',12],
+      ['chitthiyon-ki-duniya','चिट्ठियों की अनूठी दुनिया',16],
+      ['bhagwan-ke-dakiye','भगवान के डाकिए',13],
+      ['kya-nirash-hua-jaye','क्या निराश हुआ जाए',15],
+      ['kabir-ki-sakhiyan','कबीर की साखियाँ',14],
+      ['kaamchor','कामचोर',16]
+    ]
+  },
+  9: {
+    maths: [
+      ['number-systems','Number Systems',28],
+      ['polynomials','Polynomials',30],
+      ['coordinate-geometry','Coordinate Geometry',24],
+      ['linear-equations-2var','Linear Equations in Two Variables',27],
+      ['euclids-geometry','Introduction to Euclid’s Geometry',22],
+      ['lines-angles','Lines and Angles',25],
+      ['triangles','Triangles',29],
+      ['quadrilaterals','Quadrilaterals',26],
+      ['herons-formula','Heron’s Formula',21],
+      ['statistics','Statistics',23]
+    ],
+    science: [
+      ['matter-surroundings','Matter in Our Surroundings',24],
+      ['is-matter-pure','Is Matter Around Us Pure?',26],
+      ['atoms-molecules','Atoms and Molecules',28],
+      ['structure-of-atom','Structure of the Atom',27],
+      ['fundamental-unit-life','The Fundamental Unit of Life',25],
+      ['tissues','Tissues',24],
+      ['motion','Motion',29],
+      ['force-laws','Force and Laws of Motion',30],
+      ['gravitation','Gravitation',27],
+      ['sound','Sound',25]
+    ],
+    social: [
+      ['french-revolution','The French Revolution',26],
+      ['russian-revolution','Socialism in Europe and the Russian Revolution',28],
+      ['nazism-hitler','Nazism and the Rise of Hitler',27],
+      ['forest-society','Forest Society and Colonialism',22],
+      ['india-size-location','India — Size and Location',19],
+      ['physical-features','Physical Features of India',23],
+      ['what-is-democracy','What is Democracy? Why Democracy?',21],
+      ['electoral-politics','Electoral Politics',20],
+      ['village-palampur','The Story of Village Palampur',22]
+    ],
+    english: [
+      ['fun-they-had','The Fun They Had',15],
+      ['sound-of-music','The Sound of Music',17],
+      ['little-girl','The Little Girl',14],
+      ['beautiful-mind','A Truly Beautiful Mind',16],
+      ['snake-and-mirror','The Snake and the Mirror',15],
+      ['my-childhood','My Childhood',16],
+      ['reach-for-the-top','Reach for the Top',15],
+      ['kathmandu','Kathmandu',14],
+      ['road-not-taken','The Road Not Taken',12]
+    ],
+    hindi: [
+      ['do-bailon-ki-katha','दो बैलों की कथा',17],
+      ['lhasa-ki-or','ल्हासा की ओर',16],
+      ['upbhoktavad','उपभोक्तावाद की संस्कृति',15],
+      ['sanwle-sapnon','साँवले सपनों की याद',14],
+      ['premchand-ke-joote','प्रेमचंद के फटे जूते',15],
+      ['mere-bachpan-ke-din','मेरे बचपन के दिन',16],
+      ['ek-kutta-ek-maina','एक कुत्ता और एक मैना',14],
+      ['sakhiyan-sabad','साखियाँ एवं सबद',13],
+      ['vaakh','वाख',12]
+    ]
+  }
+};
+
+/* index every chapter id -> meta, for the Continue card */
+var CHAPTER_INDEX = {};
+Object.keys(CURRICULUM).forEach(function(cls){
+  SUBJECTS.forEach(function(s){
+    (CURRICULUM[cls][s.key] || []).forEach(function(ch, i){
+      var id = 'c' + cls + '-' + s.code + '-' + ch[0];
+      CHAPTER_INDEX[id] = { cls: parseInt(cls,10), subject: s, slug: ch[0], name: ch[1], mins: ch[2], idx: i };
+    });
+  });
+});
+
+/* ------------------------------------------------------------
+   5 · VIEW STATE  (?class= & ?subject= query params)
+   ------------------------------------------------------------ */
+var params = new URLSearchParams(window.location.search);
+var activeClass = parseInt(params.get('class'), 10);
+if(!(activeClass >= 6 && activeClass <= 9)) activeClass = 7;
+var activeSubject = params.get('subject');
+if(!SUBJECTS.some(function(s){ return s.key === activeSubject; })) activeSubject = 'science';
+var query = '';
+
+function syncURL(){
+  try{
+    window.history.replaceState(null, '', 'learn.html?class=' + activeClass + '&subject=' + activeSubject);
+  }catch(e){ /* file:// protocol may refuse — fine for demo */ }
+}
+
+/* ------------------------------------------------------------
+   6 · HELPERS
+   ------------------------------------------------------------ */
+function esc(str){
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function chapterId(cls, subj, slug){
+  return 'c' + cls + '-' + subj.code + '-' + slug;
+}
+
+function chapterProgress(id){
+  var st = state.chapters[id];
+  if(!st) return { pct: 0, mastered: false, test: null };
+  var v = typeof st.video === 'number' ? st.video : 0;
+  var p = typeof st.practice === 'number' ? st.practice : 0;
+  return { pct: Math.round((v + p) / 2), mastered: !!st.mastered, test: (st.test === 0 || st.test) ? st.test : null };
+}
+
+function subjName(s){ return state.lang === 'hi' ? s.hi : s.en; }
+
+function classCount(cls){
+  var n = 0;
+  SUBJECTS.forEach(function(s){ n += (CURRICULUM[cls][s.key] || []).length; });
+  return n;
+}
+
+function highlight(name, q){
+  if(!q) return esc(name);
+  var lower = name.toLowerCase();
+  var idx = lower.indexOf(q.toLowerCase());
+  if(idx === -1) return esc(name);
+  return esc(name.slice(0, idx)) +
+         '<mark>' + esc(name.slice(idx, idx + q.length)) + '</mark>' +
+         esc(name.slice(idx + q.length));
+}
+
+function lessonHref(cls, subj, slug){
+  return 'lesson.html?class=' + cls + '&subject=' + subj.key + '&ch=' + chapterId(cls, subj, slug);
+}
+
+/* ------------------------------------------------------------
+   7 · RENDER — class tabs
+   ------------------------------------------------------------ */
+function renderTabs(){
+  var host = document.getElementById('classTabs');
+  var html = '';
+  [6,7,8,9].forEach(function(cls){
+    html +=
+      '<button class="ctab' + (cls === activeClass ? ' is-active' : '') + '" data-class="' + cls + '" role="tab" aria-selected="' + (cls === activeClass) + '">' +
+        '<span class="ctab__num">' + cls + '</span>' +
+        '<span class="ctab__meta">' +
+          '<span class="ctab__label">' + t('class_word') + ' ' + cls + '</span>' +
+          '<span class="ctab__count">' + classCount(cls) + ' ' + t('chapters_word') + '</span>' +
+        '</span>' +
+      '</button>';
+  });
+  host.innerHTML = html;
+  host.querySelectorAll('.ctab').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var cls = parseInt(btn.getAttribute('data-class'), 10);
+      if(cls === activeClass) return;
+      activeClass = cls;
+      syncURL();
+      renderTabs();
+      renderContent(true);
+    });
+  });
+}
+
+/* ------------------------------------------------------------
+   8 · RENDER — subject rail
+   ------------------------------------------------------------ */
+function renderRail(stagger){
+  var host = document.getElementById('subjectRail');
+  var html = '';
+  SUBJECTS.forEach(function(s, i){
+    var count = (CURRICULUM[activeClass][s.key] || []).length;
+    var delay = stagger ? (i * 60) : 0;
+    html +=
+      '<button class="subj' + (s.key === activeSubject ? ' is-active' : '') + (stagger ? ' rv' : '') + '"' +
+        ' style="--sa:' + s.accent + (stagger ? ';animation-delay:' + delay + 'ms' : '') + '"' +
+        ' data-subject="' + s.key + '" role="tab" aria-selected="' + (s.key === activeSubject) + '">' +
+        '<span class="subj__icon">' + ICONS[s.icon] + '</span>' +
+        '<span class="subj__name">' + esc(subjName(s)) + '</span>' +
+        '<span class="subj__count">' + count + ' ' + t('chapters_word') + '</span>' +
+      '</button>';
+  });
+  host.innerHTML = html;
+  host.querySelectorAll('.subj').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var key = btn.getAttribute('data-subject');
+      if(key === activeSubject) return;
+      activeSubject = key;
+      syncURL();
+      renderRail(false);
+      renderChapters(true);
+    });
+  });
+}
+
+/* ------------------------------------------------------------
+   9 · RENDER — chapter list (+ search across the class)
+   ------------------------------------------------------------ */
+function chapterRowHTML(cls, subj, ch, number, delay, withTag){
+  var id = chapterId(cls, subj, ch[0]);
+  var prog = chapterProgress(id);
+  var cc = CLASS_COLORS[cls];
+  var mods =
+    '<span class="mods">' +
+      '<span class="mod" data-tip="Video">' + ICONS.video + '</span>' +
+      '<span class="mod" data-tip="Practice">' + ICONS.practice + '</span>' +
+      '<span class="mod" data-tip="Notes">' + ICONS.notes + '</span>' +
+      '<span class="mod" data-tip="Book">' + ICONS.book + '</span>' +
+      '<span class="mod" data-tip="Test">' + ICONS.test + '</span>' +
+    '</span>';
+  var tag = withTag
+    ? '<span class="chrow__subjtag" style="background:' + subj.accent + '">' + esc(subjName(subj)) + '</span>'
+    : '';
+  var right =
+    '<span class="chrow__right">' +
+      '<span class="chrow__dur">' + ch[2] + ' min</span>' +
+      (prog.mastered
+        ? '<span class="badge-mastered">' + ICONS.check + '<span>' + t('mastered') + '</span></span>'
+        : '<span class="chrow__arrow">' + ICONS.arrow + '</span>') +
+    '</span>';
+  return (
+    '<a class="chrow rv" href="' + lessonHref(cls, subj, ch[0]) + '"' +
+      ' style="--cc:' + cc + ';animation-delay:' + delay + 'ms">' +
+      '<span class="chrow__num">' + (number < 10 ? '0' : '') + number + '</span>' +
+      '<span class="chrow__body">' +
+        '<span class="chrow__name">' + tag + highlight(ch[1], query) + '</span>' +
+        '<span class="chrow__meta">' +
+          mods +
+          '<span class="pbar"><span class="pbar__fill' + (prog.pct === 0 ? ' is-zero' : '') + '" style="width:' + prog.pct + '%"></span></span>' +
+          '<span class="chrow__pct">' + (prog.pct > 0 ? prog.pct + '%' : '—') + '</span>' +
+        '</span>' +
+      '</span>' +
+      right +
+    '</a>'
+  );
+}
+
+function renderChapters(stagger){
+  var host = document.getElementById('chapterList');
+  var empty = document.getElementById('emptyState');
+  var title = document.getElementById('listTitle');
+  var html = '';
+  var found = 0;
+
+  if(query){
+    /* search across ALL subjects of the active class */
+    title.innerHTML = t('results_for') + ' ' + activeClass + ' · <span class="subj-accent" style="color:var(--teal)">“' + esc(query) + '”</span>';
+    SUBJECTS.forEach(function(s){
+      (CURRICULUM[activeClass][s.key] || []).forEach(function(ch, i){
+        if(ch[1].toLowerCase().indexOf(query.toLowerCase()) !== -1){
+          found++;
+          html += chapterRowHTML(activeClass, s, ch, i + 1, stagger ? Math.min(found * 60, 600) : 0, true);
+        }
+      });
+    });
+  } else {
+    var subj = SUBJECTS.filter(function(s){ return s.key === activeSubject; })[0] || SUBJECTS[0];
+    title.innerHTML =
+      esc(subjName(subj)) + ' · <span class="subj-accent" style="color:' + CLASS_COLORS[activeClass] + '">' +
+      t('class_word') + ' ' + activeClass + '</span>';
+    (CURRICULUM[activeClass][subj.key] || []).forEach(function(ch, i){
+      found++;
+      html += chapterRowHTML(activeClass, subj, ch, i + 1, stagger ? Math.min(i * 60, 600) : 0, false);
+    });
+  }
+
+  host.innerHTML = html;
+  empty.classList.toggle('is-show', found === 0);
+  host.style.display = found === 0 ? 'none' : 'flex';
+}
+
+function renderContent(stagger){
+  renderRail(stagger);
+  renderChapters(stagger);
+}
+
+/* ------------------------------------------------------------
+   10 · RENDER — side panel
+   ------------------------------------------------------------ */
+function pickContinueChapter(){
+  var best = null, bestPct = -1;
+  Object.keys(state.chapters).forEach(function(id){
+    var st = state.chapters[id];
+    if(!st || st.mastered) return;
+    if(!CHAPTER_INDEX[id]) return;
+    var prog = chapterProgress(id);
+    if(prog.pct > 0 && prog.pct < 100 && prog.pct > bestPct){
+      bestPct = prog.pct;
+      best = id;
+    }
+  });
+  return best;
+}
+
+function renderContinue(){
+  var host = document.getElementById('continueBody');
+  var id = pickContinueChapter();
+  if(!id){
+    host.innerHTML = '<p style="color:var(--muted);font-size:14px">All caught up. ' + tokkySVG(54) + '</p>';
+    return;
+  }
+  var meta = CHAPTER_INDEX[id];
+  var prog = chapterProgress(id);
+  var C = 2 * Math.PI * 34; /* r = 34 */
+  var off = C * (1 - prog.pct / 100);
+  host.innerHTML =
+    '<div class="ring">' +
+      '<svg width="84" height="84" viewBox="0 0 84 84">' +
+        '<circle cx="42" cy="42" r="34" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="6"/>' +
+        '<circle cx="42" cy="42" r="34" fill="none" stroke="url(#auroraGrad)" stroke-width="6" stroke-linecap="round"' +
+          ' stroke-dasharray="' + C.toFixed(1) + '" stroke-dashoffset="' + off.toFixed(1) + '"/>' +
+      '</svg>' +
+      '<span class="ring__pct">' + prog.pct + '%</span>' +
+    '</div>' +
+    '<div class="continue__body">' +
+      '<div class="continue__class" style="color:' + CLASS_COLORS[meta.cls] + '">' +
+        t('class_word') + ' ' + meta.cls + ' · ' + esc(subjName(meta.subject)) +
+      '</div>' +
+      '<div class="continue__name">' + esc(meta.name) + '</div>' +
+      '<a class="btn-resume" href="' + lessonHref(meta.cls, meta.subject, meta.slug) + '">' +
+        ICONS.play + '<span>' + t('resume') + '</span>' +
+      '</a>' +
+    '</div>';
+}
+
+function renderBeyond(){
+  var host = document.getElementById('beyondList');
+  var items = [
+    { icon: 'yoga',   key: 'beyond_yoga',   tint: '#3DE8C5' },
+    { icon: 'fin',    key: 'beyond_fin',    tint: '#FFB454' },
+    { icon: 'music',  key: 'beyond_music',  tint: '#FF7AA2' },
+    { icon: 'career', key: 'beyond_career', tint: '#7C9BFF' }
+  ];
+  var html = '';
+  items.forEach(function(it){
+    html +=
+      '<a class="beyond__row" href="lesson.html?track=' + it.icon + '">' +
+        '<span class="beyond__icon" style="color:' + it.tint + '">' + ICONS[it.icon] + '</span>' +
+        '<span class="beyond__name">' + t(it.key) + '</span>' +
+        ICONS.chev +
+      '</a>';
+  });
+  host.innerHTML = html;
+}
+
+/* ------------------------------------------------------------
+   11 · SEARCH
+   ------------------------------------------------------------ */
+var searchInput = document.getElementById('searchInput');
+var searchTimer = null;
+searchInput.addEventListener('input', function(){
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(function(){
+    query = searchInput.value.trim();
+    renderChapters(true);
+  }, 120);
+});
+
+document.getElementById('tryFractions').addEventListener('click', function(){
+  /* Maths chapter names are English NCERT titles in both languages, so search the English term */
+  searchInput.value = 'Fractions';
+  query = 'Fractions';
+  renderChapters(true);
+  searchInput.focus();
+});
+
+/* ------------------------------------------------------------
+   12 · LANGUAGE TOGGLE
+   ------------------------------------------------------------ */
+document.getElementById('langEn').addEventListener('click', function(){ setLang('en'); });
+document.getElementById('langHi').addEventListener('click', function(){ setLang('hi'); });
+
+/* ------------------------------------------------------------
+   13 · SCROLL REVEALS
+   ------------------------------------------------------------ */
+function setupObserver(){
+  if(!('IntersectionObserver' in window)){
+    document.querySelectorAll('.io').forEach(function(el){ el.classList.add('in'); });
+    return;
+  }
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        entry.target.classList.add('in');
+        obs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.io').forEach(function(el){ obs.observe(el); });
+}
+
+/* ------------------------------------------------------------
+   14 · BOOT
+   ------------------------------------------------------------ */
+function renderAll(stagger){
+  renderTabs();
+  renderContent(stagger);
+  renderContinue();
+  renderBeyond();
+}
+
+document.getElementById('emptyTokky').innerHTML = tokkySVG(96);
+document.getElementById('panelTokky').innerHTML = tokkySVG(64);
+
+applyI18n();
+renderAll(true);
+syncURL();
+setupObserver();
+
+})();
+</script>
+  <script src="../theme.js"></script>
+</body>
+</html>
