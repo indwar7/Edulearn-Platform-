@@ -32,16 +32,16 @@ body {
 }
 
 /* Smooth transitions */
-body, html, * {
-  transition: background-color var(--dm-transition), color var(--dm-transition), border-color var(--dm-transition);
+html {
+  transition: background-color var(--dm-transition), color var(--dm-transition);
 }
 
-/* Theme toggle button styles */
+/* Theme toggle button styles (defaults — pages may override) */
 .theme-toggle, [data-theme-toggle] {
   width: 44px;
   height: 44px;
-  border: 1.5px solid var(--dm-border-color) !important;
-  background: transparent !important;
+  border: 1.5px solid var(--dm-border-color);
+  background: transparent;
   border-radius: 10px;
   cursor: pointer;
   display: flex;
@@ -49,15 +49,14 @@ body, html, * {
   justify-content: center;
   font-size: 14px;
   font-weight: 600;
-  transition: all var(--dm-transition) !important;
-  color: var(--dm-text-primary) !important;
-  padding: 8px !important;
-  z-index: 9999 !important;
+  transition: all var(--dm-transition);
+  color: var(--dm-text-primary);
+  padding: 8px;
 }
 
 .theme-toggle:hover, [data-theme-toggle]:hover {
-  background: rgba(61, 232, 197, 0.1) !important;
-  border-color: #3DE8C5 !important;
+  background: rgba(61, 232, 197, 0.1);
+  border-color: #3DE8C5;
   transform: scale(1.05);
 }
 
@@ -84,19 +83,19 @@ nav, .navbar, header {
   color: var(--dm-text-primary) !important;
 }
 
-/* Input fields */
+/* Input fields (defaults — pages may override) */
 input, textarea, select {
-  background: rgba(0, 0, 0, 0.03) !important;
-  border-color: var(--dm-border-color) !important;
-  color: var(--dm-text-primary) !important;
+  background: rgba(0, 0, 0, 0.03);
+  border-color: var(--dm-border-color);
+  color: var(--dm-text-primary);
   transition: all var(--dm-transition);
 }
 
 html.dark-mode input,
 html.dark-mode textarea,
 html.dark-mode select {
-  background: rgba(255, 255, 255, 0.03) !important;
-  color: var(--dm-text-primary) !important;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--dm-text-primary);
 }
 
 input::placeholder, textarea::placeholder {
@@ -104,15 +103,15 @@ input::placeholder, textarea::placeholder {
 }
 
 input:focus, textarea:focus, select:focus {
-  background: rgba(0, 0, 0, 0.05) !important;
-  border-color: #3DE8C5 !important;
+  background: rgba(0, 0, 0, 0.05);
+  border-color: #3DE8C5;
 }
 
 html.dark-mode input:focus,
 html.dark-mode textarea:focus,
 html.dark-mode select:focus {
-  background: rgba(255, 255, 255, 0.05) !important;
-  border-color: #3DE8C5 !important;
+  background: rgba(255, 255, 255, 0.05);
+  border-color: #3DE8C5;
 }
 
 /* Buttons */
@@ -186,11 +185,6 @@ html.dark-mode ::selection {
 .alert, .notification {
   background: var(--dm-card-bg) !important;
   border-color: var(--dm-border-color) !important;
-  color: var(--dm-text-primary) !important;
-}
-
-/* Ensure theme persists on page load */
-html.dark-mode * {
   color: var(--dm-text-primary) !important;
 }
 

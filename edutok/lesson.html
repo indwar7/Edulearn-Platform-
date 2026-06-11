@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson — EduLearn</title>
+<meta name="description" content="EduLearn lesson player. AI animated video lectures, practice, notes and tests.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&family=Fragment+Mono:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#FFFFFF;
+  --card:#FFFFFF;
+  --card2:#F5F7FA;
+  --line:rgba(0,0,0,.08);
+  --cream:#1A1F36;
+  --muted:#6B7280;
+  --teal:#3DE8C5;
+  --aurora:linear-gradient(115deg,#3DE8C5 0%,#7C9BFF 48%,#FFB454 100%);
+  --ease:cubic-bezier(.22,1,.36,1);
+  --on-accent:#0B1224;
+  --navbg:rgba(255,255,255,.95);
+}
+html.dark-mode{
+  --ink:#0F172A;
+  --card:#1a2847;
+  --card2:#253556;
+  --line:rgba(255,255,255,.1);
+  --cream:#F5F7FA;
+  --muted:#CBD5E1;
+  --navbg:rgba(15,23,42,.95);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--ink);
+  color:var(--cream);
+  font-family:'Schibsted Grotesk',sans-serif;
+  font-size:16px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+  display:flex;flex-direction:column;
+}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;color:inherit;background:none;border:none;cursor:pointer}
+.mono{font-family:'Fragment Mono',monospace;text-transform:uppercase;letter-spacing:.12em;font-size:11px}
+
+.nav{
+  position:sticky;top:0;z-index:10;
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  background:var(--navbg);
+  border-bottom:1px solid var(--line);
+}
+.nav__inner{
+  max-width:1320px;margin:0 auto;padding:0 40px;height:72px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+}
+.brand{display:flex;align-items:center;gap:10px}
+.brand__word{font-family:'Fraunces',serif;font-weight:600;font-size:22px;letter-spacing:-.01em}
+.nav__right{display:flex;align-items:center;gap:12px}
+.nav .nav__theme{
+  height:34px;display:inline-flex;align-items:center;justify-content:center;
+  border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:15px;
+  background:transparent;color:var(--cream);
+  transition:border-color .3s var(--ease),background .3s var(--ease);
+}
+.nav .nav__theme:hover{border-color:rgba(61,232,197,.45);background:rgba(61,232,197,.08);transform:none}
+.btn-back{
+  display:inline-flex;align-items:center;gap:8px;
+  border:1px solid var(--line);border-radius:999px;
+  padding:9px 18px;font-weight:600;font-size:14px;
+  transition:border-color .3s var(--ease),background .3s var(--ease);
+}
+.btn-back:hover{border-color:rgba(61,232,197,.45);background:rgba(61,232,197,.08)}
+
+main{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  padding:60px 22px;
+}
+.stage{
+  width:100%;max-width:680px;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:28px;
+  padding:48px 40px;
+  text-align:center;
+  display:flex;flex-direction:column;align-items:center;gap:18px;
+}
+.stage__crumb{color:var(--muted)}
+.stage__title{
+  font-family:'Fraunces',serif;font-weight:500;
+  font-size:clamp(28px,5vw,44px);line-height:1.1;letter-spacing:-.02em;
+}
+.stage__sub{color:var(--muted);font-size:15px;max-width:440px}
+.stage__mods{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:6px}
+.modchip{
+  display:inline-flex;align-items:center;gap:7px;
+  border:1px solid var(--line);border-radius:999px;
+  background:var(--card2);
+  padding:7px 14px;
+  font-family:'Fragment Mono',monospace;font-size:10px;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted);
+}
+.btn-primary{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--aurora);color:var(--on-accent);
+  font-weight:700;font-size:14.5px;
+  padding:12px 24px;border-radius:999px;margin-top:10px;
+  box-shadow:0 8px 32px rgba(61,232,197,.35);
+  transition:transform .4s var(--ease),box-shadow .4s var(--ease);
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 44px rgba(61,232,197,.5)}
+
+.tokky{animation:tokkyFloat 3s ease-in-out infinite alternate}
+@keyframes tokkyFloat{from{transform:translateY(0)}to{transform:translateY(-7px)}}
+@media (prefers-reduced-motion:reduce){.tokky{animation:none}}
+@media (max-width:520px){
+  .nav__inner{padding:0 14px;height:64px;gap:10px}
+  .brand__word{font-size:18px}
+  .btn-back span{display:none}
+  .stage{padding:36px 22px}
+}
+</style>
+<link rel="stylesheet" href="../theme.css">
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="auroraGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3DE8C5"/>
+      <stop offset="48%" stop-color="#7C9BFF"/>
+      <stop offset="100%" stop-color="#FFB454"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<nav class="nav">
+  <div class="nav__inner">
+    <a class="brand" href="index.html" aria-label="EduLearn home">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 1.5 L14.6 9.4 L22.5 12 L14.6 14.6 L12 22.5 L9.4 14.6 L1.5 12 L9.4 9.4 Z" fill="url(#auroraGrad)"/>
+      </svg>
+      <span class="brand__word">EduLearn</span>
+    </a>
+    <div class="nav__right">
+      <button class="nav__theme" data-theme-toggle type="button">🌙</button>
+      <a class="btn-back" id="backLink" href="learn.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12 H4 M11 5 l-7 7 7 7"/></svg>
+        <span>Back to Learn</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <div class="stage">
+    <svg class="tokky" width="96" height="96" viewBox="0 0 100 100" aria-hidden="true">
+      <circle cx="50" cy="9" r="4" fill="#3DE8C5"/>
+      <line x1="50" y1="21" x2="50" y2="12" stroke="#7C9BFF" stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="50" cy="56" r="34" fill="#121C30" stroke="url(#auroraGrad)" stroke-width="2.5"/>
+      <rect x="36" y="44" width="8" height="14" rx="4" fill="#F2EDE3"/>
+      <rect x="56" y="44" width="8" height="14" rx="4" fill="#F2EDE3"/>
+      <path d="M42 67 q8 7 16 0" fill="none" stroke="#F2EDE3" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>
+    <div class="stage__crumb mono" id="lessonCrumb">Lesson</div>
+    <h1 class="stage__title" id="lessonTitle">This lesson</h1>
+    <p class="stage__sub">The AI animated video lecture for this chapter is in production. Practice sets, notes and the mastery test land alongside it.</p>
+    <div class="stage__mods" aria-hidden="true">
+      <span class="modchip">Video</span>
+      <span class="modchip">Practice</span>
+      <span class="modchip">Notes</span>
+      <span class="modchip">Book</span>
+      <span class="modchip">Test</span>
+    </div>
+    <a class="btn-primary" id="ctaLink" href="learn.html">Browse other chapters</a>
+  </div>
+</main>
+
+<script>
+(function(){
+'use strict';
+var params = new URLSearchParams(window.location.search);
+
+function titleCase(slug){
+  return slug.split('-').map(function(w){
+    return w ? w.charAt(0).toUpperCase() + w.slice(1) : w;
+  }).join(' ');
+}
+
+var TRACKS = { yoga:'Yoga & Mindfulness', fin:'Financial Literacy', music:'Music', career:'Career Orientation' };
+var SUBJECT_NAMES = { maths:'Mathematics', science:'Science', social:'Social Science', english:'English', hindi:'Hindi' };
+
+var crumb = document.getElementById('lessonCrumb');
+var title = document.getElementById('lessonTitle');
+var back = document.getElementById('backLink');
+
+var track = params.get('track');
+var ch = params.get('ch');
+var cls = params.get('class');
+var subject = params.get('subject');
+
+if(track && TRACKS[track]){
+  crumb.textContent = 'Beyond academics';
+  title.textContent = TRACKS[track];
+} else if(ch){
+  /* ch looks like c9-sst-french-revolution → strip the c<class>-<code>- prefix */
+  var slug = ch.replace(/^c\d+-[a-z]+-/, '');
+  title.textContent = titleCase(slug);
+  var parts = [];
+  if(cls) parts.push('Class ' + cls);
+  if(subject && SUBJECT_NAMES[subject]) parts.push(SUBJECT_NAMES[subject]);
+  crumb.textContent = parts.length ? parts.join(' · ') : 'Lesson';
+}
+
+if(cls && subject){
+  back.href = 'learn.html?class=' + encodeURIComponent(cls) + '&subject=' + encodeURIComponent(subject);
+  document.getElementById('ctaLink').href = back.href;
+}
+})();
+</script>
+<script src="../theme.js"></script>
+</body>
+</html>

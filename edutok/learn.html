@@ -30,6 +30,12 @@
   --c7:#FFB454;
   --c8:#7C9BFF;
   --c9:#FF7AA2;
+  /* theme-aware helpers */
+  --on-accent:#0B1224;            /* text placed on bright accent fills */
+  --line-strong:rgba(15,23,42,.18);
+  --navbg:rgba(255,255,255,.95);
+  --watermark:rgba(26,31,54,.05);
+  --shadow-soft:0 16px 44px rgba(15,23,42,.10);
 }
 
 /* Dark mode overrides for learn page */
@@ -41,6 +47,10 @@ html.dark-mode {
   --line: rgba(255,255,255,.1);
   --cream: #F5F7FA;
   --muted: #CBD5E1;
+  --line-strong: rgba(255,255,255,.22);
+  --navbg: rgba(15,23,42,.95);
+  --watermark: rgba(245,247,250,.06);
+  --shadow-soft: 0 16px 44px rgba(0,0,0,.45);
 }
 
 /* ============================================================
@@ -127,7 +137,7 @@ input{font-family:inherit;color:inherit}
   position:sticky;top:0;z-index:80;
   backdrop-filter:blur(20px);
   -webkit-backdrop-filter:blur(20px);
-  background:rgba(255,255,255,.95);
+  background:var(--navbg);
   border-bottom:1px solid var(--line);
 }
 .nav__inner{
@@ -167,7 +177,7 @@ input{font-family:inherit;color:inherit}
   border:1px solid var(--line);
   border-radius:999px;
   padding:3px;
-  background:rgba(255,255,255,.03);
+  background:transparent;
 }
 .lang__opt{
   font-family:'Fragment Mono',monospace;
@@ -184,7 +194,7 @@ input{font-family:inherit;color:inherit}
 .btn-primary{
   display:inline-flex;align-items:center;gap:8px;
   background:var(--aurora);
-  color:var(--ink);
+  color:var(--on-accent);
   font-weight:700;font-size:14.5px;
   padding:11px 22px;border-radius:999px;
   box-shadow:0 8px 32px rgba(61,232,197,.35);
@@ -202,7 +212,7 @@ input{font-family:inherit;color:inherit}
   padding:10px 20px;border-radius:999px;
   transition:background .35s var(--ease),transform .35s var(--ease);
 }
-.btn-ghost:hover{background:rgba(255,255,255,.05);transform:translateY(-1px)}
+.btn-ghost:hover{background:var(--card2);transform:translateY(-1px)}
 
 /* ============================================================
    Layout shell
@@ -242,7 +252,7 @@ input{font-family:inherit;color:inherit}
 .chip{
   display:inline-flex;align-items:center;gap:10px;
   border:1px solid var(--line);
-  background:rgba(13,22,38,.7);
+  background:var(--card);
   border-radius:999px;
   padding:9px 18px 9px 13px;
   font-size:13.5px;font-weight:500;
@@ -251,7 +261,6 @@ input{font-family:inherit;color:inherit}
 }
 .chip:hover{border-color:rgba(61,232,197,.4);transform:translateX(-3px)}
 .chip svg{flex:none}
-.chip--gold{color:var(--amber)}
 .chip--gold svg{color:var(--amber)}
 .chip--soft{color:var(--muted)}
 .chip--soft svg{color:var(--peri)}
@@ -272,10 +281,11 @@ input{font-family:inherit;color:inherit}
   border:1px solid var(--line);
   border-radius:999px;
   padding:14px 24px;
-  background:rgba(13,22,38,.5);
+  background:var(--card);
   overflow:hidden;
   transition:all .45s var(--ease);
   text-align:left;
+  min-width:0;
 }
 .ctab .ctab__num{
   font-family:'Fraunces',serif;
@@ -286,14 +296,14 @@ input{font-family:inherit;color:inherit}
 .ctab .ctab__meta{display:flex;flex-direction:column;gap:2px}
 .ctab .ctab__label{font-size:13.5px;font-weight:600;color:var(--cream);transition:color .45s var(--ease)}
 .ctab .ctab__count{font-family:'Fragment Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);transition:color .45s var(--ease)}
-.ctab:hover{transform:translateY(-3px);border-color:var(--cc);box-shadow:0 10px 36px rgba(0,0,0,.4)}
+.ctab:hover{transform:translateY(-3px);border-color:var(--cc);box-shadow:var(--shadow-soft)}
 .ctab.is-active{
   background:var(--cc);
   border-color:var(--cc);
   box-shadow:0 12px 42px color-mix(in srgb, var(--cc) 35%, transparent);
 }
 .ctab.is-active .ctab__num,
-.ctab.is-active .ctab__label{color:var(--ink)}
+.ctab.is-active .ctab__label{color:var(--on-accent)}
 .ctab.is-active .ctab__count{color:rgba(5,8,15,.65)}
 .ctab[data-class="6"]{--cc:var(--c6)}
 .ctab[data-class="7"]{--cc:var(--c7)}
@@ -341,12 +351,12 @@ input{font-family:inherit;color:inherit}
   transform-origin:left;
   transition:transform .5s var(--ease);
 }
-.subj:hover{transform:translateY(-4px);border-color:rgba(242,237,227,.18)}
+.subj:hover{transform:translateY(-4px);border-color:var(--line-strong)}
 .subj:hover::after{transform:scaleX(.45)}
 .subj.is-active{
   background:var(--card2);
   border-color:color-mix(in srgb, var(--sa) 55%, transparent);
-  box-shadow:0 14px 40px rgba(0,0,0,.45), 0 0 0 1px color-mix(in srgb, var(--sa) 25%, transparent) inset;
+  box-shadow:var(--shadow-soft), 0 0 0 1px color-mix(in srgb, var(--sa) 25%, transparent) inset;
 }
 .subj.is-active::after{transform:scaleX(1)}
 .subj__icon{color:var(--sa);height:26px;display:flex;align-items:center}
@@ -380,7 +390,7 @@ input{font-family:inherit;color:inherit}
 .search:focus-within svg{color:var(--teal)}
 .search input{
   width:100%;
-  background:rgba(13,22,38,.7);
+  background:var(--card);
   border:1px solid var(--line);
   border-radius:999px;
   padding:12px 18px 12px 44px;
@@ -424,8 +434,8 @@ input{font-family:inherit;color:inherit}
 }
 .chrow:hover{
   transform:translateY(-3px);
-  border-color:rgba(242,237,227,.18);
-  box-shadow:0 16px 44px rgba(0,0,0,.45);
+  border-color:var(--line-strong);
+  box-shadow:var(--shadow-soft);
 }
 .chrow:hover::before{transform:scaleY(1)}
 .chrow__num{
@@ -449,7 +459,7 @@ input{font-family:inherit;color:inherit}
 .chrow__subjtag{
   font-family:'Fragment Mono',monospace;
   font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--ink);
+  color:var(--on-accent);
   background:var(--cc);
   border-radius:4px;
   padding:2px 7px;
@@ -464,10 +474,10 @@ input{font-family:inherit;color:inherit}
   display:flex;align-items:center;justify-content:center;
   width:24px;height:24px;border-radius:7px;
   color:var(--muted);
-  background:rgba(255,255,255,.04);
+  background:var(--card2);
   transition:color .3s var(--ease),background .3s var(--ease);
 }
-.mod:hover{color:var(--cream);background:rgba(255,255,255,.1)}
+.mod:hover{color:var(--cream);background:var(--line)}
 .mod::after{
   content:attr(data-tip);
   position:absolute;bottom:calc(100% + 8px);left:50%;
@@ -485,7 +495,7 @@ input{font-family:inherit;color:inherit}
 .pbar{
   flex:1;max-width:200px;min-width:90px;
   height:4px;border-radius:4px;
-  background:rgba(255,255,255,.07);
+  background:var(--line);
   overflow:hidden;
 }
 .pbar__fill{
@@ -596,6 +606,7 @@ input{font-family:inherit;color:inherit}
 .continue{display:flex;align-items:center;gap:18px}
 .ring{position:relative;width:84px;height:84px;flex:none}
 .ring svg{transform:rotate(-90deg)}
+.ring__track{stroke:var(--line)}
 .ring__pct{
   position:absolute;inset:0;
   display:flex;align-items:center;justify-content:center;
@@ -617,7 +628,7 @@ input{font-family:inherit;color:inherit}
 .btn-resume{
   display:inline-flex;align-items:center;gap:7px;
   background:var(--aurora);
-  color:var(--ink);
+  color:var(--on-accent);
   font-weight:700;font-size:13px;
   padding:9px 18px;border-radius:999px;
   box-shadow:0 8px 32px rgba(61,232,197,.35);
@@ -634,12 +645,12 @@ input{font-family:inherit;color:inherit}
   transition:background .3s var(--ease),transform .3s var(--ease);
 }
 .beyond__row:last-child{border-bottom:none}
-.beyond__row:hover{background:rgba(255,255,255,.04);transform:translateX(3px)}
+.beyond__row:hover{background:var(--card2);transform:translateX(3px)}
 .beyond__icon{
   width:34px;height:34px;border-radius:11px;
   display:flex;align-items:center;justify-content:center;
   flex:none;
-  background:rgba(255,255,255,.05);
+  background:var(--card2);
 }
 .beyond__name{font-size:14px;font-weight:600;flex:1}
 .beyond__row svg.chev{color:var(--muted);transition:transform .3s var(--ease)}
@@ -675,7 +686,7 @@ input{font-family:inherit;color:inherit}
   font-size:clamp(96px,15vw,230px);
   line-height:1;
   letter-spacing:-.03em;
-  color:rgba(242,237,227,.08);
+  color:var(--watermark);
   pointer-events:none;
   user-select:none;
   white-space:nowrap;
@@ -725,7 +736,7 @@ input{font-family:inherit;color:inherit}
   .nav__links{gap:20px}
 }
 @media (max-width:1024px){
-  .split{grid-template-columns:1fr}
+  .split{grid-template-columns:minmax(0,1fr)}
   .panel{position:static;flex-direction:row;flex-wrap:wrap}
   .panel .pcard{flex:1;min-width:300px}
   .rail{grid-template-columns:repeat(5,minmax(150px,1fr));overflow-x:auto;padding-bottom:6px}
@@ -740,6 +751,23 @@ input{font-family:inherit;color:inherit}
   .chrow{grid-template-columns:44px minmax(0,1fr)}
   .chrow__right{display:none}
   .footer__cols{grid-template-columns:1fr 1fr}
+  .classes{gap:10px}
+  .ctab{padding:12px 16px;gap:10px}
+  .ctab .ctab__num{font-size:26px}
+}
+@media (max-width:520px){
+  .nav__inner{padding:0 14px;gap:10px;height:64px}
+  .brand{gap:7px}
+  .brand__word{font-size:18px}
+  .nav__right{gap:8px}
+  .lang__opt{padding:4px 9px}
+  .nav .nav__theme{height:30px;padding:4px 9px;font-size:13px}
+  .btn-primary{padding:8px 13px;font-size:12.5px}
+  .hero{padding:40px 0 12px}
+  .classes{grid-template-columns:1fr 1fr;gap:8px}
+  .ctab{padding:10px 12px;gap:8px}
+  .ctab .ctab__num{font-size:22px}
+  .panel .pcard{min-width:0;flex:1 1 100%}
 }
 
 /* ============================================================
@@ -758,44 +786,28 @@ input{font-family:inherit;color:inherit}
   .tokky,.tokky *{animation:none}
 }
 
-/* Dark mode theme toggle button */
-[data-theme-toggle] {
-  position: fixed !important;
-  top: 20px !important;
-  right: 20px !important;
-  z-index: 9999 !important;
-  width: 48px !important;
-  height: 48px !important;
-  border: 2px solid var(--dm-border-color) !important;
-  background: var(--dm-navbar-bg) !important;
-  border-radius: 12px !important;
-  cursor: pointer !important;
-  font-size: 14px !important;
-  font-weight: 600 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1) !important;
-  color: var(--dm-text-primary) !important;
-  padding: 10px !important;
+/* Theme toggle — lives in the nav, matches the lang pill */
+.nav .nav__theme{
+  width:auto;height:34px;
+  display:inline-flex;align-items:center;justify-content:center;
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:5px 12px;
+  font-size:15px;
+  background:transparent;
+  color:var(--cream);
+  transition:border-color .3s var(--ease),background .3s var(--ease),transform .3s var(--ease);
 }
-
-[data-theme-toggle]:hover {
-  background: rgba(61, 232, 197, 0.1) !important;
-  border-color: #3DE8C5 !important;
-  transform: scale(1.08) !important;
-  box-shadow: 0 4px 12px rgba(61, 232, 197, 0.2) !important;
+.nav .nav__theme:hover{
+  border-color:rgba(61,232,197,.45);
+  background:rgba(61,232,197,.08);
+  transform:none;
 }
-
-[data-theme-toggle]:active {
-  transform: scale(0.95) !important;
-}
+.nav .nav__theme:active{transform:scale(.95)}
 </style>
   <link rel="stylesheet" href="../theme.css">
 </head>
 <body>
-
-  <button data-theme-toggle>Dark</button>
 
 <!-- ===== shared SVG defs (aurora gradient referenced everywhere) ===== -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -836,7 +848,10 @@ input{font-family:inherit;color:inherit}
     <div class="nav__links">
       <a class="nav__link" href="index.html" data-i18n="nav_home">Home</a>
       <a class="nav__link is-current" href="learn.html" data-i18n="nav_learn">Learn</a>
-      <a class="nav__link" href="pal.html" data-i18n="nav_pal">PAL Adaptive AI</a>
+      <a class="nav__link" href="live.html" data-i18n="nav_live">Live</a>
+      <a class="nav__link" href="challenge.html" data-i18n="nav_arena">Arena</a>
+      <a class="nav__link" href="mocktest.html" data-i18n="nav_tests">Tests</a>
+      <a class="nav__link" href="pal.html" data-i18n="nav_pal">PAL AI</a>
       <a class="nav__link" href="dashboard.html" data-i18n="nav_dash">Dashboard</a>
     </div>
     <div class="nav__right">
@@ -844,6 +859,7 @@ input{font-family:inherit;color:inherit}
         <button class="lang__opt" id="langEn" type="button">EN</button>
         <button class="lang__opt" id="langHi" type="button">हिं</button>
       </div>
+      <button class="nav__theme" data-theme-toggle type="button">🌙</button>
       <a class="btn-primary" href="login.html" data-i18n="nav_cta">Start free</a>
     </div>
   </div>
@@ -859,7 +875,7 @@ input{font-family:inherit;color:inherit}
       <a href="index.html">Home</a><span class="sep">/</span><span style="color:var(--cream)">Learn</span>
     </div>
     <div class="hero__row">
-      <h2 class="hero__title rv" style="animation-delay:.12s" data-i18n="hero_title">Choose your <em>battlefield.</em></h2>
+      <h1 class="hero__title rv" style="animation-delay:.12s" data-i18n="hero_title">Choose your <em>battlefield.</em></h1>
       <div class="hero__chips">
         <div class="chip chip--gold rv" style="animation-delay:.22s">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -881,7 +897,7 @@ input{font-family:inherit;color:inherit}
     </div>
 
     <!-- class switcher -->
-    <div class="classes rv" style="animation-delay:.38s" id="classTabs" role="tablist" aria-label="Class"></div>
+    <div class="classes rv" style="animation-delay:.38s" id="classTabs" role="group" aria-label="Class"></div>
   </section>
 
   <!-- ============================================================
@@ -890,17 +906,17 @@ input{font-family:inherit;color:inherit}
   <section class="split">
     <div id="contentArea">
       <!-- subject rail -->
-      <div class="rail" id="subjectRail" role="tablist" aria-label="Subject"></div>
+      <div class="rail" id="subjectRail" role="group" aria-label="Subject"></div>
 
       <!-- list head + search -->
       <div class="listhead">
-        <h3 class="listhead__title" id="listTitle"></h3>
+        <h2 class="listhead__title" id="listTitle" aria-live="polite"></h2>
         <div class="search">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <circle cx="11" cy="11" r="7"/>
             <path d="M21 21 l-4.3 -4.3"/>
           </svg>
-          <input type="text" id="searchInput" data-i18n-ph="search_ph" placeholder="Search 9,000+ lessons..." aria-label="Search lessons" autocomplete="off">
+          <input type="text" id="searchInput" data-i18n-ph="search_ph" placeholder="Search Class 9 chapters..." aria-label="Search chapters" autocomplete="off">
         </div>
       </div>
 
@@ -914,7 +930,7 @@ input{font-family:inherit;color:inherit}
           <div class="empty__title" data-i18n="empty_title">No chapters found</div>
           <div class="empty__hint">
             <span data-i18n="empty_pre">Tokky suggests —</span>
-            <button type="button" id="tryFractions" data-i18n="empty_hint">try Fractions?</button>
+            <button type="button" id="trySuggest"></button>
           </div>
         </div>
       </div>
@@ -961,8 +977,10 @@ input{font-family:inherit;color:inherit}
         <h4>Product</h4>
         <ul>
           <li><a href="learn.html" data-i18n="nav_learn">Learn</a></li>
-          <li><a href="pal.html" data-i18n="nav_pal">PAL Adaptive AI</a></li>
-          <li><a href="lesson.html">Lessons</a></li>
+          <li><a href="live.html" data-i18n="nav_live">Live</a></li>
+          <li><a href="challenge.html" data-i18n="nav_arena">Arena</a></li>
+          <li><a href="mocktest.html" data-i18n="nav_tests">Tests</a></li>
+          <li><a href="pal.html" data-i18n="nav_pal">PAL AI</a></li>
           <li><a href="dashboard.html" data-i18n="nav_dash">Dashboard</a></li>
           <li><a href="index.html">Pricing — ₹299/mo</a></li>
         </ul>
@@ -1079,7 +1097,10 @@ var I18N = {
   en: {
     nav_home: 'Home',
     nav_learn: 'Learn',
-    nav_pal: 'PAL Adaptive AI',
+    nav_live: 'Live',
+    nav_arena: 'Arena',
+    nav_tests: 'Tests',
+    nav_pal: 'PAL AI',
     nav_dash: 'Dashboard',
     nav_cta: 'Start free',
     hero_title: 'Choose your <em>battlefield.</em>',
@@ -1087,7 +1108,8 @@ var I18N = {
     chip2: 'Study ahead or revisit any class — no stigma',
     class_word: 'Class',
     chapters_word: 'chapters',
-    search_ph: 'Search 9,000+ lessons...',
+    search_ph: 'Search Class {n} chapters...',
+    try_chip: 'try “{name}”?',
     results_for: 'Results across Class',
     continue_title: 'Continue learning',
     resume: 'Resume',
@@ -1095,7 +1117,6 @@ var I18N = {
     mastered: 'Mastered',
     empty_title: 'No chapters found',
     empty_pre: 'Tokky suggests —',
-    empty_hint: 'try Fractions?',
     footer_tag: 'Made for Bharat. 11 languages. Works fully offline.',
     tokky_name: 'Tokky says:',
     tokky_tip: '"Ananya from Indore finished Heat in 2 sittings. You’re 65% there!"',
@@ -1107,7 +1128,10 @@ var I18N = {
   hi: {
     nav_home: 'होम',
     nav_learn: 'सीखें',
-    nav_pal: 'PAL अनुकूली AI',
+    nav_live: 'लाइव',
+    nav_arena: 'अरीना',
+    nav_tests: 'टेस्ट',
+    nav_pal: 'PAL AI',
     nav_dash: 'डैशबोर्ड',
     nav_cta: 'मुफ़्त शुरू करें',
     hero_title: 'अपना <em>रणक्षेत्र</em> चुनें।',
@@ -1115,7 +1139,8 @@ var I18N = {
     chip2: 'आगे पढ़ें या कोई भी कक्षा दोहराएँ — बिना झिझक',
     class_word: 'कक्षा',
     chapters_word: 'अध्याय',
-    search_ph: '9,000+ पाठ खोजें...',
+    search_ph: 'कक्षा {n} के अध्याय खोजें...',
+    try_chip: '“{name}” आज़माएँ?',
     results_for: 'परिणाम — कक्षा',
     continue_title: 'सीखना जारी रखें',
     resume: 'फिर शुरू करें',
@@ -1123,7 +1148,6 @@ var I18N = {
     mastered: 'महारत',
     empty_title: 'कोई अध्याय नहीं मिला',
     empty_pre: 'Tokky का सुझाव —',
-    empty_hint: 'भिन्न आज़माएँ?',
     footer_tag: 'भारत के लिए बना। 11 भाषाएँ। पूरी तरह ऑफ़लाइन चलता है।',
     tokky_name: 'Tokky कहता है:',
     tokky_tip: '"इंदौर की अनन्या ने ऊष्मा 2 बैठकों में पूरा किया। आप 65% पहुँच गए!"',
@@ -1144,7 +1168,7 @@ function applyI18n(){
     el.innerHTML = t(el.getAttribute('data-i18n'));
   });
   document.querySelectorAll('[data-i18n-ph]').forEach(function(el){
-    el.setAttribute('placeholder', t(el.getAttribute('data-i18n-ph')));
+    el.setAttribute('placeholder', t(el.getAttribute('data-i18n-ph')).replace('{n}', activeClass));
   });
   document.documentElement.lang = state.lang === 'hi' ? 'hi' : 'en';
   var en = document.getElementById('langEn');
@@ -1266,7 +1290,7 @@ var SUBJECTS = [
   { key:'science', code:'sci',  en:'Science',         hi:'विज्ञान',         accent:'#3DE8C5', icon:'science' },
   { key:'social',  code:'sst',  en:'Social Science',  hi:'सामाजिक विज्ञान', accent:'#FFB454', icon:'social'  },
   { key:'english', code:'eng',  en:'English',         hi:'अंग्रेज़ी',        accent:'#FF7AA2', icon:'english' },
-  { key:'hindi',   code:'hin',  en:'Hindi',           hi:'हिंदी',           accent:'#F2EDE3', icon:'hindi'   }
+  { key:'hindi',   code:'hin',  en:'Hindi',           hi:'हिंदी',           accent:'#A78BFA', icon:'hindi'   }
 ];
 
 var CLASS_COLORS = { 6:'#3DE8C5', 7:'#FFB454', 8:'#7C9BFF', 9:'#FF7AA2' };
@@ -1586,7 +1610,7 @@ function renderTabs(){
   var html = '';
   [6,7,8,9].forEach(function(cls){
     html +=
-      '<button class="ctab' + (cls === activeClass ? ' is-active' : '') + '" data-class="' + cls + '" role="tab" aria-selected="' + (cls === activeClass) + '">' +
+      '<button class="ctab' + (cls === activeClass ? ' is-active' : '') + '" data-class="' + cls + '" type="button" aria-pressed="' + (cls === activeClass) + '">' +
         '<span class="ctab__num">' + cls + '</span>' +
         '<span class="ctab__meta">' +
           '<span class="ctab__label">' + t('class_word') + ' ' + cls + '</span>' +
@@ -1603,6 +1627,7 @@ function renderTabs(){
       syncURL();
       renderTabs();
       renderContent(true);
+      searchInput.setAttribute('placeholder', t('search_ph').replace('{n}', activeClass));
     });
   });
 }
@@ -1619,7 +1644,7 @@ function renderRail(stagger){
     html +=
       '<button class="subj' + (s.key === activeSubject ? ' is-active' : '') + (stagger ? ' rv' : '') + '"' +
         ' style="--sa:' + s.accent + (stagger ? ';animation-delay:' + delay + 'ms' : '') + '"' +
-        ' data-subject="' + s.key + '" role="tab" aria-selected="' + (s.key === activeSubject) + '">' +
+        ' data-subject="' + s.key + '" type="button" aria-pressed="' + (s.key === activeSubject) + '">' +
         '<span class="subj__icon">' + ICONS[s.icon] + '</span>' +
         '<span class="subj__name">' + esc(subjName(s)) + '</span>' +
         '<span class="subj__count">' + count + ' ' + t('chapters_word') + '</span>' +
@@ -1712,6 +1737,17 @@ function renderChapters(stagger){
   host.innerHTML = html;
   empty.classList.toggle('is-show', found === 0);
   host.style.display = found === 0 ? 'none' : 'flex';
+  if(found === 0) updateEmptySuggestion();
+}
+
+/* suggest a chapter that actually exists in the active class */
+function updateEmptySuggestion(){
+  var list = CURRICULUM[activeClass].maths || [];
+  if(!list.length) return;
+  var name = list[0][1];
+  var btn = document.getElementById('trySuggest');
+  btn.textContent = t('try_chip').replace('{name}', name);
+  btn.setAttribute('data-suggest', name);
 }
 
 function renderContent(stagger){
@@ -1751,7 +1787,7 @@ function renderContinue(){
   host.innerHTML =
     '<div class="ring">' +
       '<svg width="84" height="84" viewBox="0 0 84 84">' +
-        '<circle cx="42" cy="42" r="34" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="6"/>' +
+        '<circle class="ring__track" cx="42" cy="42" r="34" fill="none" stroke-width="6"/>' +
         '<circle cx="42" cy="42" r="34" fill="none" stroke="url(#auroraGrad)" stroke-width="6" stroke-linecap="round"' +
           ' stroke-dasharray="' + C.toFixed(1) + '" stroke-dashoffset="' + off.toFixed(1) + '"/>' +
       '</svg>' +
@@ -1801,10 +1837,11 @@ searchInput.addEventListener('input', function(){
   }, 120);
 });
 
-document.getElementById('tryFractions').addEventListener('click', function(){
+document.getElementById('trySuggest').addEventListener('click', function(){
   /* Maths chapter names are English NCERT titles in both languages, so search the English term */
-  searchInput.value = 'Fractions';
-  query = 'Fractions';
+  var name = this.getAttribute('data-suggest') || '';
+  searchInput.value = name;
+  query = name;
   renderChapters(true);
   searchInput.focus();
 });

@@ -26,15 +26,6 @@ class ThemeManager {
     }
   }
 
-  applyStoredTheme() {
-    const savedTheme = localStorage.getItem(this.storageKey) || 'light';
-    if (savedTheme === 'dark') {
-      document.documentElement.classList.add(this.darkModeClass);
-    } else {
-      document.documentElement.classList.remove(this.darkModeClass);
-    }
-  }
-
   setupThemeToggleButtons() {
     // Find all theme toggle buttons
     const toggleButtons = document.querySelectorAll('[data-theme-toggle]');
@@ -70,8 +61,9 @@ class ThemeManager {
 
   updateButtonIcon(button) {
     const isDarkMode = document.documentElement.classList.contains(this.darkModeClass);
-    button.textContent = isDarkMode ? 'Light' : 'Dark';
+    button.textContent = isDarkMode ? '☀️' : '🌙';
     button.title = isDarkMode ? 'Switch to light mode' : 'Switch to dark mode';
+    button.setAttribute('aria-label', button.title);
   }
 
   isDarkMode() {

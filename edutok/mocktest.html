@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mock Tests — EduLearn</title>
+<meta name="description" content="Progressive mock tests that adapt to you — answer well and the questions climb, struggle and the test quietly steps back.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&family=Fragment+Mono:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#FFFFFF; --card:#FFFFFF; --card2:#F5F7FA;
+  --line:rgba(0,0,0,.08); --cream:#1A1F36; --muted:#6B7280;
+  --teal:#3DE8C5; --peri:#7C9BFF; --amber:#FFB454; --rose:#FF7AA2;
+  --aurora:linear-gradient(115deg,#3DE8C5 0%,#7C9BFF 48%,#FFB454 100%);
+  --ease:cubic-bezier(.22,1,.36,1);
+  --on-accent:#0B1224; --line-strong:rgba(15,23,42,.18);
+  --navbg:rgba(255,255,255,.95); --shadow-soft:0 16px 44px rgba(15,23,42,.10);
+}
+html.dark-mode{
+  --ink:#0F172A; --card:#1a2847; --card2:#253556;
+  --line:rgba(255,255,255,.1); --cream:#F5F7FA; --muted:#CBD5E1;
+  --line-strong:rgba(255,255,255,.22); --navbg:rgba(15,23,42,.95);
+  --shadow-soft:0 16px 44px rgba(0,0,0,.45);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--ink);color:var(--cream);font-family:'Schibsted Grotesk',sans-serif;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;color:inherit;background:none;border:none;cursor:pointer}
+.mono{font-family:'Fragment Mono',monospace;text-transform:uppercase;letter-spacing:.12em;font-size:11px;color:var(--muted)}
+.rv{opacity:0;animation:rise .7s var(--ease) forwards}
+@keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.nav{position:sticky;top:0;z-index:80;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);background:var(--navbg);border-bottom:1px solid var(--line)}
+.nav__inner{max-width:1320px;margin:0 auto;padding:0 40px;height:72px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand__word{font-family:'Fraunces',serif;font-weight:600;font-size:22px}
+.nav__links{display:flex;gap:30px}
+.nav__link{font-size:14.5px;font-weight:500;color:var(--muted);position:relative;transition:color .3s var(--ease)}
+.nav__link:hover,.nav__link.is-current{color:var(--cream)}
+.nav__link.is-current::after{content:"";position:absolute;left:50%;bottom:-6px;width:18px;height:3px;border-radius:3px;transform:translateX(-50%);background:var(--aurora)}
+.nav__right{display:flex;align-items:center;gap:12px}
+.nav .nav__theme{height:34px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:15px;background:transparent;color:var(--cream)}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;background:var(--aurora);color:var(--on-accent);font-weight:700;font-size:14.5px;padding:11px 22px;border-radius:999px;box-shadow:0 8px 32px rgba(61,232,197,.35);transition:transform .4s var(--ease),box-shadow .4s var(--ease)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 44px rgba(61,232,197,.5)}
+.btn-ghost{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);font-weight:600;font-size:14px;padding:10px 20px;border-radius:999px;transition:border-color .3s var(--ease),background .3s var(--ease)}
+.btn-ghost:hover{border-color:rgba(61,232,197,.5);background:rgba(61,232,197,.07)}
+
+.wrap{max-width:1320px;margin:0 auto;padding:0 40px}
+.hero{padding:52px 0 26px}
+.hero h1{font-family:'Fraunces',serif;font-weight:500;font-size:clamp(38px,4.6vw,62px);line-height:1.04;letter-spacing:-.025em}
+.hero h1 em{font-style:italic;font-weight:600;background:var(--aurora);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.hero__sub{color:var(--muted);font-size:16px;max-width:580px;margin-top:14px}
+.hero__chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.chip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:8px 16px;font-size:13px;font-weight:500}
+.chip .dot{width:7px;height:7px;border-radius:50%;background:var(--aurora);flex:none}
+
+/* setup */
+.pickgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:14px 0 26px}
+.pick{--sa:var(--peri);background:var(--card);border:1px solid var(--line);border-radius:24px;padding:26px;position:relative;overflow:hidden;transition:transform .35s var(--ease),border-color .35s var(--ease),box-shadow .35s var(--ease)}
+.pick::after{content:"";position:absolute;left:24px;right:24px;bottom:0;height:3px;border-radius:3px 3px 0 0;background:var(--sa)}
+.pick:hover{transform:translateY(-3px);border-color:var(--line-strong);box-shadow:var(--shadow-soft)}
+.pick__subj{font-family:'Fragment Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--sa)}
+.pick h3{font-family:'Fraunces',serif;font-weight:600;font-size:23px;margin:8px 0 4px}
+.pick p{color:var(--muted);font-size:14px;margin-bottom:18px}
+.howcard,.attcard{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:22px;margin-bottom:16px}
+.pcard__eyebrow{font-family:'Fragment Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.pcard__eyebrow::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--aurora);flex:none}
+.weights{display:flex;gap:10px;flex-wrap:wrap}
+.wchip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--card2);border-radius:999px;padding:7px 14px;font-size:13px}
+.wchip i{width:9px;height:9px;border-radius:50%;flex:none}
+.att{display:flex;align-items:center;gap:14px;padding:11px 4px;border-bottom:1px solid var(--line);font-size:14px}
+.att:last-child{border-bottom:none}
+.lvlpill{font-family:'Fragment Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;border-radius:999px;padding:3px 10px;color:var(--on-accent);flex:none}
+.att .pct{margin-left:auto;font-family:'Fraunces',serif;font-weight:600;font-size:18px}
+.att .d{font-size:11.5px;color:var(--muted)}
+.empty-hint{color:var(--muted);font-size:13.5px;padding:6px 2px}
+
+/* test view */
+#testView,#resultView{display:none;padding:30px 0 80px}
+.tbar{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:20px}
+.tbar h2{font-family:'Fraunces',serif;font-weight:600;font-size:21px}
+.tbar .count{font-family:'Fragment Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.1em}
+.qtimer{position:relative;width:54px;height:54px;margin-left:auto;flex:none}
+.qtimer svg{transform:rotate(-90deg)}
+.qtimer__num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px}
+.testgrid{display:grid;grid-template-columns:minmax(0,1fr) 200px;gap:26px;align-items:start}
+.qcard{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:30px}
+.dpath{display:flex;gap:8px;margin-bottom:20px}
+.dpath i{width:22px;height:8px;border-radius:4px;background:var(--card2);border:1px solid var(--line)}
+.qtext{font-family:'Fraunces',serif;font-weight:500;font-size:clamp(19px,2.2vw,24px);line-height:1.35;margin:10px 0 22px}
+.dchip{font-family:'Fragment Mono',monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;border-radius:999px;padding:4px 12px;color:var(--on-accent);display:inline-block}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.opt{display:flex;align-items:center;gap:12px;border:1px solid var(--line);background:var(--card2);border-radius:16px;padding:14px 16px;font-size:15px;font-weight:500;text-align:left;transition:border-color .25s var(--ease),transform .25s var(--ease)}
+.opt:hover{border-color:var(--line-strong);transform:translateY(-1px)}
+.opt .ltr{width:28px;height:28px;border-radius:9px;background:var(--card);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:'Fragment Mono',monospace;font-size:11px;flex:none}
+.opt.is-right{border-color:var(--teal);background:rgba(61,232,197,.12)}
+.opt.is-right .ltr{background:var(--teal);color:var(--on-accent);border-color:transparent}
+.opt.is-wrong{border-color:var(--rose);background:rgba(255,122,162,.12);animation:shake .35s var(--ease)}
+.opt.is-wrong .ltr{background:var(--rose);color:var(--on-accent);border-color:transparent}
+.opt:disabled{cursor:default}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.toast{margin-top:16px;font-size:13.5px;font-weight:600;min-height:21px}
+/* ladder */
+.ladder{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:20px;position:sticky;top:96px}
+.ladder .mono{margin-bottom:14px;display:block}
+.rung{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:13px;border:1px solid transparent;color:var(--muted);font-size:14px;font-weight:600;transition:all .35s var(--ease)}
+.rung i{width:10px;height:10px;border-radius:50%;background:var(--card2);border:1px solid var(--line);flex:none;transition:all .35s var(--ease)}
+.rung.is-on{border-color:var(--line);background:var(--card2);color:var(--cream);transform:translateX(4px)}
+.rung.is-on i{box-shadow:0 0 0 4px color-mix(in srgb, var(--rc) 25%, transparent);background:var(--rc);border-color:transparent}
+
+/* result */
+.result{max-width:780px;margin:0 auto}
+.rescard{background:var(--card);border:1px solid var(--line);border-radius:26px;padding:38px}
+.res__top{display:flex;gap:30px;align-items:center;flex-wrap:wrap}
+.bigring{position:relative;width:130px;height:130px;flex:none}
+.bigring svg{transform:rotate(-90deg)}
+.bigring__num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:600;font-size:30px}
+.bigring__num small{font-family:'Fragment Mono',monospace;font-size:9px;letter-spacing:.12em;color:var(--muted)}
+.res__verdict{font-size:21px;font-weight:700}
+.res__verdict small{display:block;font-size:14px;color:var(--muted);font-weight:500;margin-top:5px;max-width:380px}
+.journey{margin:30px 0 8px}
+.journey svg{width:100%;height:auto}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:20px 0}
+.stat{background:var(--card2);border:1px solid var(--line);border-radius:16px;padding:14px}
+.stat b{font-family:'Fraunces',serif;font-weight:600;font-size:21px;display:block}
+.stat span{font-size:11.5px;color:var(--muted)}
+.reco{display:flex;gap:14px;background:rgba(61,232,197,.07);border:1px solid rgba(61,232,197,.3);border-radius:18px;padding:16px 18px;font-size:14.5px;margin:8px 0 20px}
+.review details{border:1px solid var(--line);border-radius:16px;margin-bottom:8px;background:var(--card2)}
+.review summary{cursor:pointer;padding:13px 16px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:10px;list-style:none}
+.review summary::-webkit-details-marker{display:none}
+.review .rbody{padding:0 16px 14px;font-size:13.5px;color:var(--muted)}
+.review .rbody b{color:var(--cream)}
+.res__acts{display:flex;gap:12px;margin-top:22px;flex-wrap:wrap}
+
+.footer__base{border-top:1px solid var(--line);margin-top:80px;padding:24px 0}
+
+@media (max-width:1180px){.nav__links{gap:20px}}
+@media (max-width:1024px){.nav__links{display:none}}
+@media (max-width:760px){
+  .wrap{padding:0 22px}.nav__inner{padding:0 22px}
+  .pickgrid{grid-template-columns:1fr}
+  .testgrid{grid-template-columns:minmax(0,1fr)}
+  .ladder{position:static;display:flex;gap:8px;padding:14px}
+  .ladder .mono{display:none}
+  .rung{flex:1;justify-content:center;padding:9px 6px;font-size:12.5px}
+  .opts{grid-template-columns:1fr}
+  .qcard,.rescard{padding:24px 20px}
+}
+@media (max-width:520px){
+  .nav__inner{padding:0 14px;height:64px;gap:10px}
+  .brand__word{font-size:18px}
+  .btn-primary{padding:8px 13px;font-size:12.5px}
+  .nav .nav__theme{height:30px;padding:4px 9px;font-size:13px}
+  .hero{padding:38px 0 18px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}
+  .rv{opacity:1;animation:none}
+}
+</style>
+<link rel="stylesheet" href="../theme.css">
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="auroraGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#3DE8C5"/><stop offset="48%" stop-color="#7C9BFF"/><stop offset="100%" stop-color="#FFB454"/></linearGradient></defs></svg>
+
+<nav class="nav">
+  <div class="nav__inner">
+    <a class="brand" href="index.html" aria-label="EduLearn home">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 1.5 L14.6 9.4 L22.5 12 L14.6 14.6 L12 22.5 L9.4 14.6 L1.5 12 L9.4 9.4 Z" fill="url(#auroraGrad)"/></svg>
+      <span class="brand__word">EduLearn</span>
+    </a>
+    <div class="nav__links">
+      <a class="nav__link" href="index.html">Home</a>
+      <a class="nav__link" href="learn.html">Learn</a>
+      <a class="nav__link" href="live.html">Live</a>
+      <a class="nav__link" href="challenge.html">Arena</a>
+      <a class="nav__link is-current" href="mocktest.html">Tests</a>
+      <a class="nav__link" href="dashboard.html">Dashboard</a>
+    </div>
+    <div class="nav__right">
+      <button class="nav__theme" data-theme-toggle type="button">🌙</button>
+      <a class="btn-primary" href="login.html">Start free</a>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- ============ SETUP ============ -->
+  <div id="setupView">
+    <section class="hero">
+      <div class="mono rv" style="animation-delay:.05s"><a href="index.html">Home</a> / <span style="color:var(--cream)">Tests</span></div>
+      <h1 class="rv" style="animation-delay:.12s;margin-top:14px">Tests that <em>adapt</em> to you.</h1>
+      <p class="hero__sub rv" style="animation-delay:.2s">Answer well and the questions climb with you. Struggle, and the test quietly steps back — just like PAL practice.</p>
+      <div class="hero__chips rv" style="animation-delay:.28s">
+        <span class="chip"><span class="dot"></span>10 questions</span>
+        <span class="chip"><span class="dot"></span>60s per question</span>
+        <span class="chip"><span class="dot"></span>Difficulty moves with you</span>
+      </div>
+    </section>
+
+    <div class="pickgrid rv" style="animation-delay:.34s">
+      <article class="pick" style="--sa:var(--peri)">
+        <div class="pick__subj">Class 9 · Mathematics</div>
+        <h3>Polynomials &amp; Number Systems</h3>
+        <p>Degrees, zeroes, factor theorem, identities, rational and irrational numbers — a 24-question adaptive bank.</p>
+        <button class="btn-primary" data-test="maths" type="button">Start test</button>
+      </article>
+      <article class="pick" style="--sa:var(--teal)">
+        <div class="pick__subj">Class 9 · Science</div>
+        <h3>Motion &amp; Force</h3>
+        <p>Graphs, equations of motion, momentum and Newton&rsquo;s laws — a 24-question adaptive bank.</p>
+        <button class="btn-primary" data-test="science" type="button">Start test</button>
+      </article>
+    </div>
+
+    <div class="howcard rv" style="animation-delay:.42s">
+      <div class="pcard__eyebrow">How adaptive scoring works</div>
+      <div class="weights">
+        <span class="wchip"><i style="background:var(--teal)"></i>Easy — 1 point</span>
+        <span class="wchip"><i style="background:var(--peri)"></i>Medium — 2 points</span>
+        <span class="wchip"><i style="background:var(--rose)"></i>Hard — 3 points</span>
+        <span class="wchip">Mastery = your points ÷ the maximum on your path</span>
+      </div>
+    </div>
+
+    <div class="attcard rv" style="animation-delay:.5s">
+      <div class="pcard__eyebrow">Previous attempts</div>
+      <div id="attList"><p class="empty-hint">No attempts yet — your history and mastery levels will appear here.</p></div>
+    </div>
+  </div>
+
+  <!-- ============ TEST ============ -->
+  <div id="testView">
+    <div class="tbar">
+      <h2 id="tName">Test</h2>
+      <span class="count" id="tCount">1 / 10</span>
+      <div class="qtimer">
+        <svg width="54" height="54" viewBox="0 0 54 54">
+          <circle cx="27" cy="27" r="22" fill="none" stroke="var(--line)" stroke-width="5"/>
+          <circle id="qArc" cx="27" cy="27" r="22" fill="none" stroke="var(--teal)" stroke-width="5" stroke-linecap="round" stroke-dasharray="138.2" stroke-dashoffset="0"/>
+        </svg>
+        <span class="qtimer__num" id="qNum">60</span>
+      </div>
+    </div>
+    <div class="testgrid">
+      <div class="qcard">
+        <div class="dpath" id="dPath"></div>
+        <span class="dchip" id="dChip"></span>
+        <div class="qtext" id="qText"></div>
+        <div class="opts" id="optGrid"></div>
+        <div class="toast" id="toast"></div>
+      </div>
+      <aside class="ladder">
+        <span class="mono">Difficulty</span>
+        <div class="rung" id="rung-h" style="--rc:var(--rose)"><i></i>Hard</div>
+        <div class="rung" id="rung-m" style="--rc:var(--peri)"><i></i>Medium</div>
+        <div class="rung" id="rung-e" style="--rc:var(--teal)"><i></i>Easy</div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- ============ RESULT ============ -->
+  <div id="resultView">
+    <div class="result">
+      <div class="rescard">
+        <div class="mono" id="resName">Result</div>
+        <div class="res__top" style="margin-top:16px">
+          <div class="bigring">
+            <svg width="130" height="130" viewBox="0 0 130 130">
+              <circle cx="65" cy="65" r="55" fill="none" stroke="var(--line)" stroke-width="10"/>
+              <circle id="resArc" cx="65" cy="65" r="55" fill="none" stroke="url(#auroraGrad)" stroke-width="10" stroke-linecap="round" stroke-dasharray="345.6" stroke-dashoffset="345.6"/>
+            </svg>
+            <span class="bigring__num"><span id="resPct">0%</span><small>mastery</small></span>
+          </div>
+          <div class="res__verdict" id="resVerdict"></div>
+        </div>
+        <div class="journey">
+          <div class="mono" style="margin-bottom:10px">Your difficulty journey</div>
+          <svg id="journeySvg" viewBox="0 0 560 130" aria-hidden="true"></svg>
+        </div>
+        <div class="stats" id="resStats"></div>
+        <div class="reco" id="resReco"></div>
+        <div class="mono" style="margin-bottom:10px">Question review</div>
+        <div class="review" id="resReview"></div>
+        <div class="res__acts">
+          <button class="btn-primary" id="retakeBtn" type="button">Retake</button>
+          <button class="btn-ghost" id="otherBtn" type="button">Try the other test</button>
+          <a class="btn-ghost" href="learn.html">Back to Learn</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer class="wrap footer__base">
+  <span class="mono">© 2026 EduLearn Learning Pvt. Ltd. · Bengaluru, Bharat</span>
+</footer>
+
+<script>
+(function(){
+'use strict';
+
+var LS_KEY = 'edulearn_mock';
+var Q_SECONDS = 60;
+var TEST_LEN = 10;
+
+/* ---------- question banks: e=easy m=medium h=hard ---------- */
+var TESTS = {
+  maths: {
+    name: 'Class 9 Maths — Polynomials & Number Systems',
+    other: 'science',
+    bank: [
+      { d:'e', q:'What is the degree of 5x³ − 4x² + 7?', opts:['1','2','3','7'], a:2 },
+      { d:'e', q:'Which of these is a polynomial?', opts:['x + 1/x','√x + 2','x² + 3x + 2','x⁻² + 1'], a:2 },
+      { d:'e', q:'√2 is a(n) … number.', opts:['rational','irrational','whole','natural'], a:1 },
+      { d:'e', q:'The coefficient of x² in 6x² + 5x − 4 is…', opts:['5','−4','6','2'], a:2 },
+      { d:'e', q:'A polynomial of degree 1 is called…', opts:['quadratic','cubic','constant','linear'], a:3 },
+      { d:'e', q:'0.3333… (repeating) equals…', opts:['1/3','3/10','1/30','3/100'], a:0 },
+      { d:'e', q:'The zero of p(x) = x − 5 is…', opts:['0','−5','5','1/5'], a:2 },
+      { d:'e', q:'A rational number is p/q where q is never…', opts:['1','negative','0','even'], a:2 },
+      { d:'m', q:'The remainder when x³ + 3x² + 3x + 1 is divided by (x + 1) is…', opts:['0','1','−1','8'], a:0 },
+      { d:'m', q:'If (x + 2) is a factor of x² + kx + 10, then k =', opts:['5','6','7','−7'], a:2 },
+      { d:'m', q:'The decimal expansion of 1/8 is…', opts:['0.125, terminating','0.125…, recurring','0.12, terminating','non-terminating'], a:0 },
+      { d:'m', q:'(x + 2)(x − 3) expands to…', opts:['x² + x − 6','x² − x − 6','x² − 5x − 6','x² − x + 6'], a:1 },
+      { d:'m', q:'(√3 + √2)(√3 − √2) equals…', opts:['5','√6','1','−1'], a:2 },
+      { d:'m', q:'The zeroes of p(x) = x² − 4 are…', opts:['2 only','−2 only','2 and −2','4 and −4'], a:2 },
+      { d:'m', q:'2³ × 2⁴ equals…', opts:['2⁷','2¹²','4⁷','2¹'], a:0 },
+      { d:'m', q:'To rationalise 1/(√5 − 2), multiply by…', opts:['(√5 − 2)','(√5 + 2)','(2 − √5)','√5'], a:1 },
+      { d:'h', q:'x³ − 3x² − 9x − 5 factorises to…', opts:['(x+1)²(x−5)','(x−1)²(x+5)','(x+1)(x−1)(x+5)','(x+5)²(x−1)'], a:0 },
+      { d:'h', q:'If x + 1/x = 5, then x² + 1/x² =', opts:['25','23','27','24'], a:1 },
+      { d:'h', q:'x³ + y³ equals…', opts:['(x+y)(x²−xy+y²)','(x+y)(x²+xy+y²)','(x−y)(x²+xy+y²)','(x+y)³'], a:0 },
+      { d:'h', q:'Which of these is irrational?', opts:['√(16/25)','0.272727…','0.101101110…','22/7'], a:2 },
+      { d:'h', q:'The remainder when x⁴ + x³ − 2x² + x + 1 is divided by (x − 1) is…', opts:['0','1','2','3'], a:2 },
+      { d:'h', q:'6x² + 5x − 6 factorises to…', opts:['(2x+3)(3x−2)','(2x−3)(3x+2)','(6x+1)(x−6)','(2x+1)(3x−6)'], a:0 },
+      { d:'h', q:'64^(2/3) equals…', opts:['8','12','16','32'], a:2 },
+      { d:'h', q:'If a = 2 + √3, then 1/a =', opts:['2 − √3','√3 − 2','(2+√3)/7','1/2 + √3'], a:0 }
+    ]
+  },
+  science: {
+    name: 'Class 9 Science — Motion & Force',
+    other: 'maths',
+    bank: [
+      { d:'e', q:'The SI unit of acceleration is…', opts:['m/s','m/s²','km/h','N'], a:1 },
+      { d:'e', q:'Negative acceleration is also called…', opts:['velocity','momentum','retardation','inertia'], a:2 },
+      { d:'e', q:'Inertia of a body is measured by its…', opts:['speed','weight','volume','mass'], a:3 },
+      { d:'e', q:'The slope of a distance–time graph gives…', opts:['acceleration','speed','displacement','force'], a:1 },
+      { d:'e', q:'The SI unit of momentum is…', opts:['kg·m/s','kg·m/s²','N/s','J'], a:0 },
+      { d:'e', q:'In uniform circular motion, the quantity that keeps changing is…', opts:['speed','mass','direction of motion','energy'], a:2 },
+      { d:'e', q:'F = ma is Newton&rsquo;s … law of motion.', opts:['first','second','third','zeroth'], a:1 },
+      { d:'e', q:'Distance is a scalar; displacement is a…', opts:['scalar too','vector','constant','unit'], a:1 },
+      { d:'m', q:'A car goes 0 to 20 m/s in 10 s. Its acceleration is…', opts:['0.5 m/s²','2 m/s²','5 m/s²','200 m/s²'], a:1 },
+      { d:'m', q:'v = u + at with u = 5 m/s, a = 2 m/s², t = 3 s gives v =', opts:['10 m/s','11 m/s','16 m/s','30 m/s'], a:1 },
+      { d:'m', q:'A body covers 60 m in 12 s. Its average speed is…', opts:['5 m/s','6 m/s','0.2 m/s','72 m/s'], a:0 },
+      { d:'m', q:'Momentum of a 10 kg body moving at 5 m/s is…', opts:['2 kg·m/s','15 kg·m/s','50 kg·m/s','500 kg·m/s'], a:2 },
+      { d:'m', q:'A horizontal line on a velocity–time graph means…', opts:['uniform acceleration','increasing speed','uniform velocity','object at rest always'], a:2 },
+      { d:'m', q:'At the top of its flight, a ball thrown straight up has…', opts:['zero velocity, zero acceleration','zero velocity, acceleration g','velocity g, zero acceleration','maximum velocity'], a:1 },
+      { d:'m', q:'A 12 N force acts on a 4 kg mass. The acceleration is…', opts:['48 m/s²','0.33 m/s²','3 m/s²','8 m/s²'], a:2 },
+      { d:'m', q:'An athlete completes one full lap of a circular track. Displacement =', opts:['track length','zero','track radius','2 × radius'], a:1 },
+      { d:'h', q:'s = ut + ½at² with u = 0, a = 2 m/s², t = 5 s gives s =', opts:['10 m','20 m','25 m','50 m'], a:2 },
+      { d:'h', q:'v² = u² + 2as: u = 0, v = 10 m/s, a = 2 m/s². Then s =', opts:['10 m','25 m','50 m','100 m'], a:1 },
+      { d:'h', q:'The area under a velocity–time graph gives…', opts:['acceleration','speed','displacement','momentum'], a:2 },
+      { d:'h', q:'A 2 kg body at 6 m/s hits a 4 kg body at rest and they stick. Final speed =', opts:['1 m/s','2 m/s','3 m/s','6 m/s'], a:1 },
+      { d:'h', q:'A 0.02 kg bullet at 400 m/s is stopped in 0.05 s. Average force =', opts:['16 N','80 N','160 N','800 N'], a:2 },
+      { d:'h', q:'A train slows from 20 m/s to rest over 100 m. Its acceleration =', opts:['−2 m/s²','−4 m/s²','−0.2 m/s²','−20 m/s²'], a:0 },
+      { d:'h', q:'Action–reaction forces do not cancel out because they…', opts:['are unequal','act at different times','act on different bodies','are always vertical'], a:2 },
+      { d:'h', q:'A stone is dropped (g = 10 m/s²). Distance fallen in the 3rd second is…', opts:['15 m','20 m','25 m','45 m'], a:2 }
+    ]
+  }
+};
+
+var WEIGHT = { e:1, m:2, h:3 };
+var DCOLOR = { e:'var(--teal)', m:'var(--peri)', h:'var(--rose)' };
+var DNAME = { e:'Easy', m:'Medium', h:'Hard' };
+
+/* ---------- storage ---------- */
+function loadLS(){
+  try{
+    var raw = localStorage.getItem(LS_KEY);
+    var d = raw ? JSON.parse(raw) : null;
+    if(!d || typeof d !== 'object') d = {};
+    if(!Array.isArray(d.attempts)) d.attempts = [];
+    return d;
+  }catch(e){ return { attempts:[] }; }
+}
+function saveLS(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(store)); }catch(e){} }
+var store = loadLS();
+
+function esc(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ---------- views ---------- */
+var views = { setup: document.getElementById('setupView'), test: document.getElementById('testView'), result: document.getElementById('resultView') };
+function show(name){
+  Object.keys(views).forEach(function(k){ views[k].style.display = k === name ? 'block' : 'none'; });
+  window.scrollTo(0, 0);
+}
+
+/* ---------- previous attempts ---------- */
+function levelOf(p){ return p > 75 ? ['Advanced','var(--teal)'] : p >= 40 ? ['Proficient','var(--peri)'] : ['Foundation','var(--amber)']; }
+function renderAttempts(){
+  var host = document.getElementById('attList');
+  if(!store.attempts.length){
+    host.innerHTML = '<p class="empty-hint">No attempts yet — your history and mastery levels will appear here.</p>';
+    return;
+  }
+  var html = '';
+  store.attempts.slice().reverse().slice(0, 6).forEach(function(a){
+    var lv = levelOf(a.mastery);
+    html += '<div class="att">' +
+      '<span class="lvlpill" style="background:' + lv[1] + '">' + lv[0] + '</span>' +
+      '<div><div style="font-weight:600;font-size:13.5px">' + esc(a.test) + '</div>' +
+      '<div class="d">' + new Date(a.dateISO).toLocaleDateString() + '</div></div>' +
+      '<span class="pct">' + a.mastery + '%</span></div>';
+  });
+  host.innerHTML = html;
+}
+
+/* ---------- adaptive test engine ---------- */
+var T = null;
+var qTimerRAF = null;
+
+function startTest(key){
+  var def = TESTS[key];
+  T = {
+    key: key, def: def,
+    level: 'm',
+    used: {},
+    n: 0,
+    journey: [],   /* {d, ok, q, picked, correctIdx, time} */
+    points: 0, maxPossible: 0,
+    tStart: 0
+  };
+  document.getElementById('tName').textContent = def.name;
+  show('test');
+  nextQuestion();
+}
+
+function pickQuestion(){
+  var order = { e:['e','m','h'], m:['m','e','h'], h:['h','m','e'] }[T.level];
+  for(var oi = 0; oi < order.length; oi++){
+    var lvl = order[oi];
+    var pool = [];
+    T.def.bank.forEach(function(q, i){
+      if(q.d === lvl && !T.used[i]) pool.push(i);
+    });
+    if(pool.length){
+      var idx = pool[Math.floor(Math.random() * pool.length)];
+      T.used[idx] = true;
+      return T.def.bank[idx];
+    }
+  }
+  return null;
+}
+
+function paintLadder(){
+  ['e','m','h'].forEach(function(l){
+    document.getElementById('rung-' + l).classList.toggle('is-on', T.level === l);
+  });
+}
+function paintPath(){
+  var html = '';
+  for(var i = 0; i < TEST_LEN; i++){
+    var st = T.journey[i];
+    html += '<i style="' + (st ? 'background:' + DCOLOR[st.d] + ';border-color:transparent' + (st.ok ? '' : ';opacity:.45') : '') + '"></i>';
+  }
+  document.getElementById('dPath').innerHTML = html;
+}
+
+function nextQuestion(){
+  if(T.n >= TEST_LEN){ finishTest(); return; }
+  var q = pickQuestion();
+  if(!q){ finishTest(); return; }
+  T.current = q;
+  T.n++;
+  T.tStart = Date.now();
+  T.maxPossible += WEIGHT[q.d];
+
+  document.getElementById('tCount').textContent = T.n + ' / ' + TEST_LEN;
+  document.getElementById('dChip').textContent = DNAME[q.d];
+  document.getElementById('dChip').style.background = DCOLOR[q.d];
+  document.getElementById('qText').innerHTML = q.q;
+  document.getElementById('toast').textContent = '';
+  paintLadder(); paintPath();
+
+  var html = '';
+  q.opts.forEach(function(o, i){
+    html += '<button class="opt" data-i="' + i + '" type="button"><span class="ltr">' +
+      String.fromCharCode(65 + i) + '</span><span>' + esc(o) + '</span></button>';
+  });
+  var grid = document.getElementById('optGrid');
+  grid.innerHTML = html;
+  grid.querySelectorAll('.opt').forEach(function(b){
+    b.addEventListener('click', function(){ answer(parseInt(b.getAttribute('data-i'), 10)); });
+  });
+
+  /* per-question timer */
+  var deadline = Date.now() + Q_SECONDS * 1000;
+  var C = 138.2;
+  cancelAnimationFrame(qTimerRAF);
+  function frame(){
+    var remaining = (deadline - Date.now()) / 1000;
+    if(remaining <= 0){ answer(null, true); return; }
+    var arc = document.getElementById('qArc');
+    document.getElementById('qNum').textContent = Math.ceil(remaining);
+    arc.setAttribute('stroke-dashoffset', (C * (1 - remaining / Q_SECONDS)).toFixed(1));
+    arc.setAttribute('stroke', remaining > 20 ? 'var(--teal)' : remaining > 10 ? 'var(--amber)' : 'var(--rose)');
+    qTimerRAF = requestAnimationFrame(frame);
+  }
+  qTimerRAF = requestAnimationFrame(frame);
+}
+
+function answer(pickedIdx, timedOut){
+  cancelAnimationFrame(qTimerRAF);
+  var q = T.current;
+  var ok = pickedIdx === q.a;
+  var took = Math.round((Date.now() - T.tStart) / 1000);
+  if(ok) T.points += WEIGHT[q.d];
+
+  T.journey.push({ d: q.d, ok: ok, q: q.q, opts: q.opts, picked: pickedIdx, correctIdx: q.a, time: took, timedOut: !!timedOut });
+
+  var grid = document.getElementById('optGrid');
+  grid.querySelectorAll('.opt').forEach(function(b){
+    b.disabled = true;
+    var i = parseInt(b.getAttribute('data-i'), 10);
+    if(i === q.a) b.classList.add('is-right');
+    else if(i === pickedIdx) b.classList.add('is-wrong');
+  });
+
+  var toast = document.getElementById('toast');
+  var prev = T.level;
+  if(ok){
+    T.level = prev === 'e' ? 'm' : 'h';
+    toast.style.color = 'var(--teal)';
+    toast.textContent = prev === 'h' ? 'Staying at the top rung.' : 'Level up — the next one is harder.';
+  } else {
+    T.level = prev === 'h' ? 'm' : 'e';
+    toast.style.color = 'var(--rose)';
+    toast.textContent = timedOut
+      ? 'Timed out — stepping back to rebuild.'
+      : (prev === 'e' ? 'Staying on basics — let&apos;s steady this.' : 'Stepping back — let&apos;s rebuild.');
+  }
+  paintLadder(); paintPath();
+  setTimeout(nextQuestion, 1400);
+}
+
+/* ---------- result ---------- */
+function finishTest(){
+  var mastery = T.maxPossible ? Math.round(T.points / T.maxPossible * 100) : 0;
+  var lv = levelOf(mastery);
+  var hardest = T.journey.some(function(j){ return j.d === 'h'; }) ? 'Hard'
+              : T.journey.some(function(j){ return j.d === 'm'; }) ? 'Medium' : 'Easy';
+  var rightCount = T.journey.filter(function(j){ return j.ok; }).length;
+  var avgTime = Math.round(T.journey.reduce(function(s, j){ return s + j.time; }, 0) / T.journey.length);
+
+  store.attempts.push({
+    dateISO: new Date().toISOString(), test: T.def.name, mastery: mastery,
+    level: lv[0], points: T.points, maxPossible: T.maxPossible,
+    journey: T.journey.map(function(j){ return { d: j.d, ok: j.ok }; })
+  });
+  saveLS();
+
+  show('result');
+  document.getElementById('resName').textContent = T.def.name;
+  document.getElementById('resPct').textContent = mastery + '%';
+  document.getElementById('resArc').setAttribute('stroke-dashoffset', (345.6 * (1 - mastery / 100)).toFixed(1));
+
+  var verdicts = {
+    Foundation: 'We found the gaps. PAL practice will rebuild them — then come back and climb.',
+    Proficient: 'Solid base. The hard rung is where your next marks are hiding.',
+    Advanced: 'You held the top rung. You are ready for the chapter final test.'
+  };
+  document.getElementById('resVerdict').innerHTML =
+    '<span style="color:' + lv[1] + '">' + lv[0] + '</span><small>' + verdicts[lv[0]] + '</small>';
+
+  /* journey chart: x = question, y = difficulty */
+  var Y = { e:100, m:60, h:20 };
+  var pts = T.journey.map(function(j, i){ return { x: 30 + i * 55, y: Y[j.d], ok: j.ok, d: j.d }; });
+  var svg = '';
+  for(var i = 0; i < pts.length - 1; i++){
+    svg += '<line x1="' + pts[i].x + '" y1="' + pts[i].y + '" x2="' + pts[i+1].x + '" y2="' + pts[i+1].y + '" stroke="var(--line-strong)" stroke-width="2"/>';
+  }
+  pts.forEach(function(p, i){
+    svg += '<circle cx="' + p.x + '" cy="' + p.y + '" r="10" fill="' + DCOLOR[p.d] + '"' + (p.ok ? '' : ' opacity=".4"') + '/>' +
+           '<text x="' + p.x + '" y="' + (p.y + 4) + '" text-anchor="middle" font-size="11" font-weight="700" fill="#0B1224">' + (p.ok ? '&#10003;' : '&#10005;') + '</text>';
+  });
+  ['Hard','Medium','Easy'].forEach(function(lbl, i){
+    svg += '<text x="556" y="' + (24 + i * 40) + '" text-anchor="end" font-size="9" fill="var(--muted)" font-family="monospace" letter-spacing="1">' + lbl.toUpperCase() + '</text>';
+  });
+  document.getElementById('journeySvg').innerHTML = svg;
+
+  document.getElementById('resStats').innerHTML =
+    '<div class="stat"><b>' + rightCount + ' / ' + TEST_LEN + '</b><span>correct</span></div>' +
+    '<div class="stat"><b>' + hardest + '</b><span>highest level reached</span></div>' +
+    '<div class="stat"><b>' + avgTime + 's</b><span>avg time per question</span></div>' +
+    '<div class="stat"><b>' + T.points + ' / ' + T.maxPossible + '</b><span>weighted points</span></div>';
+
+  /* recommendation */
+  var hardMisses = T.journey.filter(function(j){ return j.d === 'h' && !j.ok; }).length;
+  var reco;
+  if(mastery > 75) reco = 'You climbed fast and held Hard. PAL suggests attempting the chapter final test to lock the mastery badge.';
+  else if(hardMisses >= 2) reco = 'You reached Hard but slipped ' + hardMisses + ' times there. Rewatch the lecture&rsquo;s tougher worked examples, then retake.';
+  else if(mastery >= 40) reco = 'You held Medium steadily. One focused PAL practice session should unlock the Hard rung.';
+  else reco = 'The test stepped back to basics for you — no stress. Start with the chapter video and PAL bridging practice, then return.';
+  document.getElementById('resReco').innerHTML = '<span class="mono" style="flex:none;margin-top:3px">PAL says</span><span>' + reco + '</span>';
+
+  /* review */
+  var rv = '';
+  T.journey.forEach(function(j, i){
+    rv += '<details><summary><span class="dchip" style="background:' + DCOLOR[j.d] + '">' + DNAME[j.d] + '</span>' +
+      '<span style="color:' + (j.ok ? 'var(--teal)' : 'var(--rose)') + '">' + (j.ok ? 'Correct' : (j.timedOut ? 'Timed out' : 'Wrong')) + '</span>' +
+      '<span style="font-weight:500;color:var(--muted);font-size:13px">Q' + (i + 1) + '</span></summary>' +
+      '<div class="rbody"><div style="margin-bottom:6px;color:var(--cream)">' + j.q + '</div>' +
+      (j.picked !== null && !j.ok ? 'Your answer: <b style="color:var(--rose)">' + esc(j.opts[j.picked]) + '</b> · ' : '') +
+      'Correct: <b style="color:var(--teal)">' + esc(j.opts[j.correctIdx]) + '</b> · ' + j.time + 's</div></details>';
+  });
+  document.getElementById('resReview').innerHTML = rv;
+
+  document.getElementById('retakeBtn').onclick = function(){ startTest(T.key); };
+  document.getElementById('otherBtn').onclick = function(){ startTest(T.def.other); };
+  renderAttempts();
+}
+
+/* ---------- boot ---------- */
+document.querySelectorAll('[data-test]').forEach(function(b){
+  b.addEventListener('click', function(){ startTest(b.getAttribute('data-test')); });
+});
+renderAttempts();
+show('setup');
+
+})();
+</script>
+<script src="../theme.js"></script>
+</body>
+</html>
