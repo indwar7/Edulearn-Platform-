@@ -439,15 +439,15 @@
           name: 'Demo Student',
           loginTime: new Date().toISOString()
         }));
-        alert('✅ Login successful! Redirecting to dashboard...');
+        alert('Login successful! Redirecting to dashboard...');
         setTimeout(() => window.location.href = 'learn.html', 500);
       } else {
-        alert('❌ Invalid credentials.\n\nDemo: student@edulearn.com / Demo@2024');
+        alert('Invalid credentials.\n\nDemo: student@edulearn.com / Demo@2024');
       }
     }
 
     function handleSocial(provider) {
-      alert(`🔗 ${provider.toUpperCase()} login coming soon!\n\nFor now, use the demo credentials to explore.`);
+      alert(`${provider.toUpperCase()} login coming soon!\n\nFor now, use the demo credentials to explore.`);
     }
   </script>
 

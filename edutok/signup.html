@@ -499,12 +499,12 @@
         signupTime: new Date().toISOString()
       }));
 
-      alert(`✅ Welcome ${firstName}!\n\nAccount created successfully. Redirecting to learn...`);
+      alert(`Welcome ${firstName}!\n\nAccount created successfully. Redirecting to learn...`);
       setTimeout(() => window.location.href = 'learn.html?class=' + classLevel, 500);
     }
 
     function handleSocial(provider) {
-      alert(`🔗 ${provider.toUpperCase()} signup coming soon!\n\nFor now, create an account with your email.`);
+      alert(`${provider.toUpperCase()} signup coming soon!\n\nFor now, create an account with your email.`);
     }
   </script>
 

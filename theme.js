@@ -61,7 +61,9 @@ class ThemeManager {
 
   updateButtonIcon(button) {
     const isDarkMode = document.documentElement.classList.contains(this.darkModeClass);
-    button.textContent = isDarkMode ? '☀️' : '🌙';
+    const sun = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M18.7 5.3 17 7M7 17l-1.7 1.7"/></svg>';
+    const moon = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>';
+    button.innerHTML = isDarkMode ? sun : moon;
     button.title = isDarkMode ? 'Switch to light mode' : 'Switch to dark mode';
     button.setAttribute('aria-label', button.title);
   }
