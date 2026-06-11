@@ -121,10 +121,33 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
 .wave i:nth-child(2){animation-delay:.15s}.wave i:nth-child(3){animation-delay:.3s}.wave i:nth-child(4){animation-delay:.45s}.wave i:nth-child(5){animation-delay:.6s}
 @keyframes wv{0%,100%{height:5px}50%{height:18px}}
 .stage__name{position:absolute;left:14px;bottom:12px;background:rgba(5,8,15,.55);color:#F5F7FA;font-size:12.5px;font-weight:600;border-radius:8px;padding:5px 12px;backdrop-filter:blur(6px)}
-.selftile{position:absolute;right:14px;bottom:12px;width:120px;aspect-ratio:4/3;border-radius:14px;background:linear-gradient(135deg,#3a4a73,#1d2944);border:1px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:5px;color:#F5F7FA}
+.selftile{position:absolute;right:14px;bottom:12px;width:132px;aspect-ratio:4/3;border-radius:14px;overflow:hidden;background:linear-gradient(135deg,#3a4a73,#1d2944);border:1.5px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;color:#F5F7FA;transition:border-color .3s var(--ease),box-shadow .3s var(--ease)}
+.selftile.cam-on{border-color:var(--teal);box-shadow:0 0 0 2px rgba(61,232,197,.25)}
+.selftile.cam-away{border-color:var(--rose);box-shadow:0 0 0 2px rgba(255,122,162,.3)}
+.selftile video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1);display:none}
+.selftile.has-cam video{display:block}
+.self-fallback{display:flex;align-items:center;justify-content:center}
+.selftile.has-cam .self-fallback{display:none}
 .selftile .you{width:38px;height:38px;border-radius:50%;background:var(--amber);color:var(--on-accent);font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center}
-.selftile .st{font-size:10px;opacity:.85}
-.handchip{position:absolute;top:10px;right:14px;background:var(--amber);color:var(--on-accent);font-weight:700;font-size:11.5px;border-radius:999px;padding:4px 12px;display:none}
+.selftile .st{position:absolute;left:7px;bottom:6px;font-size:9.5px;font-weight:600;background:rgba(5,8,15,.55);border-radius:6px;padding:2px 7px;backdrop-filter:blur(4px)}
+.gaze-badge{position:absolute;top:7px;left:7px;font-family:'Fragment Mono',monospace;font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;border-radius:999px;padding:3px 8px;display:none;align-items:center;gap:5px;color:var(--on-accent);background:var(--teal)}
+.selftile.has-cam .gaze-badge{display:inline-flex}
+.gaze-badge.away{background:var(--rose)}
+.gaze-badge::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--on-accent);opacity:.7}
+.handchip{position:absolute;top:10px;right:14px;background:var(--amber);color:var(--on-accent);font-weight:700;font-size:11.5px;border-radius:999px;padding:4px 12px;display:none;z-index:3}
+
+/* camera consent banner */
+.cam-consent{display:flex;align-items:center;gap:16px;background:linear-gradient(135deg,rgba(61,232,197,.08),rgba(124,155,255,.08));border:1px solid rgba(61,232,197,.3);border-radius:18px;padding:16px 20px;margin-bottom:18px;flex-wrap:wrap}
+.cam-consent.is-hidden{display:none}
+.cam-consent__ic{width:42px;height:42px;border-radius:12px;background:var(--aurora);color:var(--on-accent);display:flex;align-items:center;justify-content:center;flex:none}
+.cam-consent__body{flex:1;min-width:200px}
+.cam-consent__body b{display:block;font-family:'Fraunces',serif;font-size:16px;font-weight:600;margin-bottom:2px}
+.cam-consent__body span{font-size:13px;color:var(--muted);line-height:1.45}
+.cam-consent__acts{display:flex;gap:9px;flex:none}
+.btn-cam{background:var(--aurora);color:var(--on-accent);font-weight:700;font-size:13.5px;padding:10px 18px;border-radius:999px;box-shadow:0 8px 24px rgba(61,232,197,.3);transition:transform .3s var(--ease)}
+.btn-cam:hover{transform:translateY(-2px)}
+.btn-skip{border:1px solid var(--line);font-weight:600;font-size:13.5px;padding:9px 16px;border-radius:999px;color:var(--muted)}
+.btn-skip:hover{color:var(--cream);border-color:var(--line-strong)}
 .stage__note{margin-top:10px;font-family:'Fragment Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 .controls{display:flex;justify-content:center;gap:10px;margin-top:16px;flex-wrap:wrap}
 .ctl{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:10px 18px;font-size:13.5px;font-weight:600;transition:all .3s var(--ease)}
@@ -279,6 +302,20 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
       </div>
     </div>
 
+    <div class="cam-consent" id="camConsent">
+      <div class="cam-consent__ic">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+      </div>
+      <div class="cam-consent__body">
+        <b>Turn on camera attention monitoring</b>
+        <span>PAL watches whether you're looking at the screen and shares a focus report with your parent and teacher. Video stays on your device — only the attention score is saved.</span>
+      </div>
+      <div class="cam-consent__acts">
+        <button class="btn-cam" id="enableCam" type="button">Enable camera</button>
+        <button class="btn-skip" id="skipCam" type="button">Not now</button>
+      </div>
+    </div>
+
     <div class="stagegrid">
       <div>
         <div class="stage">
@@ -288,9 +325,14 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
           </div>
           <span class="stage__name" id="tutorName">Priya Sharma · Tutor</span>
           <span class="handchip" id="handChip">Hand raised</span>
-          <div class="selftile"><span class="you">AN</span><span class="st" id="selfStatus">mic on · cam on</span></div>
+          <div class="selftile" id="selfTile">
+            <video id="selfCam" autoplay muted playsinline></video>
+            <span class="self-fallback" id="selfFallback"><span class="you">AN</span></span>
+            <span class="gaze-badge" id="gazeBadge">Looking</span>
+            <span class="st" id="selfStatus">mic on · cam on</span>
+          </div>
         </div>
-        <div class="stage__note">Prototype classroom — tiles simulated. Production: Zoom Video SDK or self-hosted LiveKit.</div>
+        <div class="stage__note" id="stageNote">Prototype classroom — tutor tile simulated. Your tile uses your real camera for attention monitoring.</div>
         <div class="controls">
           <button class="ctl" id="micBtn" type="button">Mic on</button>
           <button class="ctl" id="camBtn" type="button">Camera on</button>
@@ -470,9 +512,11 @@ function renderReports(){
         '<span class="rep__score" style="background:' + scoreColor(r.score) + '">' + r.score + '</span>' +
         '<div class="rep__body">' +
           '<div class="rep__topic">' + esc(r.topic) + '</div>' +
-          '<div class="rep__date">' + d.toLocaleDateString() + ' · ' + r.duration + ' attended</div>' +
+          '<div class="rep__date">' + d.toLocaleDateString() + ' · ' + r.duration + ' attended' +
+            (typeof r.onScreenPct === 'number' ? ' · ' + r.onScreenPct + '% on screen' : '') + '</div>' +
         '</div>' +
-        '<span class="tag" style="color:var(--teal);border-color:rgba(61,232,197,.4)">Sent to parent</span>' +
+        '<span class="tag" style="color:var(--teal);border-color:rgba(61,232,197,.4)">' +
+          (r.camUsed ? 'Camera' : 'Sent') + '</span>' +
       '</div>';
   });
   host.innerHTML = html;
@@ -536,8 +580,17 @@ function joinClass(id){
     longestFocus: 0, focusStart: Date.now(),
     events: [{ t: 0, type:'ok', label:'Joined the class' }],
     timer: setInterval(tick, 1000),
-    chatTimers: []
+    chatTimers: [],
+    /* camera attention */
+    camOn: false, gaze: 'unknown', gazeAway: false,
+    onScreenSec: 0, offScreenSec: 0, lookAwayCount: 0,
+    camTimer: null, camStream: null
   };
+  /* reset camera UI */
+  var consent = document.getElementById('camConsent');
+  consent.classList.remove('is-hidden');
+  var tile = document.getElementById('selfTile');
+  tile.classList.remove('has-cam','cam-on','cam-away');
   startChatScript();
 }
 
@@ -568,6 +621,129 @@ document.addEventListener('visibilitychange', function(){ setAway(document.hidde
 window.addEventListener('blur', function(){ setAway(true); });
 window.addEventListener('focus', function(){ setAway(false); });
 
+/* ---------- CAMERA ATTENTION (real webcam + face/gaze detection) ---------- */
+var faceDetector = null;
+if('FaceDetector' in window){
+  try{ faceDetector = new window.FaceDetector({ fastMode: true, maxDetectedFaces: 1 }); }catch(e){ faceDetector = null; }
+}
+/* canvas for the fallback brightness/skin heuristic */
+var gazeCanvas = document.createElement('canvas');
+gazeCanvas.width = 64; gazeCanvas.height = 48;
+var gazeCtx = gazeCanvas.getContext('2d', { willReadFrequently: true });
+
+function setGaze(state){ /* 'looking' | 'away' */
+  if(!CLS || !CLS.camOn) return;
+  var badge = document.getElementById('gazeBadge');
+  var tile = document.getElementById('selfTile');
+  var awayNow = (state === 'away');
+  if(awayNow !== CLS.gazeAway){
+    CLS.gazeAway = awayNow;
+    if(awayNow){ CLS.lookAwayCount++; markFocusStretch(); logEvent('bad', 'Looked away from the screen (camera)'); }
+    else { CLS.focusStart = Date.now(); logEvent('ok', 'Eyes back on screen'); }
+  }
+  CLS.gaze = state;
+  badge.textContent = awayNow ? 'Looking away' : 'Looking';
+  badge.classList.toggle('away', awayNow);
+  tile.classList.toggle('cam-on', !awayNow);
+  tile.classList.toggle('cam-away', awayNow);
+}
+
+/* analyse one video frame → resolve to true if a centred face is present */
+function detectGaze(video){
+  if(faceDetector){
+    return faceDetector.detect(video).then(function(faces){
+      if(!faces || !faces.length) return false;
+      var b = faces[0].boundingBox;
+      var cx = (b.x + b.width/2) / video.videoWidth;
+      var cy = (b.y + b.height/2) / video.videoHeight;
+      var big = (b.width * b.height) / (video.videoWidth * video.videoHeight) > 0.025;
+      /* "looking" = a reasonably sized face roughly centred in frame */
+      return big && cx > 0.28 && cx < 0.72 && cy > 0.18 && cy < 0.82;
+    }).catch(function(){ return heuristicGaze(video); });
+  }
+  return Promise.resolve(heuristicGaze(video));
+}
+
+/* fallback when FaceDetector is unavailable (Firefox/Safari):
+   compare centre-region skin-tone coverage — present & facing forward → looking */
+function heuristicGaze(video){
+  try{
+    gazeCtx.drawImage(video, 0, 0, gazeCanvas.width, gazeCanvas.height);
+    var d = gazeCtx.getImageData(0, 0, gazeCanvas.width, gazeCanvas.height).data;
+    var W = gazeCanvas.width, H = gazeCanvas.height;
+    var skin = 0, centreSkin = 0, total = 0, centreTotal = 0;
+    for(var y = 0; y < H; y++){
+      for(var x = 0; x < W; x++){
+        var i = (y * W + x) * 4;
+        var r = d[i], g = d[i+1], b = d[i+2];
+        var isSkin = r > 70 && g > 40 && b > 25 && r > g && r > b && (r - g) > 12 && Math.abs(r - g) < 130;
+        total++;
+        if(isSkin) skin++;
+        var inC = x > W*0.3 && x < W*0.7 && y > H*0.2 && y < H*0.8;
+        if(inC){ centreTotal++; if(isSkin) centreSkin++; }
+      }
+    }
+    var centreFrac = centreSkin / centreTotal;
+    /* face present and centred → looking; mostly empty centre → away */
+    return centreFrac > 0.16 && (skin/total) > 0.07;
+  }catch(e){ return true; }
+}
+
+function startCamera(){
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    camFailed('Camera not supported on this browser.');
+    return;
+  }
+  navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 240, facingMode: 'user' }, audio: false })
+    .then(function(stream){
+      if(!CLS){ stream.getTracks().forEach(function(t){ t.stop(); }); return; }
+      CLS.camStream = stream;
+      CLS.camOn = true;
+      var video = document.getElementById('selfCam');
+      video.srcObject = stream;
+      document.getElementById('selfTile').classList.add('has-cam');
+      document.getElementById('camConsent').classList.add('is-hidden');
+      document.getElementById('selfStatus').textContent = 'camera on';
+      logEvent('ok', 'Camera monitoring started');
+      setGaze('looking');
+      var miss = 0;
+      CLS.camTimer = setInterval(function(){
+        if(!CLS || !CLS.camOn || video.readyState < 2) return;
+        detectGaze(video).then(function(looking){
+          /* debounce: need 2 consecutive away frames before flipping to away */
+          if(looking){ miss = 0; setGaze('looking'); }
+          else { miss++; if(miss >= 2) setGaze('away'); }
+        });
+      }, 900);
+    })
+    .catch(function(err){
+      camFailed(err && err.name === 'NotAllowedError'
+        ? 'Camera permission denied. Attention will be tracked by tab focus only.'
+        : 'Could not start the camera. Tab-focus tracking stays on.');
+    });
+}
+
+function camFailed(msg){
+  var consent = document.getElementById('camConsent');
+  consent.classList.add('is-hidden');
+  document.getElementById('stageNote').textContent = msg;
+  if(CLS) logEvent('warn', 'Camera not enabled — tab-focus tracking only');
+}
+
+function stopCamera(){
+  if(CLS && CLS.camTimer){ clearInterval(CLS.camTimer); CLS.camTimer = null; }
+  if(CLS && CLS.camStream){ CLS.camStream.getTracks().forEach(function(t){ t.stop(); }); CLS.camStream = null; }
+  var video = document.getElementById('selfCam');
+  if(video) video.srcObject = null;
+}
+
+document.getElementById('enableCam').addEventListener('click', startCamera);
+document.getElementById('skipCam').addEventListener('click', function(){
+  document.getElementById('camConsent').classList.add('is-hidden');
+  document.getElementById('stageNote').textContent = 'Camera monitoring skipped — attention tracked by tab focus only.';
+  if(CLS) logEvent('warn', 'Skipped camera monitoring');
+});
+
 ['mousemove','keydown','pointerdown','scroll','touchstart'].forEach(function(ev){
   window.addEventListener(ev, function(){
     if(!CLS) return;
@@ -585,9 +761,19 @@ function tick(){
   var el = Math.round((Date.now() - CLS.t0)/1000);
   document.getElementById('clsClock').textContent = mmss(el);
 
+  /* camera attention accounting */
+  if(CLS.camOn){
+    if(CLS.gazeAway) CLS.offScreenSec++; else CLS.onScreenSec++;
+  }
+
   if(CLS.away){
+    /* left the browser tab entirely */
     if(CLS.awayLoss < 20){ CLS.score -= 2; CLS.awayLoss += 2; }
-  } else if(Date.now() - CLS.lastActivity > 45000){
+  } else if(CLS.camOn && CLS.gazeAway){
+    /* camera says eyes are off the screen — strongest penalty */
+    CLS.score -= 1.5;
+  } else if(Date.now() - CLS.lastActivity > 45000 && !CLS.camOn){
+    /* no camera: fall back to idle detection */
     if(!CLS.idle){
       CLS.idle = true;
       markFocusStretch();
@@ -681,11 +867,14 @@ document.getElementById('leaveBtn').addEventListener('click', function(){
   if(!CLS) return;
   clearInterval(CLS.timer);
   CLS.chatTimers.forEach(clearTimeout);
+  stopCamera();
   markFocusStretch();
 
   var score = Math.round(CLS.score);
   var durSec = Math.round((Date.now() - CLS.t0)/1000);
   var duration = mmss(durSec) + ' min';
+  var camTotal = CLS.onScreenSec + CLS.offScreenSec;
+  var onScreenPct = camTotal ? Math.round(CLS.onScreenSec / camTotal * 100) : null;
   var report = {
     dateISO: new Date().toISOString(),
     topic: CLS.session.topic,
@@ -693,7 +882,10 @@ document.getElementById('leaveBtn').addEventListener('click', function(){
     score: score,
     awayCount: CLS.awayCount,
     chats: CLS.chats,
-    events: CLS.events
+    events: CLS.events,
+    camUsed: CLS.camOn,
+    onScreenPct: onScreenPct,
+    lookAwayCount: CLS.lookAwayCount
   };
   store.reports.push(report);
   saveLS();
@@ -718,8 +910,11 @@ document.getElementById('leaveBtn').addEventListener('click', function(){
 
   document.getElementById('repStats').innerHTML =
     '<div class="stat"><b>' + duration + '</b><span>attended</span></div>' +
-    '<div class="stat"><b>' + CLS.awayCount + '</b><span>times looked away</span></div>' +
-    '<div class="stat"><b>' + mmss(Math.round(CLS.longestFocus/1000)) + '</b><span>longest focused stretch</span></div>' +
+    (onScreenPct !== null
+      ? '<div class="stat"><b>' + onScreenPct + '%</b><span>eyes on screen (camera)</span></div>' +
+        '<div class="stat"><b>' + CLS.lookAwayCount + '</b><span>times looked away (camera)</span></div>'
+      : '<div class="stat"><b>' + CLS.awayCount + '</b><span>times left the tab</span></div>' +
+        '<div class="stat"><b>' + mmss(Math.round(CLS.longestFocus/1000)) + '</b><span>longest focused stretch</span></div>') +
     '<div class="stat"><b>' + CLS.chats + '</b><span>doubts asked in chat</span></div>';
 
   var tl = '';

@@ -502,8 +502,12 @@ function parentReply(text){
     var reps = (live && live.reports) || [];
     if(!reps.length) return { text:'No live-class reports yet. After every live session, PAL sends you an **attentiveness report** — how long they stayed focused, when they drifted, and what they asked. It will appear here automatically.', chips:['How is overall progress?'] };
     var r = reps[reps.length - 1];
-    return { text:'Latest live class — **' + r.topic + '**:\n- Attention score: **' + r.score + '/100**\n- Looked away **' + (r.awayCount || 0) + ' times**, asked **' + (r.chats || 0) + ' doubts** in chat\n- Attended ' + r.duration +
-      '\n\n' + (r.score >= 80 ? 'Excellent focus — worth a shabashi today.' : r.score >= 50 ? 'Decent focus with some drift — a quieter study corner could help.' : 'Focus dropped a lot — try shorter sessions, phone in another room.'),
+    var camLine = (typeof r.onScreenPct === 'number')
+      ? '\n- **Camera attention: eyes on screen ' + r.onScreenPct + '% of the class**, looked away ' + (r.lookAwayCount || 0) + ' times'
+      : '\n- Looked away **' + (r.awayCount || 0) + ' times** (tracked by tab focus)';
+    return { text:'Latest live class — **' + r.topic + '**:\n- Attention score: **' + r.score + '/100**' + camLine + '\n- Asked **' + (r.chats || 0) + ' doubts** in chat, attended ' + r.duration +
+      '\n\n' + (r.score >= 80 ? 'Excellent focus — worth a shabashi today.' : r.score >= 50 ? 'Decent focus with some drift — a quieter study corner could help.' : 'Focus dropped a lot — try shorter sessions, phone in another room.') +
+      (r.camUsed ? '\n\nThis report used live **camera monitoring** — the video never left the device, only the score was saved.' : ''),
       chips:['How is overall progress?','Any weak subjects?'] };
   }
   if(/\b(weak|problem|struggl|kamzor|improve)\b/.test(t)){

@@ -962,8 +962,17 @@ html.dark-mode [data-theme-toggle] {
             </div>
           </div>
 
+          <!-- (c2) live-class camera attention -->
+          <div class="card span12 stag" style="--i:3" id="attnCard">
+            <div class="card-head">
+              <h3 class="card-title">Live class attention</h3>
+              <span class="eyebrow">CAMERA-MONITORED</span>
+            </div>
+            <div id="attnBody" style="display:flex;align-items:center;gap:26px;flex-wrap:wrap"></div>
+          </div>
+
           <!-- (d) reassurance -->
-          <div class="card span5 stag reassure" style="--i:3">
+          <div class="card span5 stag reassure" style="--i:4">
             <h4 data-i18n="p.reassureH">Built to never block learning</h4>
             <p data-i18n="p.reassureP">All learning works offline — videos, practice and tests run without internet, and usage syncs automatically when you are back online.</p>
             <div class="divide"></div>
@@ -1747,10 +1756,56 @@ function countUp(el, target, dur, suffix){
 /* ------------------------------------------------------------
    ROLE SWITCHING — fade + restagger
 ------------------------------------------------------------ */
+/* ---- live-class camera attention (reads edulearn_live.reports) ---- */
+function renderAttention(){
+  var host = document.getElementById('attnBody');
+  if(!host) return;
+  var data = null;
+  try{ data = JSON.parse(localStorage.getItem('edulearn_live') || 'null'); }catch(e){}
+  var reps = (data && data.reports) || [];
+  var camReps = reps.filter(function(r){ return typeof r.onScreenPct === 'number'; });
+
+  if(!camReps.length){
+    host.innerHTML =
+      '<div style="flex:1;min-width:220px"><p style="color:var(--muted);font-size:14px;line-height:1.6">' +
+      'No camera-monitored class yet. When Ananya joins a <a href="live.html" style="color:var(--teal)">live class</a> and turns on attention monitoring, PAL watches whether she is looking at the screen and the focus report appears here.</p>' +
+      '<span class="mono" style="color:var(--muted);display:inline-flex;align-items:center;gap:7px;margin-top:6px">' +
+      '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>' +
+      'Video stays on the device — only the score is shared</span></div>';
+    return;
+  }
+
+  var r = camReps[camReps.length - 1];
+  var c = r.onScreenPct >= 80 ? 'var(--teal)' : r.onScreenPct >= 50 ? 'var(--amber)' : 'var(--rose)';
+  var C = 2 * Math.PI * 40;
+  var verdict = r.onScreenPct >= 80 ? 'Excellent focus' : r.onScreenPct >= 50 ? 'Good, some drift' : 'Often distracted';
+  var d = new Date(r.dateISO);
+  host.innerHTML =
+    '<div style="position:relative;width:104px;height:104px;flex:none">' +
+      '<svg width="104" height="104" viewBox="0 0 104 104" style="transform:rotate(-90deg)">' +
+        '<circle cx="52" cy="52" r="40" fill="none" stroke="var(--line)" stroke-width="8"/>' +
+        '<circle cx="52" cy="52" r="40" fill="none" stroke="' + c + '" stroke-width="8" stroke-linecap="round" stroke-dasharray="' + C.toFixed(1) + '" stroke-dashoffset="' + (C * (1 - r.onScreenPct/100)).toFixed(1) + '"/>' +
+      '</svg>' +
+      '<span style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:Fraunces,serif;font-weight:600;font-size:24px">' + r.onScreenPct + '%</span>' +
+    '</div>' +
+    '<div style="flex:1;min-width:200px">' +
+      '<div style="font-weight:700;font-size:16px;color:' + c + '">' + verdict + '</div>' +
+      '<div style="color:var(--muted);font-size:14px;margin:3px 0 12px">' + esc(r.topic) + ' · ' + d.toLocaleDateString() + '</div>' +
+      '<div style="display:flex;gap:20px;flex-wrap:wrap">' +
+        '<div><b style="font-family:Fraunces,serif;font-size:19px">' + r.onScreenPct + '%</b><div class="mono" style="color:var(--muted)">eyes on screen</div></div>' +
+        '<div><b style="font-family:Fraunces,serif;font-size:19px">' + (r.lookAwayCount || 0) + '</b><div class="mono" style="color:var(--muted)">looked away</div></div>' +
+        '<div><b style="font-family:Fraunces,serif;font-size:19px">' + (r.chats || 0) + '</b><div class="mono" style="color:var(--muted)">doubts asked</div></div>' +
+        '<div><b style="font-family:Fraunces,serif;font-size:19px">' + r.duration + '</b><div class="mono" style="color:var(--muted)">attended</div></div>' +
+      '</div>' +
+    '</div>';
+}
+
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
 var VIEW_ANIMATORS = {
   student: function(){ animateBars(); animateDonuts(); animateContinue(); },
   teacher: function(){ animateTeacherRing(); animateHbars(); },
-  parent:  function(){ animateArea(); }
+  parent:  function(){ animateArea(); renderAttention(); }
 };
 
 function positionInd(btn){
