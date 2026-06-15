@@ -235,6 +235,14 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
 .view.active{display:block;}
 .view.leaving{opacity:0;transform:translateY(-10px);transition:opacity .25s ease,transform .25s ease;}
 .vgrid{display:grid;grid-template-columns:repeat(12,1fr);gap:22px;}
+/* Role-based feature menu */
+.feat-menu{grid-column:span 12;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:4px;}
+.feat-card{display:flex;flex-direction:column;gap:6px;padding:16px 16px 15px;border:1px solid var(--line,#262b3a);border-radius:16px;background:var(--card2,#171b27);text-decoration:none;color:inherit;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;}
+.feat-card:hover{transform:translateY(-3px);border-color:var(--teal,#3DE8C5);box-shadow:0 10px 28px rgba(61,232,197,.16);}
+.feat-card .fc-ico{font-size:22px;line-height:1;}
+.feat-card .fc-title{font-weight:700;font-size:15px;}
+.feat-card .fc-sub{font-size:12px;color:var(--muted,#8a90a2);line-height:1.35;}
+.feat-label{grid-column:span 12;font-family:'Fragment Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted,#8a90a2);margin:2px 0 -6px;}
 .stag{opacity:0;transform:translateY(26px);transition:opacity .65s var(--ease),transform .65s var(--ease);transition-delay:calc(var(--i,0)*75ms);}
 .view.shown .stag{opacity:1;transform:translateY(0);}
 
@@ -657,8 +665,8 @@ html.dark-mode [data-theme-toggle] {
     </a>
     <div class="nav-links pl" style="--d:60ms">
       <a class="nav-link" href="index.html" data-i18n="nav.home">Home</a>
-      <a class="nav-link" href="learn.html" data-i18n="nav.learn">Learn</a>
-      <a class="nav-link" href="pal.html" data-i18n="nav.pal">PAL Adaptive AI</a>
+      <a class="nav-link" id="navLearn" href="learn.html" data-i18n="nav.learn">Learn</a>
+      <a class="nav-link" id="navPal" href="pal.html" data-i18n="nav.pal">PAL Adaptive AI</a>
       <a class="nav-link current" href="dashboard.html" aria-current="page" data-i18n="nav.dashboard">Dashboard</a>
     </div>
     <div class="nav-right pl" style="--d:120ms">
@@ -728,6 +736,31 @@ html.dark-mode [data-theme-toggle] {
       <!-- ░░░░░░░░░░░░░░░░░ STUDENT VIEW ░░░░░░░░░░░░░░░░░ -->
       <section class="view" id="view-student" aria-label="Student dashboard">
         <div class="vgrid">
+
+          <!-- STUDENT feature menu -->
+          <div class="feat-label stag" style="--i:0">My Learning</div>
+          <nav class="feat-menu stag" style="--i:0" aria-label="Student features">
+            <a class="feat-card" href="learn.html">
+              <span class="fc-ico">📚</span><span class="fc-title">Learn</span>
+              <span class="fc-sub">Browse chapters & video lessons</span>
+            </a>
+            <a class="feat-card" href="mocktest.html">
+              <span class="fc-ico">📝</span><span class="fc-title">Mock Tests</span>
+              <span class="fc-sub">Practice & track your scores</span>
+            </a>
+            <a class="feat-card" href="pal.html">
+              <span class="fc-ico">🤖</span><span class="fc-title">PAL AI Tutor</span>
+              <span class="fc-sub">Ask doubts, get step-by-step help</span>
+            </a>
+            <a class="feat-card" href="challenge.html">
+              <span class="fc-ico">⚔️</span><span class="fc-title">Arena</span>
+              <span class="fc-sub">Challenges & leaderboards</span>
+            </a>
+            <a class="feat-card" href="live.html">
+              <span class="fc-ico">🎥</span><span class="fc-title">Join Live Class</span>
+              <span class="fc-sub">Attend your scheduled classes</span>
+            </a>
+          </nav>
 
           <!-- pal chip strip -->
           <div class="span12 stag" style="--i:0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
@@ -855,6 +888,27 @@ html.dark-mode [data-theme-toggle] {
       <section class="view" id="view-teacher" aria-label="Teacher dashboard">
         <div class="vgrid">
 
+          <!-- TEACHER feature menu -->
+          <div class="feat-label stag" style="--i:0">Teaching Tools</div>
+          <nav class="feat-menu stag" style="--i:0" aria-label="Teacher features">
+            <a class="feat-card" href="live.html">
+              <span class="fc-ico">🎥</span><span class="fc-title">Start Live Class</span>
+              <span class="fc-sub">Host a class for your section</span>
+            </a>
+            <a class="feat-card" href="#" id="featShareTest">
+              <span class="fc-ico">🔗</span><span class="fc-title">Share a Test</span>
+              <span class="fc-sub">Assign a mock test to your class</span>
+            </a>
+            <a class="feat-card" href="#rosterAnchor">
+              <span class="fc-ico">👥</span><span class="fc-title">Class Roster</span>
+              <span class="fc-sub">View students & performance</span>
+            </a>
+            <a class="feat-card" href="pal.html">
+              <span class="fc-ico">🤖</span><span class="fc-title">PAL for Teachers</span>
+              <span class="fc-sub">Lesson planning & insights</span>
+            </a>
+          </nav>
+
           <div class="span12 stag t-head" style="--i:0">
             <h2>Class <em>7-B</em> · Science · 32 students</h2>
             <button class="btn-primary" id="shareTestBtn">
@@ -921,6 +975,23 @@ html.dark-mode [data-theme-toggle] {
       <!-- ░░░░░░░░░░░░░░░░░ PARENT VIEW ░░░░░░░░░░░░░░░░░ -->
       <section class="view" id="view-parent" aria-label="Parent dashboard">
         <div class="vgrid">
+
+          <!-- PARENT feature menu -->
+          <div class="feat-label stag" style="--i:0">Parent Tools</div>
+          <nav class="feat-menu stag" style="--i:0" aria-label="Parent features">
+            <a class="feat-card" href="#childProgress">
+              <span class="fc-ico">📈</span><span class="fc-title">Child's Progress</span>
+              <span class="fc-sub">Streak, minutes & chapters</span>
+            </a>
+            <a class="feat-card" href="#childAttendance">
+              <span class="fc-ico">🗓️</span><span class="fc-title">Attendance</span>
+              <span class="fc-sub">Class attendance & activity</span>
+            </a>
+            <a class="feat-card" href="pal.html">
+              <span class="fc-ico">🤖</span><span class="fc-title">PAL for Parents</span>
+              <span class="fc-sub">Guidance to support learning</span>
+            </a>
+          </nav>
 
           <!-- (a) child summary -->
           <div class="card span5 stag child-card" style="--i:0">
@@ -1958,6 +2029,8 @@ function initEvents(){
   });
   // modal
   $('#shareTestBtn').addEventListener('click', openModal);
+  var featShare = document.getElementById('featShareTest');
+  if (featShare) featShare.addEventListener('click', function(e){ e.preventDefault(); openModal(); });
   $('#modalClose').addEventListener('click', closeModal);
   $('#modalCancel').addEventListener('click', closeModal);
   modalBg.addEventListener('click', function(e){ if (e.target === modalBg) closeModal(); });
@@ -1987,6 +2060,16 @@ function lockToRole(role){
   if (sw) sw.style.display = 'none';
   var note = document.querySelector('.role-note');
   if (note) note.style.display = 'none';
+
+  // Role-aware top nav: parents don't browse chapters / use the student tutor nav.
+  var navLearn = document.getElementById('navLearn');
+  var navPal = document.getElementById('navPal');
+  if (role === 'parent' || role === 'teacher'){
+    if (navLearn) navLearn.style.display = 'none';
+  }
+  if (role === 'parent'){
+    if (navPal) navPal.style.display = 'none';
+  }
 }
 
 async function bootAuth(){
@@ -2067,7 +2150,8 @@ if (document.readyState === 'loading'){
 
 })();
 </script>
-  <script src="../theme.js"></script>
+  <script src="account-menu.js"></script>
+<script src="../theme.js"></script>
 <script src="../features-panel.js"></script>
 </body>
 </html>

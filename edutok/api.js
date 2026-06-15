@@ -93,6 +93,24 @@
     return request('/api/auth/me');
   }
 
+  // Full profile (includes role-specific fields + preferences).
+  async function getProfile() {
+    return request('/api/users/me');
+  }
+
+  // Update profile + preferences. Returns the updated user.
+  async function updateProfile(fields) {
+    var data = await request('/api/users/me/profile', {
+      method: 'PUT',
+      body: fields,
+    });
+    if (data.user) {
+      // Keep the cached session user fresh.
+      localStorage.setItem(USER_KEY, JSON.stringify(data.user));
+    }
+    return data.user;
+  }
+
   function logout() {
     request('/api/auth/logout', { method: 'POST' }).catch(function () {});
     clearSession();
@@ -120,6 +138,8 @@
     signup: signup,
     logout: logout,
     me: me,
+    getProfile: getProfile,
+    updateProfile: updateProfile,
     getDashboard: getDashboard,
     getUser: getUser,
     getToken: getToken,
