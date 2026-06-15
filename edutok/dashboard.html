@@ -1383,7 +1383,13 @@ function renderGreeting(){
   var h = new Date().getHours();
   var slot = h < 12 ? 'morning' : (h < 17 ? 'afternoon' : 'evening');
   var g = GREET[STATE.lang] || GREET.en;
-  $('#greetLine').innerHTML = g[slot] + ', ' + g.names[currentRole] + '.';
+  // Prefer the REAL logged-in user's first name; fall back to demo name.
+  var who = g.names[currentRole];
+  try {
+    var u = window.EduAPI && EduAPI.getUser();
+    if (u && u.name) who = u.name.split(' ')[0];
+  } catch (e) {}
+  $('#greetLine').innerHTML = g[slot] + ', ' + who + '.';
 }
 
 /* ------------------------------------------------------------
@@ -2083,15 +2089,18 @@ async function bootAuth(){
   lockToRole(user.role);
   setRole(user.role, true);
 
-  // Show who's logged in + wire logout.
+  // Show who's logged in (name + email) + wire logout.
   var chip = document.getElementById('userChip');
   var chipText = document.getElementById('userChipText');
   if (chip && chipText){
     chip.style.display = 'flex';
-    chipText.textContent = (user.name || 'User') + ' · ' + user.role.toUpperCase();
+    chipText.textContent = (user.name || 'User') + ' · ' + (user.email || '') + ' · ' + user.role.toUpperCase();
   }
   var lo = document.getElementById('logoutBtn');
   if (lo) lo.addEventListener('click', function(){ EduAPI.logout(); });
+
+  // Re-render greeting now that we know the real user.
+  renderGreeting();
 
   // Pull real data from the backend and inject role-specific numbers.
   try {

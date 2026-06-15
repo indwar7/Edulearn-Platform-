@@ -458,9 +458,15 @@
         </div>
       </div>
 
-      <div class="form-group form-row full">
-        <label for="email">Email Address</label>
-        <input type="email" id="email" placeholder="you@example.com" required>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" placeholder="you@example.com" required>
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <input type="tel" id="phone" placeholder="+91 98765 43210" required>
+        </div>
       </div>
 
       <div class="form-group form-row full">
@@ -641,7 +647,7 @@
     // Build the role-specific request body.
     function buildBody() {
       var name = (val('firstName') + ' ' + val('lastName')).trim();
-      var base = { name: name, email: val('email'), password: val('password') };
+      var base = { name: name, email: val('email'), phone: val('phone'), password: val('password') };
       if (selectedRole === 'student') {
         return Object.assign(base, {
           rollNumber: val('s_roll'),
