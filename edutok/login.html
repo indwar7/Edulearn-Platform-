@@ -311,37 +311,50 @@
     /* Role tabs */
     .role-tabs{
       display:flex;
-      gap:6px;
+      gap:4px;
       background:#EEF1F6;
       padding:5px;
-      border-radius:12px;
-      margin-bottom:20px;
+      border-radius:14px;
+      margin-bottom:22px;
     }
     .role-tab{
       flex:1;
       border:none;
       background:transparent;
-      padding:10px 8px;
-      border-radius:9px;
-      font-size:14px;
+      padding:11px 8px;
+      border-radius:10px;
+      font-family:'Fragment Mono',ui-monospace,monospace;
+      font-size:12px;
+      letter-spacing:.04em;
+      text-transform:uppercase;
       font-weight:600;
       color:#5A6175;
       cursor:pointer;
-      transition:all .18s ease;
+      transition:all .22s cubic-bezier(.22,1,.36,1);
     }
+    .role-tab:hover:not(.on){ color:#1A1F36; }
     .role-tab.on{
       background:#fff;
-      color:var(--teal);
-      box-shadow:0 2px 8px rgba(0,0,0,.08);
+      color:#0FA983;
+      box-shadow:0 4px 14px rgba(15,23,42,.10);
+      transform:translateY(-1px);
     }
     .auth-error{
-      background:#FFF0F0;
+      background:rgba(226,76,77,.08);
+      border:1px solid rgba(226,76,77,.25);
       border-left:3px solid #E5484D;
       color:#C2181C;
-      padding:10px 12px;
-      border-radius:8px;
+      padding:11px 13px;
+      border-radius:10px;
       font-size:13px;
       margin-bottom:14px;
+      animation:errShake .35s cubic-bezier(.36,.07,.19,.97);
+    }
+    @keyframes errShake{
+      10%,90%{transform:translateX(-1px);}
+      20%,80%{transform:translateX(2px);}
+      30%,50%,70%{transform:translateX(-3px);}
+      40%,60%{transform:translateX(3px);}
     }
 
     @media (max-width:480px){

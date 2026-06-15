@@ -236,13 +236,16 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
 .view.leaving{opacity:0;transform:translateY(-10px);transition:opacity .25s ease,transform .25s ease;}
 .vgrid{display:grid;grid-template-columns:repeat(12,1fr);gap:22px;}
 /* Role-based feature menu */
-.feat-menu{grid-column:span 12;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:4px;}
-.feat-card{display:flex;flex-direction:column;gap:6px;padding:16px 16px 15px;border:1px solid var(--line,#262b3a);border-radius:16px;background:var(--card2,#171b27);text-decoration:none;color:inherit;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;}
-.feat-card:hover{transform:translateY(-3px);border-color:var(--teal,#3DE8C5);box-shadow:0 10px 28px rgba(61,232,197,.16);}
-.feat-card .fc-ico{font-size:22px;line-height:1;}
-.feat-card .fc-title{font-weight:700;font-size:15px;}
-.feat-card .fc-sub{font-size:12px;color:var(--muted,#8a90a2);line-height:1.35;}
-.feat-label{grid-column:span 12;font-family:'Fragment Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted,#8a90a2);margin:2px 0 -6px;}
+.feat-menu{grid-column:span 12;display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:16px;margin-bottom:6px;}
+.feat-card{position:relative;display:flex;flex-direction:column;gap:8px;padding:20px 18px 18px;border:1px solid var(--line);border-radius:18px;background:var(--card);text-decoration:none;color:inherit;overflow:hidden;transition:transform .28s var(--ease),border-color .28s var(--ease),box-shadow .28s var(--ease);}
+.feat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--aurora);opacity:0;transition:opacity .28s var(--ease);}
+.feat-card:hover{transform:translateY(-4px);border-color:transparent;box-shadow:var(--shadow-card);}
+.feat-card:hover::before{opacity:1;}
+.feat-card .fc-ico{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;background:var(--card2);font-size:20px;line-height:1;margin-bottom:2px;transition:transform .28s var(--ease);}
+.feat-card:hover .fc-ico{transform:scale(1.08);}
+.feat-card .fc-title{font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:15px;letter-spacing:-.01em;}
+.feat-card .fc-sub{font-size:12.5px;color:var(--muted);line-height:1.4;}
+.feat-label{grid-column:span 12;font-family:'Fragment Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin:4px 0 -4px;}
 .stag{opacity:0;transform:translateY(26px);transition:opacity .65s var(--ease),transform .65s var(--ease);transition-delay:calc(var(--i,0)*75ms);}
 .view.shown .stag{opacity:1;transform:translateY(0);}
 
@@ -720,9 +723,9 @@ html.dark-mode [data-theme-toggle] {
       </div>
       <span class="role-note" data-i18n="role.note">One platform · three views</span>
       <!-- Shown once logged in: who you are + logout -->
-      <div id="userChip" style="display:none;align-items:center;gap:10px;margin-top:8px;">
-        <span id="userChipText" style="font-size:12px;color:var(--muted,#8a90a2);font-family:'Fragment Mono',monospace;letter-spacing:.06em;"></span>
-        <button id="logoutBtn" style="border:1px solid var(--line,#2a2f3e);background:transparent;color:inherit;padding:5px 12px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">Logout</button>
+      <div id="userChip" style="display:none;align-items:center;gap:10px;margin-top:10px;padding:7px 8px 7px 14px;background:var(--card2);border:1px solid var(--line);border-radius:999px;">
+        <span id="userChipText" style="font-size:11px;color:var(--muted);font-family:'Fragment Mono',monospace;letter-spacing:.06em;"></span>
+        <button id="logoutBtn" style="border:none;background:var(--aurora);color:var(--on-accent);padding:6px 14px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.04em;cursor:pointer;transition:transform .2s var(--ease);" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">Logout</button>
       </div>
     </div>
   </header>
