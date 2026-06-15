@@ -183,6 +183,47 @@
       color:#9CA3AF;
     }
 
+    /* Role tabs + role-specific field groups */
+    .role-tabs{
+      display:flex;
+      gap:6px;
+      background:#EEF1F6;
+      padding:5px;
+      border-radius:12px;
+      margin-bottom:20px;
+    }
+    .role-tab{
+      flex:1;
+      border:none;
+      background:transparent;
+      padding:10px 8px;
+      border-radius:9px;
+      font-size:14px;
+      font-weight:600;
+      color:#5A6175;
+      cursor:pointer;
+      transition:all .18s ease;
+    }
+    .role-tab.on{
+      background:#fff;
+      color:var(--teal,#0EA5A5);
+      box-shadow:0 2px 8px rgba(0,0,0,.08);
+    }
+    .role-hint{
+      font-size:13px;
+      color:#5A6175;
+      margin:0 0 12px;
+    }
+    .auth-error{
+      background:#FFF0F0;
+      border-left:3px solid #E5484D;
+      color:#C2181C;
+      padding:10px 12px;
+      border-radius:8px;
+      font-size:13px;
+      margin-bottom:14px;
+    }
+
     .checkbox-group{
       display:flex;
       align-items:flex-start;
@@ -395,8 +436,15 @@
       <span class="logo-text">EduLearn</span>
     </div>
 
-    <h1>Start learning</h1>
-    <p class="subtitle">Join thousands of students advancing their education</p>
+    <h1>Create your account</h1>
+    <p class="subtitle">Sign up as a student, teacher, or parent</p>
+
+    <!-- Role tabs -->
+    <div class="role-tabs" id="roleTabs" role="tablist" aria-label="Sign up as">
+      <button type="button" class="role-tab on" data-role="student" role="tab" aria-selected="true">Student</button>
+      <button type="button" class="role-tab" data-role="teacher" role="tab" aria-selected="false">Teacher</button>
+      <button type="button" class="role-tab" data-role="parent" role="tab" aria-selected="false">Parent</button>
+    </div>
 
     <form onsubmit="handleSignup(event)">
       <div class="form-row">
@@ -416,20 +464,105 @@
       </div>
 
       <div class="form-group form-row full">
-        <label for="class">Class Level</label>
-        <select id="class" required>
-          <option value="">Select your class</option>
-          <option value="6">Class 6</option>
-          <option value="7">Class 7</option>
-          <option value="8">Class 8</option>
-          <option value="9">Class 9</option>
-        </select>
-      </div>
-
-      <div class="form-group form-row full">
         <label for="password">Password</label>
         <input type="password" id="password" placeholder="••••••••" required minlength="6">
       </div>
+
+      <!-- ============ STUDENT fields ============ -->
+      <div class="role-fields" data-fields="student">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="s_roll">Roll Number</label>
+            <input type="text" id="s_roll" placeholder="EDU-7A-021">
+          </div>
+          <div class="form-group">
+            <label for="s_board">Board</label>
+            <select id="s_board">
+              <option value="CBSE">CBSE</option>
+              <option value="ICSE">ICSE</option>
+              <option value="State">State</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="s_class">Class</label>
+            <select id="s_class">
+              <option value="Class 6">Class 6</option>
+              <option value="Class 7" selected>Class 7</option>
+              <option value="Class 8">Class 8</option>
+              <option value="Class 9">Class 9</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="s_section">Section</label>
+            <select id="s_section">
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="C">C</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ TEACHER fields ============ -->
+      <div class="role-fields" data-fields="teacher" style="display:none">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="t_id">Teacher ID</label>
+            <input type="text" id="t_id" placeholder="TCH-104">
+          </div>
+          <div class="form-group">
+            <label for="t_subject">Subject</label>
+            <input type="text" id="t_subject" placeholder="Science">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="t_class">Class</label>
+            <select id="t_class">
+              <option value="Class 6">Class 6</option>
+              <option value="Class 7" selected>Class 7</option>
+              <option value="Class 8">Class 8</option>
+              <option value="Class 9">Class 9</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="t_section">Section</label>
+            <select id="t_section">
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="C">C</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ PARENT fields ============ -->
+      <div class="role-fields" data-fields="parent" style="display:none">
+        <p class="role-hint">Link to your child's account using their details:</p>
+        <div class="form-group form-row full">
+          <label for="p_roll">Child's Roll Number</label>
+          <input type="text" id="p_roll" placeholder="EDU-7A-021">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="p_name">Child's Full Name</label>
+            <input type="text" id="p_name" placeholder="Aarav Sharma">
+          </div>
+          <div class="form-group">
+            <label for="p_class">Child's Class</label>
+            <select id="p_class">
+              <option value="Class 6">Class 6</option>
+              <option value="Class 7" selected>Class 7</option>
+              <option value="Class 8">Class 8</option>
+              <option value="Class 9">Class 9</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div id="signupError" class="auth-error" style="display:none"></div>
 
       <div class="checkbox-group">
         <input type="checkbox" id="terms" required>
@@ -481,30 +614,76 @@
     </div>
   </div>
 
+  <script src="api.js"></script>
   <script>
-    function handleSignup(e) {
+    var selectedRole = 'student';
+
+    // Role tab switching — shows the matching field group.
+    document.querySelectorAll('.role-tab').forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        document.querySelectorAll('.role-tab').forEach(function (t) {
+          t.classList.remove('on'); t.setAttribute('aria-selected', 'false');
+        });
+        tab.classList.add('on'); tab.setAttribute('aria-selected', 'true');
+        selectedRole = tab.getAttribute('data-role');
+        document.querySelectorAll('.role-fields').forEach(function (g) {
+          g.style.display = g.getAttribute('data-fields') === selectedRole ? '' : 'none';
+        });
+      });
+    });
+
+    function val(id){ var el = document.getElementById(id); return el ? el.value.trim() : ''; }
+    function showError(msg){
+      var el = document.getElementById('signupError');
+      el.textContent = msg; el.style.display = 'block';
+    }
+
+    // Build the role-specific request body.
+    function buildBody() {
+      var name = (val('firstName') + ' ' + val('lastName')).trim();
+      var base = { name: name, email: val('email'), password: val('password') };
+      if (selectedRole === 'student') {
+        return Object.assign(base, {
+          rollNumber: val('s_roll'),
+          className: val('s_class'),
+          section: val('s_section'),
+          board: val('s_board'),
+          subjects: ['Science', 'Maths']
+        });
+      }
+      if (selectedRole === 'teacher') {
+        return Object.assign(base, {
+          teacherId: val('t_id'),
+          className: val('t_class'),
+          section: val('t_section'),
+          subject: val('t_subject') || 'General'
+        });
+      }
+      // parent
+      return Object.assign(base, {
+        childRollNumber: val('p_roll'),
+        childName: val('p_name'),
+        childClass: val('p_class')
+      });
+    }
+
+    async function handleSignup(e) {
       e.preventDefault();
-      const firstName = document.getElementById('firstName').value;
-      const lastName = document.getElementById('lastName').value;
-      const email = document.getElementById('email').value;
-      const classLevel = document.getElementById('class').value;
-      const password = document.getElementById('password').value;
-
-      // Demo: create account
-      localStorage.setItem('edulearn_user', JSON.stringify({
-        firstName,
-        lastName,
-        email,
-        classLevel,
-        signupTime: new Date().toISOString()
-      }));
-
-      alert(`Welcome ${firstName}!\n\nAccount created successfully. Redirecting to learn...`);
-      setTimeout(() => window.location.href = 'learn.html?class=' + classLevel, 500);
+      document.getElementById('signupError').style.display = 'none';
+      var btn = e.target.querySelector('button[type="submit"] span');
+      var original = btn ? btn.textContent : '';
+      if (btn) btn.textContent = 'Creating account…';
+      try {
+        await EduAPI.signup(selectedRole, buildBody());
+        window.location.href = 'dashboard.html';
+      } catch (err) {
+        showError(err.message);
+        if (btn) btn.textContent = original;
+      }
     }
 
     function handleSocial(provider) {
-      alert(`${provider.toUpperCase()} signup coming soon!\n\nFor now, create an account with your email.`);
+      alert(provider.toUpperCase() + ' signup coming soon! Use email for now.');
     }
   </script>
 

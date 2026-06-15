@@ -308,6 +308,42 @@
       color:var(--teal);
     }
 
+    /* Role tabs */
+    .role-tabs{
+      display:flex;
+      gap:6px;
+      background:#EEF1F6;
+      padding:5px;
+      border-radius:12px;
+      margin-bottom:20px;
+    }
+    .role-tab{
+      flex:1;
+      border:none;
+      background:transparent;
+      padding:10px 8px;
+      border-radius:9px;
+      font-size:14px;
+      font-weight:600;
+      color:#5A6175;
+      cursor:pointer;
+      transition:all .18s ease;
+    }
+    .role-tab.on{
+      background:#fff;
+      color:var(--teal);
+      box-shadow:0 2px 8px rgba(0,0,0,.08);
+    }
+    .auth-error{
+      background:#FFF0F0;
+      border-left:3px solid #E5484D;
+      color:#C2181C;
+      padding:10px 12px;
+      border-radius:8px;
+      font-size:13px;
+      margin-bottom:14px;
+    }
+
     @media (max-width:480px){
       .container{
         border-radius:16px;
@@ -380,9 +416,15 @@
 
     <div class="demo-badge">Demo Mode</div>
     <div class="demo-info">
-      <strong>Try it now:</strong><br/>
-      Email: student@edulearn.com<br/>
-      Pass: Demo@2024
+      <strong>Demo accounts (pass: Demo@2024):</strong><br/>
+      student@edulearn.com · teacher@edulearn.com · parent@edulearn.com
+    </div>
+
+    <!-- Role tabs -->
+    <div class="role-tabs" id="roleTabs" role="tablist" aria-label="Login as">
+      <button type="button" class="role-tab on" data-role="student" role="tab" aria-selected="true">Student</button>
+      <button type="button" class="role-tab" data-role="teacher" role="tab" aria-selected="false">Teacher</button>
+      <button type="button" class="role-tab" data-role="parent" role="tab" aria-selected="false">Parent</button>
     </div>
 
     <form onsubmit="handleLogin(event)">
@@ -395,6 +437,8 @@
         <label for="password">Password</label>
         <input type="password" id="password" placeholder="••••••••" required value="Demo@2024">
       </div>
+
+      <div id="loginError" class="auth-error" style="display:none"></div>
 
       <div class="forgot-password">
         <a href="#">Forgot password?</a>
@@ -426,28 +470,59 @@
     </p>
   </div>
 
+  <script src="api.js"></script>
   <script>
-    function handleLogin(e) {
-      e.preventDefault();
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
+    // Currently selected role tab (default: student).
+    var selectedRole = 'student';
 
-      // Demo: simple validation
-      if(email === 'student@edulearn.com' && password === 'Demo@2024') {
-        localStorage.setItem('edulearn_user', JSON.stringify({
-          email,
-          name: 'Demo Student',
-          loginTime: new Date().toISOString()
-        }));
-        alert('Login successful! Redirecting to dashboard...');
-        setTimeout(() => window.location.href = 'learn.html', 500);
-      } else {
-        alert('Invalid credentials.\n\nDemo: student@edulearn.com / Demo@2024');
+    // Demo-credential autofill per role for a smooth demo.
+    var demoCreds = {
+      student: 'student@edulearn.com',
+      teacher: 'teacher@edulearn.com',
+      parent:  'parent@edulearn.com'
+    };
+
+    document.querySelectorAll('.role-tab').forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        document.querySelectorAll('.role-tab').forEach(function (t) {
+          t.classList.remove('on');
+          t.setAttribute('aria-selected', 'false');
+        });
+        tab.classList.add('on');
+        tab.setAttribute('aria-selected', 'true');
+        selectedRole = tab.getAttribute('data-role');
+        // Autofill the matching demo email for convenience.
+        document.getElementById('email').value = demoCreds[selectedRole] || '';
+      });
+    });
+
+    function showError(msg) {
+      var el = document.getElementById('loginError');
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      document.getElementById('loginError').style.display = 'none';
+      var email = document.getElementById('email').value.trim();
+      var password = document.getElementById('password').value;
+      var btn = e.target.querySelector('button[type="submit"] span');
+      var original = btn ? btn.textContent : '';
+      if (btn) btn.textContent = 'Signing in…';
+
+      try {
+        var user = await EduAPI.login(email, password, selectedRole);
+        // Everyone lands on the same dashboard page; it locks to their role.
+        window.location.href = 'dashboard.html';
+      } catch (err) {
+        showError(err.message);
+        if (btn) btn.textContent = original;
       }
     }
 
     function handleSocial(provider) {
-      alert(`${provider.toUpperCase()} login coming soon!\n\nFor now, use the demo credentials to explore.`);
+      alert(provider.toUpperCase() + ' login coming soon! Use the demo accounts for now.');
     }
   </script>
 

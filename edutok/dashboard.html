@@ -711,6 +711,11 @@ html.dark-mode [data-theme-toggle] {
         <button role="tab" aria-selected="false" data-role="parent" data-i18n="role.parent">Parent</button>
       </div>
       <span class="role-note" data-i18n="role.note">One platform · three views</span>
+      <!-- Shown once logged in: who you are + logout -->
+      <div id="userChip" style="display:none;align-items:center;gap:10px;margin-top:8px;">
+        <span id="userChipText" style="font-size:12px;color:var(--muted,#8a90a2);font-family:'Fragment Mono',monospace;letter-spacing:.06em;"></span>
+        <button id="logoutBtn" style="border:1px solid var(--line,#2a2f3e);background:transparent;color:inherit;padding:5px 12px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">Logout</button>
+      </div>
     </div>
   </header>
 
@@ -1152,6 +1157,7 @@ html.dark-mode [data-theme-toggle] {
   </div>
 </footer>
 
+<script src="api.js"></script>
 <script>
 /* ============================================================
    EDUTOK DASHBOARD — application script
@@ -1971,6 +1977,70 @@ function initEvents(){
 /* ------------------------------------------------------------
    boot
 ------------------------------------------------------------ */
+/* ------------------------------------------------------------
+   AUTH + ROLE LOCK — connects this dashboard to the backend.
+   Each user only sees the view for the role they logged in as.
+------------------------------------------------------------ */
+function lockToRole(role){
+  // Hide the manual role switcher — the view is fixed to the user's role.
+  var sw = document.querySelector('.role-switch');
+  if (sw) sw.style.display = 'none';
+  var note = document.querySelector('.role-note');
+  if (note) note.style.display = 'none';
+}
+
+async function bootAuth(){
+  // EduAPI comes from api.js. If missing, fall back to demo (no lock).
+  if (!window.EduAPI) { setTimeout(function(){ setRole('student', true); }, 120); return; }
+
+  var user = EduAPI.requireAuth(); // redirects to login.html if not authed
+  if (!user) return;
+
+  // Lock the UI to this user's role and show them their own view only.
+  lockToRole(user.role);
+  setRole(user.role, true);
+
+  // Show who's logged in + wire logout.
+  var chip = document.getElementById('userChip');
+  var chipText = document.getElementById('userChipText');
+  if (chip && chipText){
+    chip.style.display = 'flex';
+    chipText.textContent = (user.name || 'User') + ' · ' + user.role.toUpperCase();
+  }
+  var lo = document.getElementById('logoutBtn');
+  if (lo) lo.addEventListener('click', function(){ EduAPI.logout(); });
+
+  // Pull real data from the backend and inject role-specific numbers.
+  try {
+    var data = await EduAPI.getDashboard();
+    applyDashboardData(user, data);
+  } catch (e) {
+    console.warn('Dashboard data load failed:', e.message);
+  }
+}
+
+// Inject real backend numbers into the rendered views (best-effort, by role).
+function applyDashboardData(user, data){
+  // Greeting name everywhere
+  document.querySelectorAll('[data-greet-name]').forEach(function(el){ el.textContent = user.name; });
+
+  if (data.role === 'student' && data.stats){
+    setText('#statStreak', data.stats.streak);
+    setText('#statMinutes', data.stats.minutes);
+    setText('#statBadges', (data.stats.badges || []).length);
+  }
+  if (data.role === 'teacher'){
+    setText('#statStudents', data.studentCount);
+    if (data.classAverage) setText('#statAvgMin', data.classAverage.avgMinutes);
+  }
+  if (data.role === 'parent' && data.children && data.children[0]){
+    var c = data.children[0];
+    setText('#statChildStreak', c.streak);
+    setText('#statChildMinutes', c.minutes);
+  }
+}
+function setText(sel, v){ var el = document.querySelector(sel); if (el && v != null) el.textContent = v; }
+
 function init(){
   initDates();
   initStrip();
@@ -1985,8 +2055,8 @@ function init(){
   initEvents();
   initReveals();
   applyLang(STATE.lang === 'hi' ? 'hi' : 'en');
-  // initial view with entrance stagger
-  setTimeout(function(){ setRole('student', true); }, RM ? 0 : 120);
+  // Auth + role lock replaces the old hardcoded setRole('student').
+  bootAuth();
 }
 
 if (document.readyState === 'loading'){
