@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Database — EduLearn Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,480&family=Schibsted+Grotesk:wght@400;500;600;700&family=Fragment+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --ink:#1A1F36;--bg:#F7F9FC;--card:#FFFFFF;--muted:#6B7280;
+      --line:rgba(15,23,42,.10);--teal:#0FA983;
+      --aurora:linear-gradient(115deg,#3DE8C5 0%,#7C9BFF 48%,#FFB454 100%);
+      --ease:cubic-bezier(.22,1,.36,1);--shadow:0 18px 44px rgba(15,23,42,.10);
+    }
+    *{box-sizing:border-box;}
+    body{margin:0;font-family:'Schibsted Grotesk',system-ui,sans-serif;background:var(--bg);color:var(--ink);}
+    .wrap{max-width:1180px;margin:0 auto;padding:36px 24px 60px;}
+    .top{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:8px;}
+    h1{font-family:'Fraunces',serif;font-weight:480;font-size:34px;margin:0;}
+    h1 em{font-style:italic;background:var(--aurora);-webkit-background-clip:text;background-clip:text;color:transparent;}
+    .sub{color:var(--muted);font-size:14px;margin:6px 0 0;}
+    .mono{font-family:'Fragment Mono',monospace;letter-spacing:.04em;}
+    .btn{border:none;border-radius:11px;background:var(--aurora);color:#0B1224;font-weight:700;font-size:14px;padding:11px 18px;cursor:pointer;transition:transform .2s var(--ease),box-shadow .2s ease;}
+    .btn:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(61,232,197,.3);}
+    .live{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);}
+    .dot{width:8px;height:8px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 0 rgba(15,169,131,.5);animation:pulse 2s infinite;}
+    @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(15,169,131,.45);}70%{box-shadow:0 0 0 8px rgba(15,169,131,0);}100%{box-shadow:0 0 0 0 rgba(15,169,131,0);}}
+
+    .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;margin:24px 0;}
+    .stat{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px 20px 18px;position:relative;overflow:hidden;}
+    .stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--aurora);}
+    .stat b{font-family:'Fraunces',serif;font-weight:480;font-size:36px;display:block;line-height:1;}
+    .stat span{font-family:'Fragment Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);}
+
+    .filters{display:flex;gap:6px;background:#EEF1F6;padding:5px;border-radius:13px;width:max-content;margin-bottom:18px;}
+    .filters button{border:none;background:transparent;padding:9px 16px;border-radius:9px;font-family:'Fragment Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;color:#5A6175;cursor:pointer;transition:all .2s var(--ease);}
+    .filters button.on{background:#fff;color:var(--teal);box-shadow:0 3px 12px rgba(15,23,42,.1);}
+
+    .tablecard{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);overflow:hidden;}
+    table{width:100%;border-collapse:collapse;}
+    thead th{text-align:left;font-family:'Fragment Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding:16px 18px;border-bottom:1px solid var(--line);background:#FAFBFD;}
+    tbody td{padding:15px 18px;border-bottom:1px solid var(--line);font-size:14px;vertical-align:middle;}
+    tbody tr:last-child td{border-bottom:none;}
+    tbody tr{transition:background .15s ease;}
+    tbody tr:hover{background:#FAFBFD;}
+    tbody tr.fresh{animation:flash 1.6s var(--ease);}
+    @keyframes flash{0%{background:rgba(61,232,197,.22);}100%{background:transparent;}}
+    .pill{display:inline-block;padding:4px 11px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.02em;}
+    .pill.student{background:rgba(61,232,197,.16);color:#0E8a6f;}
+    .pill.teacher{background:rgba(124,155,255,.16);color:#4d63c4;}
+    .pill.parent{background:rgba(255,180,84,.18);color:#b6741a;}
+    .nm{font-weight:600;}
+    .meta{color:var(--muted);font-size:12.5px;}
+    .empty{padding:50px;text-align:center;color:var(--muted);}
+    .err{margin:16px 0;padding:14px 16px;border-radius:12px;background:rgba(226,76,77,.1);color:#C2181C;font-size:14px;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <h1>Live <em>Database</em></h1>
+        <p class="sub">Every user registered on EduLearn — straight from MongoDB.
+          <span class="live"><span class="dot"></span><span class="mono" id="auto">auto-refresh 5s</span></span>
+        </p>
+      </div>
+      <button class="btn" onclick="load(true)">↻ Refresh now</button>
+    </div>
+
+    <div class="stats" id="stats"></div>
+
+    <div class="filters" id="filters">
+      <button class="on" data-f="all">All</button>
+      <button data-f="student">Students</button>
+      <button data-f="teacher">Teachers</button>
+      <button data-f="parent">Parents</button>
+    </div>
+
+    <div id="errBox"></div>
+
+    <div class="tablecard">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th><th>Email</th><th>Phone</th><th>Role</th>
+            <th>ID / Roll</th><th>Class</th><th>Registered</th>
+          </tr>
+        </thead>
+        <tbody id="rows"><tr><td colspan="7" class="empty">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="api.js"></script>
+  <script>
+    var API = (localStorage.getItem('edulearn_api') || 'http://localhost:4000');
+    var filter = 'all';
+    var lastIds = new Set();
+
+    document.querySelectorAll('#filters button').forEach(function(b){
+      b.addEventListener('click', function(){
+        document.querySelectorAll('#filters button').forEach(function(x){x.classList.remove('on');});
+        b.classList.add('on'); filter = b.getAttribute('data-f'); render();
+      });
+    });
+
+    var DATA = { users: [], counts:{}, total:0 };
+
+    function fmtDate(d){
+      try { var x = new Date(d); return x.toLocaleDateString() + ' ' + x.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}); }
+      catch(e){ return ''; }
+    }
+
+    function render(){
+      var rows = document.getElementById('rows');
+      var list = DATA.users.filter(function(u){ return filter==='all' || u.role===filter; });
+      if (!list.length){ rows.innerHTML = '<tr><td colspan="7" class="empty">No '+(filter==='all'?'':filter+' ')+'users yet. Register one to see it appear here.</td></tr>'; return; }
+      rows.innerHTML = list.map(function(u){
+        var idCol = u.role==='teacher' ? (u.teacherId||'—') : (u.rollNumber||'—');
+        var cls = u.className ? (u.className + (u.section?' · '+u.section:'')) : (u.role==='parent'? (u.children+' child'+(u.children===1?'':'ren')) : '—');
+        var fresh = !lastIds.has(u.id) && lastIds.size ? ' class="fresh"' : '';
+        return '<tr'+fresh+'>'+
+          '<td class="nm">'+esc(u.name)+'</td>'+
+          '<td class="meta">'+esc(u.email)+'</td>'+
+          '<td class="meta">'+esc(u.phone||'—')+'</td>'+
+          '<td><span class="pill '+u.role+'">'+u.role+'</span></td>'+
+          '<td class="mono" style="font-size:12px">'+esc(idCol)+'</td>'+
+          '<td class="meta">'+esc(cls)+'</td>'+
+          '<td class="meta">'+fmtDate(u.createdAt)+'</td>'+
+        '</tr>';
+      }).join('');
+      // remember ids for next "fresh" highlight
+      lastIds = new Set(DATA.users.map(function(u){return u.id;}));
+    }
+
+    function renderStats(){
+      var c = DATA.counts || {};
+      document.getElementById('stats').innerHTML =
+        stat(DATA.total,'Total Users') + stat(c.student||0,'Students') +
+        stat(c.teacher||0,'Teachers') + stat(c.parent||0,'Parents');
+    }
+    function stat(n,l){ return '<div class="stat"><b>'+n+'</b><span>'+l+'</span></div>'; }
+    function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+
+    async function load(manual){
+      document.getElementById('errBox').innerHTML='';
+      try {
+        var res = await fetch(API + '/api/admin/users');
+        if (!res.ok) throw new Error('Server returned ' + res.status);
+        DATA = await res.json();
+        renderStats(); render();
+      } catch(e){
+        document.getElementById('errBox').innerHTML =
+          '<div class="err">Cannot reach the backend at '+API+'. Make sure it is running (npm run demo). '+esc(e.message)+'</div>';
+      }
+    }
+
+    load();
+    setInterval(function(){ load(); }, 5000);
+  </script>
+</body>
+</html>
