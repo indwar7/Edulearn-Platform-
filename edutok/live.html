@@ -330,7 +330,12 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
     <div class="stagegrid">
       <div>
         <div class="stage">
-          <div class="stage__avatar">
+          <!-- Real LiveKit video stage (shown when connected) -->
+          <div id="lkStage" style="display:none;width:100%;">
+            <video id="lkMainVideo" autoplay playsinline style="width:100%;border-radius:14px;background:#000;max-height:60vh;"></video>
+            <div id="lkStatus" style="margin-top:8px;font-family:'Fragment Mono',monospace;font-size:12px;color:var(--muted);"></div>
+          </div>
+          <div class="stage__avatar" id="simAvatar">
             <div class="stage__circle" id="tutorCircle">PS</div>
             <div class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
           </div>
@@ -402,6 +407,10 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
 'use strict';
 
 var LS_KEY = 'edulearn_live';
+
+// Safe wrappers to LiveKit glue (live-video.js). No-op if not available.
+function global_EduLiveConnect(id){ if (window.EduLive && id) window.EduLive.connect(id); }
+function global_EduLiveDisconnect(){ if (window.EduLive) window.EduLive.disconnect(); }
 
 function loadLS(){
   try{
@@ -580,6 +589,10 @@ function joinClass(id){
   document.getElementById('tutorName').textContent = s.tutor + ' · Tutor';
   document.getElementById('tutorCircle').textContent = initials(s.tutor);
   window.scrollTo(0, 0);
+
+  // Try to connect real LiveKit video (only works for backend sessions + when
+  // LiveKit keys are configured; otherwise the simulated stage stays).
+  if (global_EduLiveConnect) global_EduLiveConnect(s.backendId || s.id);
 
   CLS = {
     session: s,
@@ -901,6 +914,9 @@ document.getElementById('leaveBtn').addEventListener('click', function(){
   store.reports.push(report);
   saveLS();
 
+  /* disconnect live video */
+  global_EduLiveDisconnect();
+
   /* paint report view */
   document.getElementById('classView').style.display = 'none';
   document.getElementById('reportView').style.display = 'block';
@@ -961,7 +977,9 @@ renderReports();
 
 })();
 </script>
+<script src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script>
 <script src="api.js"></script>
+<script src="live-video.js"></script>
 <script src="account-menu.js"></script>
 <script src="../theme.js"></script>
 <script src="../features-panel.js"></script>
