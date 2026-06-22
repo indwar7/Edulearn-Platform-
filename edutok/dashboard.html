@@ -2131,20 +2131,77 @@ function applyDashboardData(user, data){
   // Greeting name everywhere
   document.querySelectorAll('[data-greet-name]').forEach(function(el){ el.textContent = user.name; });
 
-  if (data.role === 'student' && data.stats){
-    setText('#statStreak', data.stats.streak);
-    setText('#statMinutes', data.stats.minutes);
-    setText('#statBadges', (data.stats.badges || []).length);
+  if (data.role === 'student'){
+    if (data.stats){
+      setText('#statStreak', data.stats.streak);
+      setText('#statMinutes', data.stats.minutes);
+      setText('#statBadges', (data.stats.badges || []).length);
+    }
+    // Real derived insights drive the streak number + weekly minutes chart.
+    if (data.insights) applyStudentInsights(data.insights);
   }
   if (data.role === 'teacher'){
     setText('#statStudents', data.studentCount);
-    if (data.classAverage) setText('#statAvgMin', data.classAverage.avgMinutes);
+    if (data.classAverage){
+      setText('#statAvgMin', data.classAverage.avgMinutes);
+      setText('#statAvgStreak', data.classAverage.avgDayStreak);
+      setText('#statAvgWeekMin', data.classAverage.avgWeekMinutes);
+    }
+    setText('#statActiveWeek', data.activeThisWeek);
+    applyTeacherInsights(data);
   }
   if (data.role === 'parent' && data.children && data.children[0]){
     var c = data.children[0];
-    setText('#statChildStreak', c.streak);
+    // Prefer the real day-streak; fall back to the legacy counter.
+    setText('#statChildStreak', c.dayStreak != null ? c.dayStreak : c.streak);
     setText('#statChildMinutes', c.minutes);
+    if (c.dayStreak != null) applyStudentInsights({
+      dayStreak: c.dayStreak, weekly: c.weekly, thisWeek: c.thisWeek
+    });
   }
+}
+
+// Wire a student's (or child's) real insights into STATE + re-render charts.
+function applyStudentInsights(ins){
+  if (Array.isArray(ins.weekly) && ins.weekly.length === 7){
+    STATE.minutes = ins.weekly.map(function(p){ return p.minutes || 0; });
+  }
+  if (typeof ins.dayStreak === 'number') STATE.streak = ins.dayStreak;
+
+  // Re-render the strip (streak + weekly total) and the bar chart with real data.
+  try { initStrip(); } catch(e){}
+  try { buildBars(); animateBars(); } catch(e){}
+
+  // This-week summary numbers, if those elements exist.
+  if (ins.thisWeek){
+    setText('#weekMinutes', ins.thisWeek.minutes);
+    setText('#weekLessons', ins.thisWeek.lessons);
+    setText('#weekActiveDays', ins.thisWeek.activeDays);
+  }
+}
+
+// Teacher: render top + needs-attention lists if their containers exist.
+function applyTeacherInsights(data){
+  var topHost = document.querySelector('#topStudents');
+  if (topHost && Array.isArray(data.topStudents)){
+    topHost.innerHTML = data.topStudents.map(function(s){
+      return '<div class="myrow"><span>' + escapeHtml(s.name) + '</span>' +
+             '<span class="when">' + (s.thisWeek ? s.thisWeek.minutes : 0) + ' min</span></div>';
+    }).join('') || '<p class="empty-hint">No activity yet this week.</p>';
+  }
+  var attnHost = document.querySelector('#needsAttention');
+  if (attnHost && Array.isArray(data.needsAttention)){
+    attnHost.innerHTML = data.needsAttention.length
+      ? data.needsAttention.map(function(s){
+          return '<div class="myrow"><span>' + escapeHtml(s.name) + '</span>' +
+                 '<span class="when" style="color:var(--rose)">0 min</span></div>';
+        }).join('')
+      : '<p class="empty-hint">Everyone was active this week 🎉</p>';
+  }
+}
+
+function escapeHtml(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 function setText(sel, v){ var el = document.querySelector(sel); if (el && v != null) el.textContent = v; }
 

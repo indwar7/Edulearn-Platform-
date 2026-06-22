@@ -117,6 +117,36 @@
     window.location.href = 'login.html';
   }
 
+  // ---- Live class calls ----
+  // List the live sessions the current user is eligible for.
+  // Student → live classes for their class+section+subjects.
+  // Teacher → their own live sessions.
+  async function listLive() {
+    var data = await request('/api/live');
+    return data.sessions || [];
+  }
+
+  // Teacher only: start a targeted live class. Returns the created session.
+  async function createLive(fields) {
+    var data = await request('/api/live', { method: 'POST', body: fields });
+    return data.session;
+  }
+
+  // Eligibility-checked join. Returns room info ({ ok, session }).
+  async function joinLive(id) {
+    return request('/api/live/' + id + '/join', { method: 'POST' });
+  }
+
+  // Teacher only: end the session (tears down the video room for everyone).
+  async function endLive(id) {
+    return request('/api/live/' + id + '/end', { method: 'POST' });
+  }
+
+  // Teacher only: full class roster with live presence ({ roster, joined, total }).
+  async function liveRoster(id) {
+    return request('/api/live/' + id + '/roster');
+  }
+
   // Guard: redirect to login if not authenticated. Optionally require a role.
   function requireAuth(requiredRole) {
     var user = getUser();
@@ -145,5 +175,10 @@
     getToken: getToken,
     requireAuth: requireAuth,
     clearSession: clearSession,
+    listLive: listLive,
+    createLive: createLive,
+    joinLive: joinLive,
+    endLive: endLive,
+    liveRoster: liveRoster,
   };
 })(window);
