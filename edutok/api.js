@@ -3,10 +3,12 @@
    Connects the static pages to the EduLearn backend.
    ============================================================ */
 (function (global) {
-  // Backend base URL. Override by setting localStorage 'edulearn_api' if you
-  // deploy the backend somewhere else (e.g. Render). Defaults to local dev.
+  // Backend base URL. Defaults to the deployed backend (served over HTTPS via
+  // CloudFront — the EC2 origin is HTTP and would be blocked as mixed content).
+  // For local dev, override it: localStorage.setItem('edulearn_api','http://localhost:4000')
   var API_BASE =
-    localStorage.getItem('edulearn_api') || 'http://localhost:4000';
+    localStorage.getItem('edulearn_api') ||
+    'https://d3cxm67a2ygkx3.cloudfront.net';
 
   var TOKEN_KEY = 'edulearn_token';
   var USER_KEY = 'edulearn_user';
