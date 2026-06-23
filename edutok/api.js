@@ -63,7 +63,13 @@
       data = {};
     }
     if (!res.ok) {
-      throw new Error(data.error || 'Request failed (' + res.status + ')');
+      var err = new Error(data.error || 'Request failed (' + res.status + ')');
+      err.status = res.status;
+      err.code = data.code;
+      err.userId = data.userId;
+      err.email = data.email;
+      err.phone = data.phone;
+      throw err;
     }
     return data;
   }
@@ -117,6 +123,27 @@
     request('/api/auth/logout', { method: 'POST' }).catch(function () {});
     clearSession();
     window.location.href = 'login.html';
+  }
+
+  // ---- OTP calls ----
+  async function sendOtp(channel, emailOrPhone, userId) {
+    var body = { channel: channel };
+    if (userId) body.userId = userId;
+    else if (emailOrPhone) body.email = emailOrPhone;
+    return request('/api/auth/send-otp', {
+      method: 'POST',
+      body: body,
+    });
+  }
+
+  async function verifyOtp(channel, code, emailOrPhone, userId) {
+    var body = { channel: channel, code: code };
+    if (userId) body.userId = userId;
+    else if (emailOrPhone) body.email = emailOrPhone;
+    return request('/api/auth/verify-otp', {
+      method: 'POST',
+      body: body,
+    });
   }
 
   // ---- Live class calls ----
@@ -182,5 +209,7 @@
     joinLive: joinLive,
     endLive: endLive,
     liveRoster: liveRoster,
+    sendOtp: sendOtp,
+    verifyOtp: verifyOtp,
   };
 })(window);

@@ -426,6 +426,36 @@
     html.dark-mode [data-theme-toggle] {
       color: #F5F7FA;
     }
+
+    /* OTP Inputs Style */
+    .otp-digit {
+      width: 48px;
+      height: 48px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      border: 1.5px solid rgba(0,0,0,.1);
+      border-radius: 10px;
+      background: #FAFBFC;
+      color: #1A1F36;
+      font-family: inherit;
+      transition: all .3s var(--ease);
+    }
+    .otp-digit:focus {
+      outline: none;
+      border-color: var(--teal);
+      background: #FFFFFF;
+      box-shadow: 0 0 0 4px rgba(61,232,197,.1);
+    }
+    html.dark-mode .otp-digit {
+      background: rgba(255, 255, 255, 0.03);
+      border-color: rgba(255, 255, 255, 0.1);
+      color: #F5F7FA;
+    }
+    html.dark-mode .otp-digit:focus {
+      background: #1E293B;
+      border-color: var(--teal);
+    }
   </style>
   <link rel="stylesheet" href="../theme.css">
 </head>
@@ -456,187 +486,239 @@
       <span class="logo-text">EduLearn</span>
     </div>
 
-    <h1>Create your account</h1>
-    <p class="subtitle">Sign up as a student, teacher, or parent</p>
+    <div id="signupFormView">
+      <h1>Create your account</h1>
+      <p class="subtitle">Sign up as a student, teacher, or parent</p>
 
-    <!-- Role tabs -->
-    <div class="role-tabs" id="roleTabs" role="tablist" aria-label="Sign up as">
-      <button type="button" class="role-tab on" data-role="student" role="tab" aria-selected="true">Student</button>
-      <button type="button" class="role-tab" data-role="teacher" role="tab" aria-selected="false">Teacher</button>
-      <button type="button" class="role-tab" data-role="parent" role="tab" aria-selected="false">Parent</button>
+      <!-- Role tabs -->
+      <div class="role-tabs" id="roleTabs" role="tablist" aria-label="Sign up as">
+        <button type="button" class="role-tab on" data-role="student" role="tab" aria-selected="true">Student</button>
+        <button type="button" class="role-tab" data-role="teacher" role="tab" aria-selected="false">Teacher</button>
+        <button type="button" class="role-tab" data-role="parent" role="tab" aria-selected="false">Parent</button>
+      </div>
+
+      <form onsubmit="handleSignup(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="firstName">First Name</label>
+            <input type="text" id="firstName" placeholder="Aarav" required>
+          </div>
+          <div class="form-group">
+            <label for="lastName">Last Name</label>
+            <input type="text" id="lastName" placeholder="Sharma" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" placeholder="you@example.com" required>
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" placeholder="+91 98765 43210" required>
+          </div>
+        </div>
+
+        <div class="form-group form-row full">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="••••••••" required minlength="6">
+        </div>
+
+        <!-- ============ STUDENT fields ============ -->
+        <div class="role-fields" data-fields="student">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="s_roll">Roll Number</label>
+              <input type="text" id="s_roll" placeholder="EDU-7A-021">
+            </div>
+            <div class="form-group">
+              <label for="s_board">Board</label>
+              <select id="s_board">
+                <option value="CBSE">CBSE</option>
+                <option value="ICSE">ICSE</option>
+                <option value="State">State</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="s_class">Class</label>
+              <select id="s_class">
+                <option value="Class 6">Class 6</option>
+                <option value="Class 7" selected>Class 7</option>
+                <option value="Class 8">Class 8</option>
+                <option value="Class 9">Class 9</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="s_section">Section</label>
+              <select id="s_section">
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ TEACHER fields ============ -->
+        <div class="role-fields" data-fields="teacher" style="display:none">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="t_id">Teacher ID</label>
+              <input type="text" id="t_id" placeholder="TCH-104">
+            </div>
+            <div class="form-group">
+              <label for="t_subject">Subject</label>
+              <input type="text" id="t_subject" placeholder="Science">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="t_class">Class</label>
+              <select id="t_class">
+                <option value="Class 6">Class 6</option>
+                <option value="Class 7" selected>Class 7</option>
+                <option value="Class 8">Class 8</option>
+                <option value="Class 9">Class 9</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="t_section">Section</label>
+              <select id="t_section">
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ PARENT fields ============ -->
+        <div class="role-fields" data-fields="parent" style="display:none">
+          <p class="role-hint">Link to your child's account using their details:</p>
+          <div class="form-group form-row full">
+            <label for="p_roll">Child's Roll Number</label>
+            <input type="text" id="p_roll" placeholder="EDU-7A-021">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="p_name">Child's Full Name</label>
+              <input type="text" id="p_name" placeholder="Aarav Sharma">
+            </div>
+            <div class="form-group">
+              <label for="p_class">Child's Class</label>
+              <select id="p_class">
+                <option value="Class 6">Class 6</option>
+                <option value="Class 7" selected>Class 7</option>
+                <option value="Class 8">Class 8</option>
+                <option value="Class 9">Class 9</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div id="signupError" class="auth-error" style="display:none"></div>
+
+        <div class="checkbox-group">
+          <input type="checkbox" id="terms" required>
+          <label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+          <span>Create Account</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
+
+        <div class="divider">or sign up with</div>
+
+        <div class="social-logins">
+          <button type="button" class="social-btn" onclick="handleSocial('google')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            Google
+          </button>
+          <button type="button" class="social-btn" onclick="handleSocial('apple')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 13.5c-.91 2.13-.505 4.26 1.75 5.59.94.565 2.05.96 3.25 1.12-.15 1.17-.915 2.08-1.915 2.38-1.94.585-4.42.19-6.64-1.05-.68-.37-1.28-.86-1.81-1.41-.53.55-1.13 1.04-1.81 1.41-2.22 1.24-4.7 1.635-6.64 1.05-1-.3-1.765-1.21-1.915-2.38 1.2-.16 2.31-.555 3.25-1.12 2.255-1.33 2.66-3.46 1.75-5.59-1.755-4.18-7.805-5.06-7.805-5.06 0-.39.04-.78.11-1.16 6.265-.365 8.715 2.645 10.985 4.47 2.27-1.825 4.72-4.835 10.985-4.47.07.38.11.77.11 1.16 0 0-6.05.88-7.805 5.06z"/></svg>
+            Apple
+          </button>
+        </div>
+      </form>
+
+      <p class="login-link">
+        Already have an account? <a href="login.html">Sign in</a>
+      </p>
+
+      <div class="features">
+        <div class="feature">
+          <span class="feature-icon">✓</span>
+          <span>Free access to 9,000+ lessons</span>
+        </div>
+        <div class="feature">
+          <span class="feature-icon">✓</span>
+          <span>Track your progress</span>
+        </div>
+        <div class="feature">
+          <span class="feature-icon">✓</span>
+          <span>All classes & boards</span>
+        </div>
+        <div class="feature">
+          <span class="feature-icon">✓</span>
+          <span>Learn at your own pace</span>
+        </div>
+      </div>
     </div>
 
-    <form onsubmit="handleSignup(event)">
-      <div class="form-row">
-        <div class="form-group">
-          <label for="firstName">First Name</label>
-          <input type="text" id="firstName" placeholder="Aarav" required>
-        </div>
-        <div class="form-group">
-          <label for="lastName">Last Name</label>
-          <input type="text" id="lastName" placeholder="Sharma" required>
-        </div>
+    <!-- OTP Form View -->
+    <div id="otpFormView" style="display:none">
+      <h1>Verification Code</h1>
+      <p class="subtitle" id="otpSubtitle" style="margin-bottom:20px">Please enter the 6-digit code sent to your email</p>
+
+      <!-- Channel selector if both email and phone are available -->
+      <div id="otpChannelSelector" style="display:none;margin-bottom:16px;text-align:center">
+        <span style="font-size:13px;color:#6B7280">Send code via:</span>
+        <button type="button" id="channelBtnEmail" class="social-btn" style="display:inline-flex;padding:6px 12px;font-size:12px;margin-left:6px" onclick="setOtpChannel('email')">Email</button>
+        <button type="button" id="channelBtnPhone" class="social-btn" style="display:inline-flex;padding:6px 12px;font-size:12px;margin-left:6px" onclick="setOtpChannel('phone')">Phone</button>
       </div>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label for="email">Email Address</label>
-          <input type="email" id="email" placeholder="you@example.com" required>
-        </div>
-        <div class="form-group">
-          <label for="phone">Phone Number</label>
-          <input type="tel" id="phone" placeholder="+91 98765 43210" required>
-        </div>
+      <div id="devCodeAlert" class="demo-info" style="display:none">
+        <strong>Demo OTP:</strong> <span id="devCodeVal" style="font-family:monospace;font-size:16px;font-weight:bold;letter-spacing:1px"></span>
       </div>
 
-      <div class="form-group form-row full">
-        <label for="password">Password</label>
-        <input type="password" id="password" placeholder="••••••••" required minlength="6">
-      </div>
-
-      <!-- ============ STUDENT fields ============ -->
-      <div class="role-fields" data-fields="student">
-        <div class="form-row">
-          <div class="form-group">
-            <label for="s_roll">Roll Number</label>
-            <input type="text" id="s_roll" placeholder="EDU-7A-021">
-          </div>
-          <div class="form-group">
-            <label for="s_board">Board</label>
-            <select id="s_board">
-              <option value="CBSE">CBSE</option>
-              <option value="ICSE">ICSE</option>
-              <option value="State">State</option>
-            </select>
-          </div>
+      <form onsubmit="handleVerifyOtp(event)">
+        <!-- OTP Inputs -->
+        <div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:24px" class="otp-inputs-wrapper">
+          <input type="text" class="otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+          <input type="text" class="otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+          <input type="text" class="otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+          <input type="text" class="otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+          <input type="text" class="otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+          <input type="text" class="otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
         </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="s_class">Class</label>
-            <select id="s_class">
-              <option value="Class 6">Class 6</option>
-              <option value="Class 7" selected>Class 7</option>
-              <option value="Class 8">Class 8</option>
-              <option value="Class 9">Class 9</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="s_section">Section</label>
-            <select id="s_section">
-              <option value="A">A</option>
-              <option value="B">B</option>
-              <option value="C">C</option>
-            </select>
-          </div>
-        </div>
-      </div>
 
-      <!-- ============ TEACHER fields ============ -->
-      <div class="role-fields" data-fields="teacher" style="display:none">
-        <div class="form-row">
-          <div class="form-group">
-            <label for="t_id">Teacher ID</label>
-            <input type="text" id="t_id" placeholder="TCH-104">
-          </div>
-          <div class="form-group">
-            <label for="t_subject">Subject</label>
-            <input type="text" id="t_subject" placeholder="Science">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="t_class">Class</label>
-            <select id="t_class">
-              <option value="Class 6">Class 6</option>
-              <option value="Class 7" selected>Class 7</option>
-              <option value="Class 8">Class 8</option>
-              <option value="Class 9">Class 9</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="t_section">Section</label>
-            <select id="t_section">
-              <option value="A">A</option>
-              <option value="B">B</option>
-              <option value="C">C</option>
-            </select>
-          </div>
-        </div>
-      </div>
+        <div id="otpError" class="auth-error" style="display:none"></div>
 
-      <!-- ============ PARENT fields ============ -->
-      <div class="role-fields" data-fields="parent" style="display:none">
-        <p class="role-hint">Link to your child's account using their details:</p>
-        <div class="form-group form-row full">
-          <label for="p_roll">Child's Roll Number</label>
-          <input type="text" id="p_roll" placeholder="EDU-7A-021">
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="p_name">Child's Full Name</label>
-            <input type="text" id="p_name" placeholder="Aarav Sharma">
-          </div>
-          <div class="form-group">
-            <label for="p_class">Child's Class</label>
-            <select id="p_class">
-              <option value="Class 6">Class 6</option>
-              <option value="Class 7" selected>Class 7</option>
-              <option value="Class 8">Class 8</option>
-              <option value="Class 9">Class 9</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <div id="signupError" class="auth-error" style="display:none"></div>
-
-      <div class="checkbox-group">
-        <input type="checkbox" id="terms" required>
-        <label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
-      </div>
-
-      <button type="submit" class="btn btn-primary">
-        <span>Create Account</span>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M5 12h14M12 5l7 7-7 7"/>
-        </svg>
-      </button>
-
-      <div class="divider">or sign up with</div>
-
-      <div class="social-logins">
-        <button type="button" class="social-btn" onclick="handleSocial('google')">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-          Google
+        <button type="submit" class="btn btn-primary" id="verifyOtpBtn" style="margin-bottom:16px">
+          <span>Verify & Get Started</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
         </button>
-        <button type="button" class="social-btn" onclick="handleSocial('apple')">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 13.5c-.91 2.13-.505 4.26 1.75 5.59.94.565 2.05.96 3.25 1.12-.15 1.17-.915 2.08-1.915 2.38-1.94.585-4.42.19-6.64-1.05-.68-.37-1.28-.86-1.81-1.41-.53.55-1.13 1.04-1.81 1.41-2.22 1.24-4.7 1.635-6.64 1.05-1-.3-1.765-1.21-1.915-2.38 1.2-.16 2.31-.555 3.25-1.12 2.255-1.33 2.66-3.46 1.75-5.59-1.755-4.18-7.805-5.06-7.805-5.06 0-.39.04-.78.11-1.16 6.265-.365 8.715 2.645 10.985 4.47 2.27-1.825 4.72-4.835 10.985-4.47.07.38.11.77.11 1.16 0 0-6.05.88-7.805 5.06z"/></svg>
-          Apple
-        </button>
-      </div>
-    </form>
 
-    <p class="login-link">
-      Already have an account? <a href="login.html">Sign in</a>
-    </p>
+        <div style="text-align:center;font-size:14px;color:#6B7280;margin-bottom:16px">
+          Didn't receive the code? 
+          <a href="#" id="resendOtpLink" onclick="resendOtp(event)" style="color:var(--teal);text-decoration:none;font-weight:700">Resend Code</a>
+          <span id="resendTimerText" style="display:none">in <span id="resendCountdown">60</span>s</span>
+        </div>
 
-    <div class="features">
-      <div class="feature">
-        <span class="feature-icon">✓</span>
-        <span>Free access to 9,000+ lessons</span>
-      </div>
-      <div class="feature">
-        <span class="feature-icon">✓</span>
-        <span>Track your progress</span>
-      </div>
-      <div class="feature">
-        <span class="feature-icon">✓</span>
-        <span>All classes & boards</span>
-      </div>
-      <div class="feature">
-        <span class="feature-icon">✓</span>
-        <span>Learn at your own pace</span>
-      </div>
+        <div style="text-align:center;font-size:14px;display:flex;justify-content:center;gap:12px">
+          <a href="#" onclick="showSignupView(event)" style="color:#6B7280;text-decoration:none;font-weight:600">← Back</a>
+          <span style="color:#D1D5DB">|</span>
+          <a href="dashboard.html" style="color:#6B7280;text-decoration:none;font-weight:600">Skip for now</a>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -700,13 +782,185 @@
       var original = btn ? btn.textContent : '';
       if (btn) btn.textContent = 'Creating account…';
       try {
-        await EduAPI.signup(selectedRole, buildBody());
-        window.location.href = 'dashboard.html';
+        var user = await EduAPI.signup(selectedRole, buildBody());
+        // Since we signed up, user session is active but not verified.
+        // Let's trigger verification immediately!
+        showOtpView(user.id, user.email, user.phone);
       } catch (err) {
         showError(err.message);
         if (btn) btn.textContent = original;
       }
     }
+
+    // OTP global state
+    var otpState = {
+      userId: null,
+      email: null,
+      phone: null,
+      channel: 'email',
+      resendTimer: null,
+      resendCountdown: 0
+    };
+
+    function setupOtpInputs() {
+      var inputs = document.querySelectorAll('.otp-digit');
+      inputs.forEach(function (input, idx) {
+        input.addEventListener('input', function (e) {
+          var val = input.value;
+          if (val.length === 1 && idx < inputs.length - 1) {
+            inputs[idx + 1].focus();
+          }
+        });
+        input.addEventListener('keydown', function (e) {
+          if (e.key === 'Backspace' && input.value === '' && idx > 0) {
+            inputs[idx - 1].focus();
+          }
+        });
+        input.addEventListener('paste', function (e) {
+          e.preventDefault();
+          var pasteData = (e.clipboardData || window.clipboardData).getData('text').trim();
+          if (pasteData.length === 6 && /^\d+$/.test(pasteData)) {
+            inputs.forEach(function (inp, i) {
+              inp.value = pasteData[i];
+            });
+            inputs[5].focus();
+          }
+        });
+      });
+    }
+
+    function showSignupView(e) {
+      if (e) e.preventDefault();
+      document.getElementById('signupFormView').style.display = '';
+      document.getElementById('otpFormView').style.display = 'none';
+      if (otpState.resendTimer) clearInterval(otpState.resendTimer);
+    }
+
+    function startResendTimer() {
+      var resendLink = document.getElementById('resendOtpLink');
+      var timerText = document.getElementById('resendTimerText');
+      var countdownVal = document.getElementById('resendCountdown');
+      
+      otpState.resendCountdown = 60;
+      resendLink.style.display = 'none';
+      timerText.style.display = 'inline';
+      countdownVal.textContent = otpState.resendCountdown;
+
+      if (otpState.resendTimer) clearInterval(otpState.resendTimer);
+
+      otpState.resendTimer = setInterval(function () {
+        otpState.resendCountdown--;
+        countdownVal.textContent = otpState.resendCountdown;
+        if (otpState.resendCountdown <= 0) {
+          clearInterval(otpState.resendTimer);
+          resendLink.style.display = 'inline';
+          timerText.style.display = 'none';
+        }
+      }, 1000);
+    }
+
+    async function triggerSendOtp(channel) {
+      document.getElementById('otpError').style.display = 'none';
+      document.getElementById('devCodeAlert').style.display = 'none';
+      otpState.channel = channel;
+      try {
+        var res = await EduAPI.sendOtp(channel, otpState.email, otpState.userId);
+        if (res.devCode) {
+          document.getElementById('devCodeVal').textContent = res.devCode;
+          document.getElementById('devCodeAlert').style.display = 'block';
+        }
+        startResendTimer();
+      } catch (err) {
+        var el = document.getElementById('otpError');
+        el.textContent = err.message;
+        el.style.display = 'block';
+      }
+    }
+
+    async function resendOtp(e) {
+      if (e) e.preventDefault();
+      if (otpState.resendCountdown > 0) return;
+      await triggerSendOtp(otpState.channel);
+    }
+
+    async function setOtpChannel(channel) {
+      if (otpState.channel === channel) return;
+      document.getElementById('channelBtnEmail').style.borderColor = channel === 'email' ? 'var(--teal)' : '';
+      document.getElementById('channelBtnPhone').style.borderColor = channel === 'phone' ? 'var(--teal)' : '';
+      
+      await triggerSendOtp(channel);
+      var dest = channel === 'email' ? otpState.email : otpState.phone;
+      document.getElementById('otpSubtitle').textContent = 'Please enter the 6-digit code sent to ' + dest;
+    }
+
+    function showOtpView(userId, email, phone) {
+      otpState.userId = userId;
+      otpState.email = email;
+      otpState.phone = phone;
+
+      var dest = email || phone || 'your registered contact';
+      document.getElementById('otpSubtitle').textContent = 'Please enter the 6-digit code sent to ' + dest;
+
+      document.getElementById('signupFormView').style.display = 'none';
+      document.getElementById('otpFormView').style.display = '';
+
+      // Configure channel selector
+      var selector = document.getElementById('otpChannelSelector');
+      if (email && phone) {
+        selector.style.display = 'block';
+        document.getElementById('channelBtnEmail').style.borderColor = 'var(--teal)';
+        document.getElementById('channelBtnPhone').style.borderColor = '';
+        otpState.channel = 'email';
+      } else {
+        selector.style.display = 'none';
+        otpState.channel = email ? 'email' : 'phone';
+      }
+
+      var inputs = document.querySelectorAll('.otp-digit');
+      inputs.forEach(function (inp) { inp.value = ''; });
+      if (inputs[0]) inputs[0].focus();
+
+      triggerSendOtp(otpState.channel);
+    }
+
+    async function handleVerifyOtp(e) {
+      e.preventDefault();
+      document.getElementById('otpError').style.display = 'none';
+      var inputs = document.querySelectorAll('.otp-digit');
+      var code = '';
+      inputs.forEach(function (inp) {
+        code += inp.value.trim();
+      });
+      if (code.length !== 6) {
+        var el = document.getElementById('otpError');
+        el.textContent = 'Please enter all 6 digits.';
+        el.style.display = 'block';
+        return;
+      }
+
+      var verifyBtn = document.getElementById('verifyOtpBtn');
+      var btnSpan = verifyBtn.querySelector('span');
+      var original = btnSpan ? btnSpan.textContent : '';
+      if (btnSpan) btnSpan.textContent = 'Verifying…';
+
+      try {
+        var res = await EduAPI.verifyOtp(otpState.channel, code, otpState.email, otpState.userId);
+        if (res.verified) {
+          // Signup is already complete and tokens are stored. Just route to dashboard!
+          window.location.href = 'dashboard.html';
+        } else {
+          throw new Error('Verification failed.');
+        }
+      } catch (err) {
+        var el = document.getElementById('otpError');
+        el.textContent = err.message;
+        el.style.display = 'block';
+        if (btnSpan) btnSpan.textContent = original;
+      }
+    }
+
+    // Call input binding setup
+    setupOtpInputs();
 
     function handleSocial(provider) {
       alert(provider.toUpperCase() + ' signup coming soon! Use email for now.');
