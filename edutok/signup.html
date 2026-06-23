@@ -715,8 +715,6 @@
 
         <div style="text-align:center;font-size:14px;display:flex;justify-content:center;gap:12px">
           <a href="#" onclick="showSignupView(event)" style="color:#6B7280;text-decoration:none;font-weight:600">← Back</a>
-          <span style="color:#D1D5DB">|</span>
-          <a href="dashboard.html" style="color:#6B7280;text-decoration:none;font-weight:600">Skip for now</a>
         </div>
       </form>
     </div>
@@ -883,44 +881,40 @@
       await triggerSendOtp(otpState.channel);
     }
 
-    async function setOtpChannel(channel) {
-      if (otpState.channel === channel) return;
-      document.getElementById('channelBtnEmail').style.borderColor = channel === 'email' ? 'var(--teal)' : '';
-      document.getElementById('channelBtnPhone').style.borderColor = channel === 'phone' ? 'var(--teal)' : '';
-      
-      await triggerSendOtp(channel);
-      var dest = channel === 'email' ? otpState.email : otpState.phone;
-      document.getElementById('otpSubtitle').textContent = 'Please enter the 6-digit code sent to ' + dest;
-    }
-
     function showOtpView(userId, email, phone) {
       otpState.userId = userId;
       otpState.email = email;
       otpState.phone = phone;
-
-      var dest = email || phone || 'your registered contact';
-      document.getElementById('otpSubtitle').textContent = 'Please enter the 6-digit code sent to ' + dest;
+      otpState.emailVerified = false;
+      otpState.phoneVerified = false;
 
       document.getElementById('signupFormView').style.display = 'none';
       document.getElementById('otpFormView').style.display = '';
+      // Hide channel selector — both are mandatory in sequence
+      document.getElementById('otpChannelSelector').style.display = 'none';
 
-      // Configure channel selector
-      var selector = document.getElementById('otpChannelSelector');
-      if (email && phone) {
-        selector.style.display = 'block';
-        document.getElementById('channelBtnEmail').style.borderColor = 'var(--teal)';
-        document.getElementById('channelBtnPhone').style.borderColor = '';
-        otpState.channel = 'email';
-      } else {
-        selector.style.display = 'none';
-        otpState.channel = email ? 'email' : 'phone';
-      }
+      determineNextStep();
+    }
 
+    function determineNextStep() {
       var inputs = document.querySelectorAll('.otp-digit');
-      inputs.forEach(function (inp) { inp.value = ''; });
+      inputs.forEach(function(inp){ inp.value = ''; });
       if (inputs[0]) inputs[0].focus();
 
-      triggerSendOtp(otpState.channel);
+      if (!otpState.emailVerified) {
+        otpState.channel = 'email';
+        document.getElementById('otpSubtitle').textContent =
+          'Step 1 of 2: Enter the 6-digit code sent to your email ' + (otpState.email || '');
+        triggerSendOtp('email');
+      } else if (!otpState.phoneVerified) {
+        otpState.channel = 'phone';
+        document.getElementById('otpSubtitle').textContent =
+          'Step 2 of 2: Enter the 6-digit code sent to your phone ' + (otpState.phone || '');
+        triggerSendOtp('phone');
+      } else {
+        // Both verified — go to dashboard
+        window.location.href = 'dashboard.html';
+      }
     }
 
     async function handleVerifyOtp(e) {
@@ -946,8 +940,13 @@
       try {
         var res = await EduAPI.verifyOtp(otpState.channel, code, otpState.email, otpState.userId);
         if (res.verified) {
-          // Signup is already complete and tokens are stored. Just route to dashboard!
-          window.location.href = 'dashboard.html';
+          if (otpState.channel === 'email') {
+            otpState.emailVerified = true;
+          } else {
+            otpState.phoneVerified = true;
+          }
+          if (btnSpan) btnSpan.textContent = original;
+          determineNextStep();
         } else {
           throw new Error('Verification failed.');
         }

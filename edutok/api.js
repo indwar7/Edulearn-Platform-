@@ -69,6 +69,8 @@
       err.userId = data.userId;
       err.email = data.email;
       err.phone = data.phone;
+      err.emailVerified = data.emailVerified;
+      err.phoneVerified = data.phoneVerified;
       throw err;
     }
     return data;
@@ -176,6 +178,37 @@
     return request('/api/live/' + id + '/roster');
   }
 
+  // ---- PAL AI calls ----
+  async function listPalSessions() {
+    return request('/api/pal/sessions');
+  }
+
+  async function getPalSession(id) {
+    return request('/api/pal/sessions/' + id);
+  }
+
+  async function chatPal(message, sessionId) {
+    var body = { message: message };
+    if (sessionId) body.sessionId = sessionId;
+    return request('/api/pal/chat', {
+      method: 'POST',
+      body: body
+    });
+  }
+
+  async function renamePalSession(id, title) {
+    return request('/api/pal/sessions/' + id, {
+      method: 'PATCH',
+      body: { title: title }
+    });
+  }
+
+  async function deletePalSession(id) {
+    return request('/api/pal/sessions/' + id, {
+      method: 'DELETE'
+    });
+  }
+
   // Guard: redirect to login if not authenticated. Optionally require a role.
   function requireAuth(requiredRole) {
     var user = getUser();
@@ -211,5 +244,10 @@
     liveRoster: liveRoster,
     sendOtp: sendOtp,
     verifyOtp: verifyOtp,
+    listPalSessions: listPalSessions,
+    getPalSession: getPalSession,
+    chatPal: chatPal,
+    renamePalSession: renamePalSession,
+    deletePalSession: deletePalSession,
   };
 })(window);

@@ -599,6 +599,8 @@
       userId: null,
       email: null,
       phone: null,
+      emailVerified: false,
+      phoneVerified: false,
       channel: 'email',
       resendTimer: null,
       resendCountdown: 0
@@ -666,7 +668,7 @@
       document.getElementById('devCodeAlert').style.display = 'none';
       otpState.channel = channel;
       try {
-        var res = await EduAPI.sendOtp(channel, otpState.email, otpState.userId);
+        var res = await EduAPI.sendOtp(channel, undefined, otpState.userId);
         if (res.devCode) {
           document.getElementById('devCodeVal').textContent = res.devCode;
           document.getElementById('devCodeAlert').style.display = 'block';
@@ -685,44 +687,48 @@
       await triggerSendOtp(otpState.channel);
     }
 
-    async function setOtpChannel(channel) {
-      if (otpState.channel === channel) return;
-      document.getElementById('channelBtnEmail').style.borderColor = channel === 'email' ? 'var(--teal)' : '';
-      document.getElementById('channelBtnPhone').style.borderColor = channel === 'phone' ? 'var(--teal)' : '';
-      
-      await triggerSendOtp(channel);
-      var dest = channel === 'email' ? otpState.email : otpState.phone;
-      document.getElementById('otpSubtitle').textContent = 'Please enter the 6-digit code sent to ' + dest;
-    }
-
-    function showOtpView(userId, email, phone) {
+    function showOtpView(userId, email, phone, emailVerified, phoneVerified) {
       otpState.userId = userId;
       otpState.email = email;
       otpState.phone = phone;
-
-      var dest = email || phone || 'your registered contact';
-      document.getElementById('otpSubtitle').textContent = 'Please enter the 6-digit code sent to ' + dest;
+      otpState.emailVerified = !!emailVerified;
+      otpState.phoneVerified = !!phoneVerified;
 
       document.getElementById('loginFormView').style.display = 'none';
       document.getElementById('otpFormView').style.display = '';
 
-      // Configure channel selector
-      var selector = document.getElementById('otpChannelSelector');
-      if (email && phone) {
-        selector.style.display = 'block';
-        document.getElementById('channelBtnEmail').style.borderColor = 'var(--teal)';
-        document.getElementById('channelBtnPhone').style.borderColor = '';
-        otpState.channel = 'email';
-      } else {
-        selector.style.display = 'none';
-        otpState.channel = email ? 'email' : 'phone';
-      }
+      determineNextStep();
+    }
 
+    function determineNextStep() {
       var inputs = document.querySelectorAll('.otp-digit');
       inputs.forEach(function (inp) { inp.value = ''; });
       if (inputs[0]) inputs[0].focus();
 
-      triggerSendOtp(otpState.channel);
+      if (!otpState.emailVerified) {
+        otpState.channel = 'email';
+        document.getElementById('otpSubtitle').textContent = 'Step 1 of 2: Please enter the 6-digit code sent to your email ' + otpState.email;
+        triggerSendOtp('email');
+      } else if (!otpState.phoneVerified) {
+        otpState.channel = 'phone';
+        document.getElementById('otpSubtitle').textContent = 'Step 2 of 2: Please enter the 6-digit code sent to your phone ' + otpState.phone;
+        triggerSendOtp('phone');
+      } else {
+        completeVerification();
+      }
+    }
+
+    async function completeVerification() {
+      var email = document.getElementById('email').value.trim();
+      var password = document.getElementById('password').value;
+      try {
+        await EduAPI.login(email, password, selectedRole);
+        window.location.href = 'dashboard.html';
+      } catch (err) {
+        var el = document.getElementById('otpError');
+        el.textContent = err.message;
+        el.style.display = 'block';
+      }
     }
 
     async function handleVerifyOtp(e) {
@@ -746,13 +752,15 @@
       if (btnSpan) btnSpan.textContent = 'Verifying…';
 
       try {
-        var res = await EduAPI.verifyOtp(otpState.channel, code, otpState.email, otpState.userId);
+        var res = await EduAPI.verifyOtp(otpState.channel, code, undefined, otpState.userId);
         if (res.verified) {
-          // Complete login automatically by logging in again
-          var email = document.getElementById('email').value.trim();
-          var password = document.getElementById('password').value;
-          await EduAPI.login(email, password, selectedRole);
-          window.location.href = 'dashboard.html';
+          if (otpState.channel === 'email') {
+            otpState.emailVerified = true;
+          } else {
+            otpState.phoneVerified = true;
+          }
+          if (btnSpan) btnSpan.textContent = original;
+          determineNextStep();
         } else {
           throw new Error('Verification failed.');
         }
@@ -782,7 +790,7 @@
       } catch (err) {
         if (err.code === 'VERIFICATION_REQUIRED') {
           if (btn) btn.textContent = original;
-          showOtpView(err.userId, err.email, err.phone);
+          showOtpView(err.userId, err.email, err.phone, err.emailVerified, err.phoneVerified);
         } else {
           showError(err.message);
           if (btn) btn.textContent = original;

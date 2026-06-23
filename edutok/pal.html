@@ -203,7 +203,7 @@ html.dark-mode .bubble a{color:var(--teal)}
 <div class="app">
   <!-- ============ SIDEBAR ============ -->
   <aside class="side" id="sidebar">
-    <div class="roles" role="group" aria-label="Who is asking">
+    <div class="roles" role="group" aria-label="Who is asking" id="roleSwitcher">
       <button class="role r-student is-on" data-role="student" type="button">Student</button>
       <button class="role r-parent" data-role="parent" type="button">Parent</button>
       <button class="role r-teacher" data-role="teacher" type="button">Teacher</button>
@@ -362,14 +362,24 @@ var ROSTER = [
    STORAGE
    ============================================================ */
 var LS_KEY = 'edulearn_pal_chats';
+
+// Determine the authenticated user's role (or fallback to 'student' for demo).
+var _authUser = null;
+try {
+  _authUser = JSON.parse(localStorage.getItem('edulearn_user') || 'null');
+} catch(e) { _authUser = null; }
+var AUTH_ROLE = (_authUser && _authUser.role) || null;
+var AUTH_SESSION_ID = null; // tracks current backend session id
+
 function loadStore(){
   try{
     var d = JSON.parse(localStorage.getItem(LS_KEY) || 'null');
     if(!d || typeof d !== 'object') d = {};
     if(!Array.isArray(d.chats)) d.chats = [];
-    if(!d.role) d.role = 'student';
+    // Always boot into the authenticated user's role when logged in
+    if(!d.role || AUTH_ROLE) d.role = AUTH_ROLE || 'student';
     return d;
-  }catch(e){ return { chats:[], role:'student', activeId:null }; }
+  }catch(e){ return { chats:[], role: AUTH_ROLE || 'student', activeId:null }; }
 }
 function save(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(store)); }catch(e){} }
 var store = loadStore();
@@ -771,18 +781,58 @@ function sendMessage(text){
     '<div class="msg msg--pal" id="typingRow"><span class="av av--pal">' + PAL_AV + '</span><div class="bubble"><span class="typing"><i></i><i></i><i></i></span></div></div>');
   thread.scrollTop = thread.scrollHeight;
 
-  setTimeout(function(){
-    var r = reply(text);
-    var row = document.getElementById('typingRow');
-    if(row) row.remove();
-    var m = { who:'pal', text: r.text, quiz: r.quiz || null, quizDone: null, chips: r.chips || null };
-    streamIn(m, function(){
-      c.msgs.push(m);
-      save();
-      busy = false; sendBtn.disabled = false;
-      input.focus();
+  // Try real backend PAL AI first; fall back to local engine.
+  var token = (typeof EduAPI !== 'undefined') && EduAPI.getToken && EduAPI.getToken();
+  if (token) {
+    var reqSessionId = c.backendSessionId || AUTH_SESSION_ID || undefined;
+    EduAPI.chatPal(text, reqSessionId).then(function(res){
+      var row = document.getElementById('typingRow');
+      if(row) row.remove();
+      // Store backend session id for this chat thread
+      if (res.sessionId) {
+        c.backendSessionId = res.sessionId;
+        AUTH_SESSION_ID = res.sessionId;
+      }
+      var replyText = (typeof res.reply === 'string' ? res.reply : null) ||
+                      (res.reply && res.reply.content) ||
+                      (res.message && typeof res.message === 'string' ? res.message : null) ||
+                      (res.message && res.message.content) ||
+                      'I did not catch that. Could you rephrase?';
+      var m = { who:'pal', text: replyText, quiz: null, quizDone: null, chips: null };
+      streamIn(m, function(){
+        c.msgs.push(m);
+        save();
+        busy = false; sendBtn.disabled = false;
+        input.focus();
+      });
+    }).catch(function(err){
+      // Graceful fallback: use local engine
+      var row = document.getElementById('typingRow');
+      if(row) row.remove();
+      var r = reply(text);
+      var m = { who:'pal', text: r.text, quiz: r.quiz || null, quizDone: null, chips: r.chips || null };
+      streamIn(m, function(){
+        c.msgs.push(m);
+        save();
+        busy = false; sendBtn.disabled = false;
+        input.focus();
+      });
     });
-  }, 650 + Math.random() * 500);
+  } else {
+    // No auth token — use offline local engine
+    setTimeout(function(){
+      var r = reply(text);
+      var row = document.getElementById('typingRow');
+      if(row) row.remove();
+      var m = { who:'pal', text: r.text, quiz: r.quiz || null, quizDone: null, chips: r.chips || null };
+      streamIn(m, function(){
+        c.msgs.push(m);
+        save();
+        busy = false; sendBtn.disabled = false;
+        input.focus();
+      });
+    }, 650 + Math.random() * 500);
+  }
 }
 
 /* ============================================================
@@ -816,6 +866,18 @@ document.getElementById('menuBtn').addEventListener('click', function(){
 if(!store.activeId || !activeChat()){
   if(store.chats.length){ store.activeId = store.chats[0].id; }
   else { store.chats.unshift({ id:'c' + Date.now(), role: store.role, title:'New chat', msgs:[] }); store.activeId = store.chats[0].id; }
+}
+// Lock role to authenticated user's actual role
+if(AUTH_ROLE){
+  store.role = AUTH_ROLE;
+  // Disable manual role switching for logged-in users
+  document.querySelectorAll('.role').forEach(function(b){
+    if(b.getAttribute('data-role') !== AUTH_ROLE){
+      b.style.opacity = '0.35';
+      b.style.pointerEvents = 'none';
+      b.setAttribute('title', 'Your account role is ' + AUTH_ROLE + '. Log in as a different role to switch.');
+    }
+  });
 }
 setRole(store.role, true);
 renderChatList();
