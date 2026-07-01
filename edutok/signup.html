@@ -780,10 +780,9 @@
       var original = btn ? btn.textContent : '';
       if (btn) btn.textContent = 'Creating account…';
       try {
-        var user = await EduAPI.signup(selectedRole, buildBody());
-        // Since we signed up, user session is active but not verified.
-        // Let's trigger verification immediately!
-        showOtpView(user.id, user.email, user.phone);
+        await EduAPI.signup(selectedRole, buildBody());
+        // No email/phone verification — signup logs the user straight in.
+        window.location.href = 'dashboard.html';
       } catch (err) {
         showError(err.message);
         if (btn) btn.textContent = original;
