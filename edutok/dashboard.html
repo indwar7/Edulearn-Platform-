@@ -1259,20 +1259,20 @@ var EASE_MS = RM ? 0 : 1;
 /* ------------------------------------------------------------
    SHARED STATE — localStorage "edutok_state"
 ------------------------------------------------------------ */
+// Empty defaults: a new user sees zeros / empty states, never invented data.
+// Real values are injected from the backend in applyDashboardData().
 var DEFAULTS = {
   lang: 'en',
-  streak: 12,
-  minutes: [34,52,41,68,45,72,58],
-  badges: ['photosynthesis','fractions','electricity'],
-  chapters: {
-    'c7-sci-photosynthesis': { video:100, practice:80, test:85,  mastered:false },
-    'c7-math-fractions':     { video:60,  practice:35, test:null, mastered:false },
-    'c7-sci-heat':           { video:45,  practice:10, test:null, mastered:false },
-    'c7-sst-mughal-empire':  { video:25,  practice:0,  test:null, mastered:false },
-    'c6-math-integers':      { video:100, practice:100,test:92,  mastered:true  }
-  },
-  pal: { level:2, remedialMastery:40, finalUnlocked:false, hints:3, skips:1 }
+  streak: 0,
+  minutes: [0,0,0,0,0,0,0],
+  badges: [],
+  chapters: {},
+  pal: { level:1, remedialMastery:0, finalUnlocked:false, hints:3, skips:1 }
 };
+
+// Real per-subject mastery + badges from the backend (data.mastery). Empty
+// until the API responds; drives the donuts + badge shelf. No fabricated data.
+var MASTERY = { subjects: [], badges: [], hasActivity: false };
 
 function deepMerge(base, over){
   var out = {};
@@ -1500,17 +1500,26 @@ function animateBars(){
 /* ------------------------------------------------------------
    STUDENT — subject mastery donuts
 ------------------------------------------------------------ */
-var SUBJECTS = [
-  { name:'Maths',   pct:72, color:'#7C9BFF' },
-  { name:'Science', pct:86, color:'#3DE8C5' },
-  { name:'SST',     pct:54, color:'#FFB454' },
-  { name:'English', pct:91, color:'#FF7AA2' },
-  { name:'Hindi',   pct:63, color:'#C2A8FF' }
-];
+// Stable colour per canonical subject key (from the backend mastery payload).
+var SUBJECT_COLORS = {
+  maths:'#7C9BFF', science:'#3DE8C5', sst:'#FFB454', english:'#FF7AA2', hindi:'#C2A8FF'
+};
 var DONUT_R = 31, DONUT_C = 2 * Math.PI * 31;
+
+// Built from real backend mastery. Empty until data arrives → honest empty state.
+var SUBJECTS = [];
 
 function buildDonuts(){
   var grid = $('#donutGrid');
+  if (!grid) return;
+
+  // Honest empty state: no real mastery yet.
+  if (!SUBJECTS.length){
+    grid.innerHTML = '<p class="empty-hint" style="grid-column:1/-1">' +
+      'No subject mastery yet. Complete chapters and mock tests and your mastery will appear here.</p>';
+    return;
+  }
+
   var html = '';
   SUBJECTS.forEach(function(s, i){
     html += '<div class="donut-cell">';
@@ -1581,21 +1590,40 @@ function medalSVG(b, earned){
   return s;
 }
 
+// Pick a medallion icon for a real backend badge by matching keywords in its
+// key/label; falls back to a generic ray icon.
+function iconForBadge(b){
+  var t = ((b.key || '') + ' ' + (b.label || '')).toLowerCase();
+  if (t.indexOf('streak') !== -1) return 'clock';
+  if (t.indexOf('mock') !== -1 || t.indexOf('ace') !== -1) return 'bolt';
+  if (t.indexOf('chapter') !== -1) return 'eq';
+  return 'rays';
+}
+
 function buildBadges(){
   var shelf = $('#badgeShelf');
-  var earnedCount = 0;
+  if (!shelf) return;
+  var earned = (MASTERY.badges || []);
+
+  // Honest empty state: nothing genuinely earned yet.
+  if (!earned.length){
+    shelf.innerHTML = '<p class="empty-hint" style="width:100%">' +
+      'No badges yet. Master a chapter, keep a daily streak, or ace a mock test to earn your first.</p>';
+    var bc0 = $('#badgeCount'); if (bc0) bc0.textContent = '0 EARNED';
+    return;
+  }
+
   var html = '';
-  BADGE_CATALOG.forEach(function(b){
-    var earned = STATE.badges.indexOf(b.id) !== -1;
-    if (earned) earnedCount++;
-    html += '<div class="medal-cell' + (earned ? '' : ' locked') + '">';
-    html += '<div class="medal">' + medalSVG(b, earned) + '</div>';
-    html += '<span class="mlab">' + b.label + '</span>';
-    html += '<span class="msub">' + (earned ? b.sub : 'LOCKED') + '</span>';
+  earned.forEach(function(b){
+    var meta = { id: b.key, label: b.label, icon: iconForBadge(b) };
+    html += '<div class="medal-cell">';
+    html += '<div class="medal">' + medalSVG(meta, true) + '</div>';
+    html += '<span class="mlab">' + escapeHtml(b.label) + '</span>';
+    html += '<span class="msub">' + escapeHtml(b.earnedFrom || 'Earned') + '</span>';
     html += '</div>';
   });
   shelf.innerHTML = html;
-  $('#badgeCount').textContent = earnedCount + ' OF ' + BADGE_CATALOG.length + ' EARNED';
+  var bc = $('#badgeCount'); if (bc) bc.textContent = earned.length + ' EARNED';
 }
 
 /* ------------------------------------------------------------
@@ -1815,32 +1843,40 @@ function animateArea(){
 }
 
 /* ------------------------------------------------------------
-   RAIL — calendar heatmap (8 weeks)
+   RAIL — calendar heatmap (8 weeks) — driven by REAL activity.
+   HEAT_BY_DAY maps a "YYYY-MM-DD" key → minutes studied that day
+   (populated from backend insights.weekly). Days with no data show
+   as rest days, not fabricated activity.
 ------------------------------------------------------------ */
-function hmRand(i){
-  var x = Math.sin(i * 12.9898 + 4.1414) * 43758.5453;
-  return x - Math.floor(x);
+var HEAT_BY_DAY = {};            // "2026-06-30" -> minutes (real)
+function dayKeyLocal(d){
+  return d.getFullYear() + '-' +
+    String(d.getMonth() + 1).padStart(2, '0') + '-' +
+    String(d.getDate()).padStart(2, '0');
+}
+// Bucket real minutes into a 0–4 intensity level.
+function heatLevel(mins){
+  if (!mins) return 0;
+  if (mins < 15) return 1;
+  if (mins < 30) return 2;
+  if (mins < 60) return 3;
+  return 4;
 }
 var HM_COLORS = ['rgba(61,232,197,.07)','rgba(61,232,197,.22)','rgba(61,232,197,.45)','rgba(61,232,197,.7)','#3DE8C5'];
 
 function buildHeatmap(){
   var hm = $('#heatmap');
   var tip = $('#hmTip');
+  if (!hm) return;
   var total = 56;
   var html = '';
   for (var i = 0; i < total; i++){
     var d = dayOffset(total - 1 - i);
-    var r = hmRand(i);
-    var lvl;
-    if (r < 0.18) lvl = 0;
-    else if (r < 0.42) lvl = 1;
-    else if (r < 0.68) lvl = 2;
-    else if (r < 0.88) lvl = 3;
-    else lvl = 4;
-    if (i === total - 1) lvl = 4; // today, lit
-    var minsVal = lvl === 0 ? 0 : Math.round(12 + r * 58);
+    var minsVal = HEAT_BY_DAY[dayKeyLocal(d)] || 0;   // real minutes, 0 if none
+    var lvl = heatLevel(minsVal);
+    var isToday = i === total - 1;
     html += '<span class="hcell" style="background:' + HM_COLORS[lvl] + ';transition-delay:' + (i * 14) + 'ms;' +
-      (i === total - 1 ? 'box-shadow:0 0 10px rgba(61,232,197,.8);' : '') + '" data-tip="' +
+      (isToday && lvl > 0 ? 'box-shadow:0 0 10px rgba(61,232,197,.8);' : '') + '" data-tip="' +
       (minsVal === 0 ? 'REST DAY' : minsVal + ' MIN') + ' · ' + DAY_TIP[d.getDay()] + ' ' + d.getDate() + ' ' + MON_SHORT[d.getMonth()] + '"></span>';
   }
   hm.innerHTML = html;
@@ -2132,12 +2168,14 @@ function applyDashboardData(user, data){
   document.querySelectorAll('[data-greet-name]').forEach(function(el){ el.textContent = user.name; });
 
   if (data.role === 'student'){
+    // Real per-subject mastery + earned badges drive the donuts + badge shelf.
+    applyMastery(data.mastery);
     if (data.stats){
       setText('#statStreak', data.stats.streak);
       setText('#statMinutes', data.stats.minutes);
-      setText('#statBadges', (data.stats.badges || []).length);
     }
-    // Real derived insights drive the streak number + weekly minutes chart.
+    setText('#statBadges', MASTERY.badges.length);
+    // Real derived insights drive the streak number + weekly minutes chart + heatmap.
     if (data.insights) applyStudentInsights(data.insights);
   }
   if (data.role === 'teacher'){
@@ -2161,10 +2199,28 @@ function applyDashboardData(user, data){
   }
 }
 
+// Convert the backend mastery payload into the donut + badge data, then
+// rebuild those widgets. Falls back to honest empty states when there's none.
+function applyMastery(mastery){
+  MASTERY = mastery && typeof mastery === 'object'
+    ? { subjects: mastery.subjects || [], badges: mastery.badges || [], hasActivity: !!mastery.hasActivity }
+    : { subjects: [], badges: [], hasActivity: false };
+
+  SUBJECTS = MASTERY.subjects.map(function(s){
+    return { name: s.name, pct: s.pct, color: (SUBJECT_COLORS[s.key] || '#7C9BFF') };
+  });
+
+  try { buildDonuts(); animateDonuts(); } catch(e){}
+  try { buildBadges(); } catch(e){}
+}
+
 // Wire a student's (or child's) real insights into STATE + re-render charts.
 function applyStudentInsights(ins){
   if (Array.isArray(ins.weekly) && ins.weekly.length === 7){
     STATE.minutes = ins.weekly.map(function(p){ return p.minutes || 0; });
+    // Feed the calendar heatmap with the real per-day minutes we have.
+    ins.weekly.forEach(function(p){ if (p && p.day) HEAT_BY_DAY[p.day] = p.minutes || 0; });
+    try { buildHeatmap(); } catch(e){}
   }
   if (typeof ins.dayStreak === 'number') STATE.streak = ins.dayStreak;
 

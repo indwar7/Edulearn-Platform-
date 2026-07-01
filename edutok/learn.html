@@ -1039,18 +1039,11 @@ var STATE_DEFAULTS = {
   streak: 12,
   minutes: [34, 52, 41, 68, 45, 72, 58],
   badges: ['photosynthesis', 'fractions', 'electricity'],
-  chapters: {
-    'c7-sci-photosynthesis':      { video: 100, practice: 100, test: 92, mastered: true  },
-    'c7-sci-electric-current':    { video: 100, practice: 100, test: 88, mastered: true  },
-    'c6-math-fractions':          { video: 100, practice: 100, test: 85, mastered: true  },
-    'c7-sci-heat':                { video: 65,  practice: 30,  test: null, mastered: false },
-    'c7-math-fractions-decimals': { video: 60,  practice: 20,  test: null, mastered: false },
-    'c7-sci-acids-bases-salts':   { video: 40,  practice: 0,   test: null, mastered: false },
-    'c7-sst-mughal-empire':       { video: 25,  practice: 0,   test: null, mastered: false },
-    'c8-sci-force-pressure':      { video: 50,  practice: 20,  test: null, mastered: false },
-    'c9-math-polynomials':        { video: 30,  practice: 0,   test: null, mastered: false }
-  },
-  pal: { level: 2, remedialMastery: 46, finalUnlocked: false, hints: 3, skips: 1 }
+  // No seeded chapters: progress starts empty and is filled from the backend
+  // for signed-in users (and from the user's own activity locally). This is
+  // what keeps a brand-new user from seeing progress they never earned.
+  chapters: {},
+  pal: { level: 1, remedialMastery: 0, finalUnlocked: false, hints: 3, skips: 1 }
 };
 
 function cloneObj(o){ return JSON.parse(JSON.stringify(o)); }
@@ -1889,9 +1882,38 @@ renderAll(true);
 syncURL();
 setupObserver();
 
+// Hydrate real per-user progress from the backend when signed in. A brand-new
+// user has empty chapters server-side, so no fake progress is shown; returning
+// users see exactly what they've actually completed. Exposed so the loader
+// script (after api.js) can call it once EduAPI is available.
+window.__eduHydrateProgress = function (progress) {
+  if (!progress || typeof progress !== 'object') return;
+  // Backend is the source of truth for a logged-in user: replace, don't merge,
+  // so stale localStorage demo data can't leak in.
+  state.chapters = (progress.chapters && typeof progress.chapters === 'object')
+    ? progress.chapters : {};
+  if (typeof progress.streak === 'number') state.streak = progress.streak;
+  if (typeof progress.minutes === 'number') state.minutes = progress.minutes;
+  if (Array.isArray(progress.badges)) state.badges = progress.badges;
+  saveState(state);
+  renderAll(false);
+};
+
 })();
 </script>
   <script src="api.js"></script>
+  <script>
+    // Once the API helper is loaded, pull the signed-in user's real progress
+    // and re-render. Silent no-op for logged-out visitors (they see the empty
+    // course library, not fabricated progress).
+    (function () {
+      if (!window.EduAPI || !EduAPI.getToken || !EduAPI.getToken()) return;
+      if (typeof EduAPI.getProgress !== 'function') return;
+      EduAPI.getProgress().then(function (progress) {
+        if (progress && window.__eduHydrateProgress) window.__eduHydrateProgress(progress);
+      }).catch(function () { /* offline / expired token → keep local view */ });
+    })();
+  </script>
 <script src="account-menu.js"></script>
 <script src="../theme.js"></script>
 <script src="../features-panel.js"></script>

@@ -99,6 +99,18 @@
     return request('/api/dashboard');
   }
 
+  // Real per-user progress snapshot: { progress: { chapters, streak, minutes, badges, ... } }.
+  async function getProgress() {
+    var data = await request('/api/progress');
+    return (data && data.progress) || null;
+  }
+
+  // Persist a partial or full progress object (merged server-side).
+  async function saveProgress(fields) {
+    var data = await request('/api/progress', { method: 'PUT', body: fields });
+    return (data && data.progress) || null;
+  }
+
   async function me() {
     return request('/api/auth/me');
   }
@@ -233,6 +245,8 @@
     getProfile: getProfile,
     updateProfile: updateProfile,
     getDashboard: getDashboard,
+    getProgress: getProgress,
+    saveProgress: saveProgress,
     getUser: getUser,
     getToken: getToken,
     requireAuth: requireAuth,
