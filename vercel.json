@@ -1,0 +1,9 @@
+{
+  "redirects": [
+    {
+      "source": "/edutok/:path*",
+      "destination": "/edulearn-frontend/:path*",
+      "permanent": true
+    }
+  ]
+}
