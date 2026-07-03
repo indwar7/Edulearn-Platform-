@@ -14,8 +14,8 @@
 
   var BASE = (function () {
     var p = location.pathname;
-    var i = p.indexOf('/edutok/');
-    return i !== -1 ? p.slice(0, i + 8) : (p.replace(/[^/]*$/, ''));
+    var i = p.indexOf('/edulearn-frontend/');
+    return i !== -1 ? p.slice(0, i + 19) : (p.replace(/[^/]*$/, ''));
   })();
   function href(file) { return BASE + file; }
 

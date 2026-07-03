@@ -705,13 +705,20 @@
       inputs.forEach(function (inp) { inp.value = ''; });
       if (inputs[0]) inputs[0].focus();
 
-      if (!otpState.emailVerified) {
+      // Count how many steps are needed
+      var needEmail = !otpState.emailVerified;
+      var needPhone = !otpState.phoneVerified;
+      var totalSteps = (needEmail ? 1 : 0) + (needPhone ? 1 : 0);
+
+      if (needEmail) {
         otpState.channel = 'email';
-        document.getElementById('otpSubtitle').textContent = 'Step 1 of 2: Please enter the 6-digit code sent to your email ' + otpState.email;
+        var prefix = totalSteps > 1 ? 'Step 1 of 2: ' : '';
+        document.getElementById('otpSubtitle').textContent = prefix + 'Please enter the 6-digit code sent to your email ' + otpState.email;
         triggerSendOtp('email');
-      } else if (!otpState.phoneVerified) {
+      } else if (needPhone) {
         otpState.channel = 'phone';
-        document.getElementById('otpSubtitle').textContent = 'Step 2 of 2: Please enter the 6-digit code sent to your phone ' + otpState.phone;
+        var prefix = totalSteps > 1 ? 'Step 2 of 2: ' : '';
+        document.getElementById('otpSubtitle').textContent = prefix + 'Enter the 6-digit code sent to your phone ' + otpState.phone;
         triggerSendOtp('phone');
       } else {
         completeVerification();

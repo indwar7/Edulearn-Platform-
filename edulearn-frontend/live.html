@@ -334,6 +334,14 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
           </form>
         </div>
 
+        <!-- Join with a class code -->
+        <div class="rv" id="joinCodeBox" style="animation-delay:.30s;display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:22px">
+          <input id="joinCodeInput" type="text" class="composer__field" style="flex:1;min-width:180px;text-transform:uppercase;letter-spacing:1px"
+            placeholder="Have a code? e.g. SCI-7A-4821" autocomplete="off" spellcheck="false">
+          <button class="btn-join" id="joinCodeBtn" type="button">Join with code</button>
+          <span id="joinCodeMsg" class="empty-hint" style="flex-basis:100%;margin:0"></span>
+        </div>
+
         <!-- Real backend sessions (live now, eligibility-checked) -->
         <h2 class="sect-title rv" id="liveNowTitle" style="animation-delay:.32s;display:none">Live now</h2>
         <div class="sessions" id="liveGrid" style="margin-bottom:26px"></div>
@@ -1151,6 +1159,47 @@ function renderRealSessions(){
   });
 }
 
+// Wire the "Join with code" box: look the class up by its code, then enter the
+// classroom. Eligibility is enforced server-side (same as the normal join).
+function wireJoinCode(){
+  var input = document.getElementById('joinCodeInput');
+  var btn = document.getElementById('joinCodeBtn');
+  var msg = document.getElementById('joinCodeMsg');
+  if (!input || !btn) return;
+
+  async function submit(){
+    var code = (input.value || '').trim().toUpperCase();
+    msg.textContent = '';
+    if (!code){ msg.textContent = 'Enter a class code first.'; return; }
+    btn.disabled = true;
+    var orig = btn.textContent;
+    btn.textContent = 'Joining…';
+    try {
+      var res = await EduAPI.joinLiveByCode(code);
+      if (res && res.ok && res.session){
+        // Shape the session for joinRealClass (it expects _id + fields).
+        var s = res.session;
+        joinRealClass(s.id, {
+          _id: s.id, title: s.title, className: s.className,
+          section: s.section, subject: s.subject,
+          teacherId: null
+        });
+      } else {
+        msg.textContent = 'Could not join with that code.';
+      }
+    } catch (err){
+      // Backend gives a clear reason (wrong code / not your class / ended).
+      msg.textContent = err.message || 'Could not join with that code.';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = orig;
+    }
+  }
+
+  btn.addEventListener('click', submit);
+  input.addEventListener('keydown', function(e){ if (e.key === 'Enter'){ e.preventDefault(); submit(); } });
+}
+
 // Teacher submits the composer → create a backend session → enter as host.
 function wireStartForm(){
   var form = document.getElementById('startForm');
@@ -1387,6 +1436,7 @@ function bootRealLive(){
   if (!window.EduAPI){ setTimeout(bootRealLive, 40); return; } // api.js not loaded yet
   setupTeacherComposer();
   wireStartForm();
+  wireJoinCode();
   loadRealSessions();
 }
 if (document.readyState === 'loading'){

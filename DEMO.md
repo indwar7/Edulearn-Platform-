@@ -27,7 +27,7 @@ You'll see a banner + the API starts on `http://localhost:4000`.
 cd /Users/abhayindwar/Documents/edu
 python3 -m http.server 8000
 ```
-Then open: **http://localhost:8000/edutok/login.html**
+Then open: **http://localhost:8000/edulearn-frontend/login.html**
 
 ---
 

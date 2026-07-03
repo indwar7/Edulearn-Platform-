@@ -180,6 +180,15 @@
     return request('/api/live/' + id + '/join', { method: 'POST' });
   }
 
+  // Join via short code (e.g. "SCI-7A-4821"). Same eligibility as joinLive.
+  // Returns room info ({ ok, session }).
+  async function joinLiveByCode(code) {
+    return request('/api/live/join-by-code', {
+      method: 'POST',
+      body: { code: code },
+    });
+  }
+
   // Teacher only: end the session (tears down the video room for everyone).
   async function endLive(id) {
     return request('/api/live/' + id + '/end', { method: 'POST' });
@@ -254,6 +263,7 @@
     listLive: listLive,
     createLive: createLive,
     joinLive: joinLive,
+    joinLiveByCode: joinLiveByCode,
     endLive: endLive,
     liveRoster: liveRoster,
     sendOtp: sendOtp,
