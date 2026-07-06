@@ -33,7 +33,14 @@
     // Wipe per-user cached data so the next person on a shared device never
     // sees the previous user's chats, bookings or progress. Keeps device-level
     // settings like the API override ('edulearn_api').
-    var USER_DATA_KEYS = ['edulearn_pal_chats', 'edulearn_live', 'edutok_state'];
+    var USER_DATA_KEYS = [
+      'edulearn_pal_chats',
+      'edulearn_live',
+      'edutok_state',
+      'edulearn_mock', // mocktest.html — mock-test attempt history
+      'edulearn_arena', // challenge.html — Arena scores/streaks
+      'edulearn_state', // learn.html — chapter progress, streaks, badges
+    ];
     var doomed = [];
     for (var i = 0; i < localStorage.length; i++) {
       var k = localStorage.key(i);
