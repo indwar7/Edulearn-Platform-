@@ -855,10 +855,15 @@ input{font-family:inherit;color:inherit}
       <a class="nav__link" href="dashboard.html" data-i18n="nav_dash">Dashboard</a>
     </div>
     <div class="nav__right">
+      <!-- Hindi disabled in production: ~190 NCERT chapter titles have no
+           Hindi text yet, so switching languages left the page half-English.
+           Re-enable once chapter titles are translated. -->
+      <!--
       <div class="lang" role="group" aria-label="Language">
         <button class="lang__opt" id="langEn" type="button">EN</button>
         <button class="lang__opt" id="langHi" type="button">हिं</button>
       </div>
+      -->
       <button class="nav__theme" data-theme-toggle type="button"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg></button>
       <a class="btn-primary" href="login.html" data-i18n="nav_cta">Start free</a>
     </div>
@@ -1082,6 +1087,9 @@ function saveState(st){
 }
 
 var state = loadState();
+// Hindi is disabled in production (see the commented-out toggle above) —
+// force English regardless of a stale localStorage value from before.
+state.lang = 'en';
 
 /* ------------------------------------------------------------
    2 · i18n
@@ -1164,10 +1172,11 @@ function applyI18n(){
     el.setAttribute('placeholder', t(el.getAttribute('data-i18n-ph')).replace('{n}', activeClass));
   });
   document.documentElement.lang = state.lang === 'hi' ? 'hi' : 'en';
+  // Toggle buttons are commented out (Hindi disabled) — guard their absence.
   var en = document.getElementById('langEn');
   var hi = document.getElementById('langHi');
-  en.classList.toggle('is-on', state.lang === 'en');
-  hi.classList.toggle('is-on', state.lang === 'hi');
+  if (en) en.classList.toggle('is-on', state.lang === 'en');
+  if (hi) hi.classList.toggle('is-on', state.lang === 'hi');
 }
 
 function setLang(lang){
@@ -1840,10 +1849,11 @@ document.getElementById('trySuggest').addEventListener('click', function(){
 });
 
 /* ------------------------------------------------------------
-   12 · LANGUAGE TOGGLE
+   12 · LANGUAGE TOGGLE (disabled in production — buttons are commented out
+   above until Hindi chapter titles exist; guard their absence here too)
    ------------------------------------------------------------ */
-document.getElementById('langEn').addEventListener('click', function(){ setLang('en'); });
-document.getElementById('langHi').addEventListener('click', function(){ setLang('hi'); });
+if (document.getElementById('langEn')) document.getElementById('langEn').addEventListener('click', function(){ setLang('en'); });
+if (document.getElementById('langHi')) document.getElementById('langHi').addEventListener('click', function(){ setLang('hi'); });
 
 /* ------------------------------------------------------------
    13 · SCROLL REVEALS

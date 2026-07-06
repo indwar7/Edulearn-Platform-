@@ -673,10 +673,15 @@ html.dark-mode [data-theme-toggle] {
       <a class="nav-link current" href="dashboard.html" aria-current="page" data-i18n="nav.dashboard">Dashboard</a>
     </div>
     <div class="nav-right pl" style="--d:120ms">
+      <!-- Hindi disabled in production for consistency with learn.html,
+           where ~190 chapter titles have no Hindi text yet. This page's own
+           translation is complete, but re-enable only alongside learn.html. -->
+      <!--
       <div class="lang-pill" role="group" aria-label="Language">
         <button id="langEn" class="on" aria-pressed="true">EN</button>
         <button id="langHi" aria-pressed="false">हिं</button>
       </div>
+      -->
       <a class="btn-primary" href="learn.html" id="navCta">
         <span data-i18n="nav.start">Start free</span>
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
@@ -1129,6 +1134,9 @@ html.dark-mode [data-theme-toggle] {
         <div class="chart-tip" id="hmTip" style="position:fixed;">23 MIN · MON 12 MAY</div>
       </div>
 
+      <!-- Language rail card disabled in production alongside the nav toggle
+           above — see that comment for why. -->
+      <!--
       <div class="card pl" style="--d:380ms;padding:22px 24px;">
         <div class="card-head" style="margin-bottom:6px;">
           <h3 class="card-title" style="font-size:18px;" data-i18n="rail.langs">11 languages</h3>
@@ -1149,6 +1157,7 @@ html.dark-mode [data-theme-toggle] {
         </div>
         <p class="rail-mini">English and हिन्दी are live in this demo — nine more ship with the app, all working offline.</p>
       </div>
+      -->
     </aside>
   </div>
 </main>
@@ -1312,6 +1321,9 @@ function saveState(){
   try { localStorage.setItem('edutok_state', JSON.stringify(STATE)); } catch (e) { /* storage unavailable */ }
 }
 var STATE = loadState();
+// Hindi is disabled in production (see the commented-out toggle above) —
+// force English regardless of a stale localStorage value from before.
+STATE.lang = 'en';
 
 /* ------------------------------------------------------------
    i18n — EN / HI dictionary
@@ -1384,10 +1396,10 @@ function applyLang(lang){
     if (dict[key] !== undefined) el.textContent = dict[key];
   });
   document.documentElement.lang = lang;
-  $('#langEn').classList.toggle('on', lang === 'en');
-  $('#langHi').classList.toggle('on', lang === 'hi');
-  $('#langEn').setAttribute('aria-pressed', String(lang === 'en'));
-  $('#langHi').setAttribute('aria-pressed', String(lang === 'hi'));
+  // Toggle + rail card are commented out (Hindi disabled) — guard absence.
+  var en = $('#langEn'), hi = $('#langHi');
+  if (en) { en.classList.toggle('on', lang === 'en'); en.setAttribute('aria-pressed', String(lang === 'en')); }
+  if (hi) { hi.classList.toggle('on', lang === 'hi'); hi.setAttribute('aria-pressed', String(lang === 'hi')); }
   $$('#railLangs .lang-chip.live').forEach(function(ch){
     ch.classList.toggle('on', ch.getAttribute('data-lang') === lang);
   });
@@ -2065,9 +2077,9 @@ function initReveals(){
    wire-up
 ------------------------------------------------------------ */
 function initEvents(){
-  // language pill
-  $('#langEn').addEventListener('click', function(){ applyLang('en'); });
-  $('#langHi').addEventListener('click', function(){ applyLang('hi'); });
+  // language pill (disabled in production — buttons are commented out above)
+  if ($('#langEn')) $('#langEn').addEventListener('click', function(){ applyLang('en'); });
+  if ($('#langHi')) $('#langHi').addEventListener('click', function(){ applyLang('hi'); });
   // rail language picker
   $$('#railLangs .lang-chip.live').forEach(function(ch){
     ch.addEventListener('click', function(){ applyLang(ch.getAttribute('data-lang')); });
