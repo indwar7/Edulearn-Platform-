@@ -224,6 +224,23 @@
     return request('/api/live/' + id + '/roster');
   }
 
+  // ---- Video calls ----
+  // List uploaded lecture videos, optionally filtered by class/subject/topic.
+  async function listVideos(filters) {
+    filters = filters || {};
+    var qs = Object.keys(filters)
+      .filter(function (k) { return filters[k]; })
+      .map(function (k) { return encodeURIComponent(k) + '=' + encodeURIComponent(filters[k]); })
+      .join('&');
+    var data = await request('/api/videos' + (qs ? '?' + qs : ''));
+    return data.videos || [];
+  }
+
+  // Fire-and-forget view count bump (no auth required server-side).
+  function recordVideoView(id) {
+    request('/api/videos/' + id + '/view', { method: 'POST' }).catch(function () {});
+  }
+
   // ---- PAL AI calls ----
   async function listPalSessions() {
     return request('/api/pal/sessions');
@@ -291,6 +308,8 @@
     joinLiveByCode: joinLiveByCode,
     endLive: endLive,
     liveRoster: liveRoster,
+    listVideos: listVideos,
+    recordVideoView: recordVideoView,
     sendOtp: sendOtp,
     verifyOtp: verifyOtp,
     listPalSessions: listPalSessions,

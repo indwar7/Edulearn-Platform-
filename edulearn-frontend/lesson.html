@@ -121,6 +121,16 @@ main{
   .btn-back span{display:none}
   .stage{padding:36px 22px}
 }
+
+/* real video playback (shown instead of the placeholder stage when a
+   teacher has uploaded a lecture for this chapter) */
+.vstage{width:100%;max-width:820px;display:flex;flex-direction:column;gap:16px}
+.vstage__crumb{color:var(--muted)}
+.vstage__title{font-family:'Fraunces',serif;font-weight:500;font-size:clamp(24px,4vw,36px);letter-spacing:-.02em}
+.vplayer-wrap{width:100%;border-radius:20px;overflow:hidden;background:#000;border:1px solid var(--line)}
+.vplayer-wrap video{display:block;width:100%;max-height:70vh;background:#000}
+.vmeta{display:flex;gap:10px;flex-wrap:wrap;align-items:center;color:var(--muted);font-size:13px}
+.vmeta .tag{border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-family:'Fragment Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase}
 </style>
 <link rel="stylesheet" href="../theme.css">
 </head>
@@ -155,7 +165,23 @@ main{
 </nav>
 
 <main>
-  <div class="stage">
+  <!-- Real video: shown when a teacher has uploaded a lecture that matches
+       this chapter's class + subject + topic. -->
+  <div class="vstage" id="videoStage" style="display:none">
+    <div class="vstage__crumb mono" id="videoCrumb">Lesson</div>
+    <h1 class="vstage__title" id="videoTitle">Lecture</h1>
+    <div class="vplayer-wrap">
+      <video id="player" controls playsinline></video>
+    </div>
+    <div class="vmeta">
+      <span class="tag" id="videoClassTag"></span>
+      <span class="tag" id="videoSubjectTag"></span>
+      <span id="videoByline"></span>
+    </div>
+  </div>
+
+  <!-- Placeholder: shown when no video has been uploaded yet for this chapter. -->
+  <div class="stage" id="placeholderStage">
     <svg class="tokky" width="96" height="96" viewBox="0 0 100 100" aria-hidden="true">
       <circle cx="50" cy="9" r="4" fill="#3DE8C5"/>
       <line x1="50" y1="21" x2="50" y2="12" stroke="#7C9BFF" stroke-width="2.5" stroke-linecap="round"/>
@@ -166,7 +192,7 @@ main{
     </svg>
     <div class="stage__crumb mono" id="lessonCrumb">Lesson</div>
     <h1 class="stage__title" id="lessonTitle">This lesson</h1>
-    <p class="stage__sub">The AI animated video lecture for this chapter is in production. Practice sets, notes and the mastery test land alongside it.</p>
+    <p class="stage__sub" id="placeholderSub">No video lecture has been uploaded for this chapter yet. Practice sets, notes and the mastery test land alongside it.</p>
     <div class="stage__mods" aria-hidden="true">
       <span class="modchip">Video</span>
       <span class="modchip">Practice</span>
@@ -179,6 +205,8 @@ main{
 </main>
 
 <script>
+// Shared with the video-lookup script below (which runs after api.js loads).
+var LESSON = {};
 (function(){
 'use strict';
 var params = new URLSearchParams(window.location.search);
@@ -200,13 +228,14 @@ var track = params.get('track');
 var ch = params.get('ch');
 var cls = params.get('class');
 var subject = params.get('subject');
+var slug = null;
 
 if(track && TRACKS[track]){
   crumb.textContent = 'Beyond academics';
   title.textContent = TRACKS[track];
 } else if(ch){
   /* ch looks like c9-sst-french-revolution → strip the c<class>-<code>- prefix */
-  var slug = ch.replace(/^c\d+-[a-z]+-/, '');
+  slug = ch.replace(/^c\d+-[a-z]+-/, '');
   title.textContent = titleCase(slug);
   var parts = [];
   if(cls) parts.push('Class ' + cls);
@@ -218,10 +247,51 @@ if(cls && subject){
   back.href = 'learn.html?class=' + encodeURIComponent(cls) + '&subject=' + encodeURIComponent(subject);
   document.getElementById('ctaLink').href = back.href;
 }
+
+// Hand off to the video-lookup script (runs once EduAPI is available).
+LESSON.cls = cls;
+LESSON.subject = subject;
+LESSON.slug = slug;
+LESSON.chapterTitle = title.textContent;
+LESSON.chapterCrumb = crumb.textContent;
 })();
 </script>
 <script src="api.js"></script>
 <script src="account-menu.js"></script>
+<script>
+(function(){
+'use strict';
+// Only academic chapters (not "beyond academics" tracks) have uploaded
+// lecture videos — those are keyed by class/subject/topic, tracks aren't.
+if (!LESSON.cls || !LESSON.subject || !LESSON.slug || !window.EduAPI) return;
+
+var searchTerm = LESSON.slug.replace(/-/g, ' ');
+
+EduAPI.listVideos({ className: LESSON.cls, subject: LESSON.subject, topic: searchTerm })
+  .then(function(videos){
+    if (!videos.length) return; // no upload yet — keep showing the placeholder
+    var v = videos[0]; // most recent match (API sorts newest first)
+
+    document.getElementById('placeholderStage').style.display = 'none';
+    var stage = document.getElementById('videoStage');
+    stage.style.display = 'flex';
+    document.getElementById('videoCrumb').textContent = LESSON.chapterCrumb;
+    document.getElementById('videoTitle').textContent = v.title || LESSON.chapterTitle;
+    document.getElementById('videoClassTag').textContent = v.className;
+    document.getElementById('videoSubjectTag').textContent = v.subject;
+    document.getElementById('videoByline').textContent =
+      'By ' + (v.uploadedByName || 'Teacher') + ' · ' + v.views + ' views';
+
+    var player = document.getElementById('player');
+    player.src = EduAPI.API_BASE + '/api/videos/' + v.id + '/stream';
+    player.addEventListener('play', function onFirstPlay(){
+      EduAPI.recordVideoView(v.id);
+      player.removeEventListener('play', onFirstPlay);
+    });
+  })
+  .catch(function(){ /* lookup failed — leave the honest placeholder showing */ });
+})();
+</script>
 <script src="../theme.js"></script>
 <script src="../features-panel.js"></script>
 </body>
