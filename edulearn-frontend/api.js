@@ -30,6 +30,24 @@
   function clearSession() {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
+    // Wipe per-user cached data so the next person on a shared device never
+    // sees the previous user's chats, bookings or progress. Keeps device-level
+    // settings like the API override ('edulearn_api').
+    var USER_DATA_KEYS = ['edulearn_pal_chats', 'edulearn_live', 'edutok_state'];
+    var doomed = [];
+    for (var i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i);
+      if (!k) continue;
+      if (
+        USER_DATA_KEYS.indexOf(k) !== -1 ||
+        k.indexOf('edulearn_pal_chats_') === 0
+      ) {
+        doomed.push(k);
+      }
+    }
+    doomed.forEach(function (k) {
+      localStorage.removeItem(k);
+    });
   }
 
   // Core fetch wrapper. Adds JSON headers + bearer token, parses errors nicely.

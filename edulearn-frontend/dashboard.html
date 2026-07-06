@@ -660,7 +660,7 @@ html.dark-mode [data-theme-toggle] {
 ============================================================ -->
 <nav class="nav">
   <div class="nav-inner">
-    <a class="logo pl" style="--d:0ms" href="index.html" aria-label="EduLearn home">
+    <a class="logo pl" style="--d:0ms" href="index.html" id="navLogo" aria-label="EduLearn home">
       <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
         <path d="M12 1.6C13.1 7.6 16.4 10.9 22.4 12C16.4 13.1 13.1 16.4 12 22.4C10.9 16.4 7.6 13.1 1.6 12C7.6 10.9 10.9 7.6 12 1.6Z" fill="url(#auroraG)"/>
       </svg>
@@ -677,7 +677,7 @@ html.dark-mode [data-theme-toggle] {
         <button id="langEn" class="on" aria-pressed="true">EN</button>
         <button id="langHi" aria-pressed="false">हिं</button>
       </div>
-      <a class="btn-primary" href="learn.html">
+      <a class="btn-primary" href="learn.html" id="navCta">
         <span data-i18n="nav.start">Start free</span>
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
       </a>
@@ -925,7 +925,7 @@ html.dark-mode [data-theme-toggle] {
           </nav>
 
           <div class="span12 stag t-head" style="--i:0">
-            <h2>Class <em>7-B</em> · Science · 32 students</h2>
+            <h2 id="tClassHead">Class <em>7-B</em> · Science · 32 students</h2>
             <button class="btn-primary" id="shareTestBtn">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="12" r="3"/><circle cx="18" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><path d="M8.7 10.6l6.6-3.2"/><path d="M8.7 13.4l6.6 3.2"/></svg>
               <span data-i18n="t.share">Share a test</span>
@@ -961,7 +961,7 @@ html.dark-mode [data-theme-toggle] {
           </div>
 
           <!-- (c) roster table -->
-          <div class="card span12 stag" style="--i:3">
+          <div class="card span12 stag" style="--i:3" id="rosterAnchor">
             <div class="card-head">
               <h3 class="card-title" data-i18n="t.students">Students</h3>
               <span class="eyebrow" data-i18n="t.sortHint">Click mastery to sort</span>
@@ -998,7 +998,7 @@ html.dark-mode [data-theme-toggle] {
               <span class="fc-ico">📈</span><span class="fc-title">Child's Progress</span>
               <span class="fc-sub">Streak, minutes & chapters</span>
             </a>
-            <a class="feat-card" href="#childAttendance">
+            <a class="feat-card" href="#attnCard">
               <span class="fc-ico">🗓️</span><span class="fc-title">Attendance</span>
               <span class="fc-sub">Class attendance & activity</span>
             </a>
@@ -1009,26 +1009,26 @@ html.dark-mode [data-theme-toggle] {
           </nav>
 
           <!-- (a) child summary -->
-          <div class="card span5 stag child-card" style="--i:0">
+          <div class="card span5 stag child-card" style="--i:0" id="childProgress">
             <div class="child-top">
               <svg width="58" height="58" viewBox="0 0 58 58" aria-hidden="true">
                 <defs><linearGradient id="avAnanya" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFB454"/><stop offset="100%" stop-color="#FF7AA2"/></linearGradient></defs>
                 <circle cx="29" cy="29" r="28" fill="url(#avAnanya)"/>
-                <text x="29" y="30" text-anchor="middle" dominant-baseline="central" font-family="Fraunces,serif" font-size="21" font-weight="600" fill="#05080F">AS</text>
+                <text x="29" y="30" text-anchor="middle" dominant-baseline="central" font-family="Fraunces,serif" font-size="21" font-weight="600" fill="#05080F" id="childAvatarTxt">AS</text>
               </svg>
               <div>
-                <div class="cname">Ananya Sharma</div>
-                <div class="ccls" data-i18n="p.class">Class 7 · CBSE · Science stream-curious</div>
+                <div class="cname" id="childName">Ananya Sharma</div>
+                <div class="ccls" data-i18n="p.class" id="childClass">Class 7 · CBSE · Science stream-curious</div>
               </div>
             </div>
             <div class="child-stats">
               <div class="cstat"><b id="pStreak">12</b><span data-i18n="p.streak">day streak</span></div>
               <div class="cstat"><b id="pHours">6.2h</b><span data-i18n="p.week">this week</span></div>
-              <div class="cstat"><b>49h</b><span data-i18n="p.total">all-time</span></div>
+              <div class="cstat"><b id="pAllTime">49h</b><span data-i18n="p.total">all-time</span></div>
             </div>
             <div style="display:flex;align-items:center;gap:9px;">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg>
-              <span class="mono" style="color:var(--muted)" data-i18n="p.lastActive">Last active · today, 7:42 PM</span>
+              <span class="mono" style="color:var(--muted)" data-i18n="p.lastActive" id="childLastActive">Last active · today, 7:42 PM</span>
             </div>
           </div>
 
@@ -1095,7 +1095,7 @@ html.dark-mode [data-theme-toggle] {
             <div class="divide"></div>
             <div class="note">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V6a2 2 0 0 1 2-2h14v13.5"/><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg>
-              <span><b>Multi-grade access:</b> Ananya can revisit any Class 6 chapter anytime — quietly, stigma-free. PAL never labels, it just bridges.</span>
+              <span><b>Multi-grade access:</b> your child can revisit any earlier-class chapter anytime — quietly, stigma-free. PAL never labels, it just bridges.</span>
             </div>
           </div>
 
@@ -2011,7 +2011,9 @@ var modalBg = $('#modalBg');
 function openModal(){ modalBg.classList.add('open'); updateShareLink(); }
 function closeModal(){ modalBg.classList.remove('open'); }
 function updateShareLink(){
-  $('#shareLink').textContent = 'https://edulearn.app/t/7b-science-' + $('#chapSel').value + '?key=DEMO';
+  // Real, working link: the deployed mock-test page for the picked chapter.
+  var base = location.href.split('#')[0].split('?')[0].replace(/dashboard\.html$/, 'mocktest.html');
+  $('#shareLink').textContent = base + '?chapter=' + encodeURIComponent($('#chapSel').value);
 }
 function copyText(txt){
   if (navigator.clipboard && navigator.clipboard.writeText){
@@ -2150,6 +2152,14 @@ async function bootAuth(){
   var lo = document.getElementById('logoutBtn');
   if (lo) lo.addEventListener('click', function(){ EduAPI.logout(); });
 
+  // Logged-in nav: "Start free" makes no sense (and lets teachers/parents
+  // wander into the student learn page) — hide it. And the logo keeps you on
+  // your dashboard instead of dropping you on the logged-out landing page.
+  var cta = document.getElementById('navCta');
+  if (cta) cta.style.display = 'none';
+  var logoEl = document.getElementById('navLogo');
+  if (logoEl) logoEl.setAttribute('href', 'dashboard.html');
+
   // Re-render greeting now that we know the real user.
   renderGreeting();
 
@@ -2187,12 +2197,61 @@ function applyDashboardData(user, data){
     }
     setText('#statActiveWeek', data.activeThisWeek);
     applyTeacherInsights(data);
+
+    // Real class header + roster table (replaces the hardcoded demo roster).
+    var teaches = (data.profile && data.profile.teaches) || [];
+    if (teaches[0]){
+      var th = document.getElementById('tClassHead');
+      if (th) th.innerHTML = 'Class <em>' + escapeHtml(teaches[0].className + '-' + teaches[0].section) +
+        '</em> · ' + escapeHtml(teaches[0].subject) + ' · ' + data.studentCount + ' students';
+    }
+    if (Array.isArray(data.roster)){
+      ROSTER = data.roster.map(function(s){
+        return {
+          n: s.name,
+          t: (s.thisWeek && s.thisWeek.minutes) || 0,
+          m: s.masteryPct || 0,
+          w: s.weakSubject || '—'
+        };
+      });
+      renderRoster();
+      if (!ROSTER.length){
+        $('#rosterBody').innerHTML =
+          '<tr><td colspan="5"><p class="empty-hint" style="padding:14px 4px;">No students in your class yet — they appear here as soon as they sign up with your class & section.</p></td></tr>';
+      }
+    }
   }
-  if (data.role === 'parent' && data.children && data.children[0]){
-    var c = data.children[0];
+  if (data.role === 'parent'){
+    var kids = data.children || [];
+    if (!kids.length){
+      // Honest empty state instead of a demo child.
+      setText('#childName', 'No child linked yet');
+      var cc = document.getElementById('childClass');
+      if (cc){ cc.removeAttribute('data-i18n'); cc.textContent = 'Link your child from signup (roll no + name + class)'; }
+      setText('#childAvatarTxt', '?');
+      setText('#pStreak', 0); setText('#pHours', '0h'); setText('#pAllTime', '0h');
+      var la0 = document.getElementById('childLastActive');
+      if (la0){ la0.removeAttribute('data-i18n'); la0.textContent = 'Last active · —'; }
+      return;
+    }
+    var c = kids[0];
+    // Show the REAL linked child — name, class, initials (was hardcoded demo data).
+    setText('#childName', c.name);
+    var ccls = document.getElementById('childClass');
+    if (ccls){ ccls.removeAttribute('data-i18n'); ccls.textContent = c.classLabel || ''; }
+    var ini = (c.name || '?').trim().split(/\s+/).map(function(p){ return p[0]; }).slice(0, 2).join('').toUpperCase();
+    setText('#childAvatarTxt', ini || '?');
+    setText('#pAllTime', ((c.minutes || 0) / 60).toFixed(1) + 'h');
+    var la = document.getElementById('childLastActive');
+    if (la){
+      la.removeAttribute('data-i18n');
+      la.textContent = 'Last active · ' + (c.lastActiveAt ? new Date(c.lastActiveAt).toLocaleString([], {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}) : 'not yet');
+    }
     // Prefer the real day-streak; fall back to the legacy counter.
     setText('#statChildStreak', c.dayStreak != null ? c.dayStreak : c.streak);
     setText('#statChildMinutes', c.minutes);
+    setText('#pStreak', c.dayStreak != null ? c.dayStreak : (c.streak || 0));
+    setText('#pHours', (((c.thisWeek && c.thisWeek.minutes) || 0) / 60).toFixed(1) + 'h');
     if (c.dayStreak != null) applyStudentInsights({
       dayStreak: c.dayStreak, weekly: c.weekly, thisWeek: c.thisWeek
     });

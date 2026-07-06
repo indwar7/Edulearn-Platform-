@@ -361,14 +361,17 @@ var ROSTER = [
 /* ============================================================
    STORAGE
    ============================================================ */
-var LS_KEY = 'edulearn_pal_chats';
-
 // Determine the authenticated user's role (or fallback to 'student' for demo).
 var _authUser = null;
 try {
   _authUser = JSON.parse(localStorage.getItem('edulearn_user') || 'null');
 } catch(e) { _authUser = null; }
 var AUTH_ROLE = (_authUser && _authUser.role) || null;
+
+// Chat store is namespaced PER USER so one account's chats are never shown
+// to another account on the same device. (The old shared key is retired.)
+var LS_KEY = 'edulearn_pal_chats_' + ((_authUser && _authUser.id) || 'guest');
+try { localStorage.removeItem('edulearn_pal_chats'); } catch(e) {}
 var AUTH_SESSION_ID = null; // tracks current backend session id
 
 function loadStore(){

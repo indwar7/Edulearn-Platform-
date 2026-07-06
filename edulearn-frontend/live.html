@@ -346,7 +346,7 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
         <h2 class="sect-title rv" id="liveNowTitle" style="animation-delay:.32s;display:none">Live now</h2>
         <div class="sessions" id="liveGrid" style="margin-bottom:26px"></div>
 
-        <h2 class="sect-title rv" style="animation-delay:.34s">Today&rsquo;s sessions</h2>
+        <h2 class="sect-title rv" style="animation-delay:.34s" id="todayTitle">Today&rsquo;s sessions</h2>
         <div class="sessions" id="sessionGrid"></div>
       </div>
       <aside class="panel">
@@ -1096,6 +1096,21 @@ function setupTeacherComposer(){
   // Re-read the session fresh in case it changed after this script parsed.
   liveUser = (window.EduAPI && EduAPI.getUser) ? EduAPI.getUser() : null;
   if (!liveUser || liveUser.role !== 'teacher') return;
+
+  // Teachers get a teacher page: hide the student-facing demo content
+  // (booking slots, demo-attention CTA, "my sessions" panels) so the page
+  // is about STARTING a class, not booking a seat in one.
+  ['todayTitle', 'sessionGrid'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  var heroCta = document.querySelector('.hero__cta');
+  if (heroCta) heroCta.style.display = 'none';
+  var heroSub = document.querySelector('.hero__sub');
+  if (heroSub) heroSub.textContent = 'Start a live class for your section below — your students join in one tap or with the class code.';
+  var sidePanel = document.querySelector('aside.panel');
+  if (sidePanel) sidePanel.style.display = 'none';
+
   var box = document.getElementById('teacherComposer');
   var sel = document.getElementById('startAssign');
   var teaches = (liveUser.teaches || []);
