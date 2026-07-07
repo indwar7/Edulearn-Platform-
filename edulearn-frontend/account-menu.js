@@ -9,6 +9,26 @@
   var user = EduAPI.getUser();
   if (!user) return; // not logged in → no account menu
 
+  // ---------- fix the page's own nav bar for a logged-in user ----------
+  // Several pages (live.html, learn.html, challenge.html, mocktest.html,
+  // pal.html) ship a static, logged-out-by-default nav: it shows a
+  // "Start free" button that links to login.html even when already logged
+  // in, and Learn/Arena/Tests/PAL links regardless of role. Fix that here
+  // instead of duplicating role logic in every page's inline script.
+  document.querySelectorAll('a.btn-primary[href="login.html"]').forEach(function (el) {
+    el.style.display = 'none';
+  });
+  if (user.role === 'parent' || user.role === 'teacher') {
+    document.querySelectorAll('a.nav__link[href="learn.html"]').forEach(function (el) {
+      el.style.display = 'none';
+    });
+  }
+  if (user.role === 'parent') {
+    document.querySelectorAll('a.nav__link[href="pal.html"], a.nav__link[href="challenge.html"], a.nav__link[href="mocktest.html"]').forEach(function (el) {
+      el.style.display = 'none';
+    });
+  }
+
   // ---------- styles (theme-aware: light default + dark-mode override) ----------
   var css = '' +
     ':root{--am-bg:#FFFFFF;--am-bg2:#F5F7FA;--am-ink:#1A1F36;--am-muted:#6B7280;--am-line:rgba(15,23,42,.10);--am-aurora:linear-gradient(115deg,#3DE8C5 0%,#7C9BFF 48%,#FFB454 100%);}' +
