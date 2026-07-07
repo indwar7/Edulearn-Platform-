@@ -1094,25 +1094,38 @@ function subjColor(subject){
   return '#7C9BFF';
 }
 
+// Any logged-in user: hide the hardcoded fake demo content (fake tutors,
+// fake bookings, fake attention reports) that's meant only as a
+// try-before-signup preview for logged-out visitors on this same page.
+// Real sessions (#liveGrid) and joining by code are unaffected.
+function hideDemoContentForLoggedInUser(){
+  liveUser = (window.EduAPI && EduAPI.getUser) ? EduAPI.getUser() : null;
+  if (!liveUser) return;
+
+  ['todayTitle', 'sessionGrid'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  var heroCta = document.querySelector('.hero__cta');
+  if (heroCta) heroCta.style.display = 'none';
+  var sidePanel = document.querySelector('aside.panel');
+  if (sidePanel) sidePanel.style.display = 'none';
+}
+
 // Render the teacher's "start a class" composer from their assignments.
 function setupTeacherComposer(){
   // Re-read the session fresh in case it changed after this script parsed.
   liveUser = (window.EduAPI && EduAPI.getUser) ? EduAPI.getUser() : null;
   if (!liveUser || liveUser.role !== 'teacher') return;
 
-  // Teachers get a teacher page: hide the student-facing demo content
-  // (booking slots, demo-attention CTA, "my sessions" panels) so the page
-  // is about STARTING a class, not booking a seat in one.
-  ['todayTitle', 'sessionGrid', 'joinCodeBox'].forEach(function(id){
-    var el = document.getElementById(id);
-    if (el) el.style.display = 'none';
-  });
-  var heroCta = document.querySelector('.hero__cta');
-  if (heroCta) heroCta.style.display = 'none';
+  // Teachers get a teacher page: hide the same fake demo content every
+  // logged-in user gets hidden, plus (teacher-only) the join-by-code box —
+  // the page is about STARTING a class, not booking/joining a seat in one.
+  hideDemoContentForLoggedInUser();
+  var joinCodeBox = document.getElementById('joinCodeBox');
+  if (joinCodeBox) joinCodeBox.style.display = 'none';
   var heroSub = document.querySelector('.hero__sub');
   if (heroSub) heroSub.textContent = 'Start a live class for your section below — your students join in one tap or with the class code.';
-  var sidePanel = document.querySelector('aside.panel');
-  if (sidePanel) sidePanel.style.display = 'none';
 
   var box = document.getElementById('teacherComposer');
   var sel = document.getElementById('startAssign');
@@ -1443,15 +1456,24 @@ var LiveRT = (function(){
 window.LiveRT = LiveRT; // expose so the chat/leave handlers can reach it
 
 /* boot */
-renderSessions();
-renderMyList();
-renderReports();
+// A logged-in user must never see the fake demo sessions/bookings/reports,
+// not even briefly — check localStorage directly (synchronous, available
+// immediately) rather than waiting for api.js to load before hiding them,
+// which left a flash-of-fake-content window on slower connections.
+var isLoggedIn = false;
+try { isLoggedIn = !!localStorage.getItem('edulearn_token'); } catch(e) {}
+if (!isLoggedIn) {
+  renderSessions();
+  renderMyList();
+  renderReports();
+}
 
 /* real backend live classes — run AFTER api.js has loaded. The inline boot
    executes before the <script src="api.js"> tags below it, so EduAPI may not
    exist yet; wait for it (and the DOM) before wiring the backend features. */
 function bootRealLive(){
   if (!window.EduAPI){ setTimeout(bootRealLive, 40); return; } // api.js not loaded yet
+  hideDemoContentForLoggedInUser();
   setupTeacherComposer();
   wireStartForm();
   wireJoinCode();
