@@ -955,7 +955,7 @@ input{font-family:inherit;color:inherit}
 
       <div class="pcard pcard--tokky io" style="transition-delay:.2s">
         <div id="panelTokky"></div>
-        <p><strong data-i18n="tokky_name">Tokky says:</strong> <span data-i18n="tokky_tip">"Ananya from Indore finished Heat in 2 sittings. You're 65% there!"</span></p>
+        <p><strong data-i18n="tokky_name">Tokky says:</strong> <span id="tokkyTip"></span></p>
       </div>
     </aside>
   </section>
@@ -1120,7 +1120,8 @@ var I18N = {
     empty_pre: 'Tokky suggests —',
     footer_tag: 'Made for Bharat. Works fully offline.',
     tokky_name: 'Tokky says:',
-    tokky_tip: '"Ananya from Indore finished Heat in 2 sittings. You’re 65% there!"',
+    tokky_tip_progress: 'You’re {pct}% through {title} — keep going!',
+    tokky_tip_empty: 'Pick a chapter above and Tokky will cheer you on as you go.',
     beyond_yoga: 'Yoga & Mindfulness',
     beyond_fin: 'Financial Literacy',
     beyond_music: 'Music',
@@ -1151,7 +1152,8 @@ var I18N = {
     empty_pre: 'Tokky का सुझाव —',
     footer_tag: 'भारत के लिए बना। पूरी तरह ऑफ़लाइन चलता है।',
     tokky_name: 'Tokky कहता है:',
-    tokky_tip: '"इंदौर की अनन्या ने ऊष्मा 2 बैठकों में पूरा किया। आप 65% पहुँच गए!"',
+    tokky_tip_progress: 'आप {title} में {pct}% पहुँच गए — ऐसे ही जारी रखें!',
+    tokky_tip_empty: 'ऊपर से एक अध्याय चुनें, Tokky आपका उत्साह बढ़ाएगा।',
     beyond_yoga: 'योग और माइंडफुलनेस',
     beyond_fin: 'वित्तीय साक्षरता',
     beyond_music: 'संगीत',
@@ -1177,6 +1179,8 @@ function applyI18n(){
   var hi = document.getElementById('langHi');
   if (en) en.classList.toggle('is-on', state.lang === 'en');
   if (hi) hi.classList.toggle('is-on', state.lang === 'hi');
+  // Re-render (not just data-i18n swap) since this uses a {pct}/{title} template.
+  try { renderTokkyTip(); } catch(e){}
 }
 
 function setLang(lang){
@@ -1777,6 +1781,7 @@ function pickContinueChapter(){
 
 function renderContinue(){
   var host = document.getElementById('continueBody');
+  renderTokkyTip();
   var id = pickContinueChapter();
   if(!id){
     host.innerHTML = '<p style="color:var(--muted);font-size:14px">All caught up. ' + tokkySVG(54) + '</p>';
@@ -1804,6 +1809,24 @@ function renderContinue(){
         ICONS.play + '<span>' + t('resume') + '</span>' +
       '</a>' +
     '</div>';
+}
+
+// Real progress tip (was a hardcoded fake "Ananya from Indore... 65%" line
+// shown to every user regardless of their actual progress). Reuses the same
+// pickContinueChapter()/chapterProgress() the continue-learning card uses.
+function renderTokkyTip(){
+  var el = document.getElementById('tokkyTip');
+  if(!el) return;
+  var id = pickContinueChapter();
+  if(!id){
+    el.textContent = t('tokky_tip_empty');
+    return;
+  }
+  var meta = CHAPTER_INDEX[id];
+  var prog = chapterProgress(id);
+  el.textContent = t('tokky_tip_progress')
+    .replace('{pct}', prog.pct)
+    .replace('{title}', meta.name);
 }
 
 function renderBeyond(){

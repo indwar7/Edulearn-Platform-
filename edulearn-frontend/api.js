@@ -303,6 +303,24 @@
     });
   }
 
+  // ---- Assessments (hourly challenge / Arena) ----
+  // Real per-hour question (or { alreadyPlayed: true, points } if already played).
+  async function getChallenge() {
+    return request('/api/assessments/challenge');
+  }
+
+  async function answerChallenge(questionId, chosenIndex, msTaken) {
+    return request('/api/assessments/challenge/answer', {
+      method: 'POST',
+      body: { questionId: questionId, chosenIndex: chosenIndex, msTaken: msTaken }
+    });
+  }
+
+  // Real leaderboard for this hour: { hourKey, leaderboard: [{rank,name,points}], you }
+  async function getChallengeLeaderboard() {
+    return request('/api/assessments/challenge/leaderboard');
+  }
+
   // Guard: redirect to login if not authenticated. Optionally require a role.
   function requireAuth(requiredRole) {
     var user = getUser();
@@ -343,6 +361,9 @@
     listVideos: listVideos,
     recordVideoView: recordVideoView,
     startMockTest: startMockTest,
+    getChallenge: getChallenge,
+    answerChallenge: answerChallenge,
+    getChallengeLeaderboard: getChallengeLeaderboard,
     sendOtp: sendOtp,
     verifyOtp: verifyOtp,
     listPalSessions: listPalSessions,

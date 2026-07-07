@@ -1024,21 +1024,21 @@ html.dark-mode [data-theme-toggle] {
               <svg width="58" height="58" viewBox="0 0 58 58" aria-hidden="true">
                 <defs><linearGradient id="avAnanya" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFB454"/><stop offset="100%" stop-color="#FF7AA2"/></linearGradient></defs>
                 <circle cx="29" cy="29" r="28" fill="url(#avAnanya)"/>
-                <text x="29" y="30" text-anchor="middle" dominant-baseline="central" font-family="Fraunces,serif" font-size="21" font-weight="600" fill="#05080F" id="childAvatarTxt">AS</text>
+                <text x="29" y="30" text-anchor="middle" dominant-baseline="central" font-family="Fraunces,serif" font-size="21" font-weight="600" fill="#05080F" id="childAvatarTxt">…</text>
               </svg>
               <div>
-                <div class="cname" id="childName">Ananya Sharma</div>
-                <div class="ccls" data-i18n="p.class" id="childClass">Class 7 · CBSE · Science stream-curious</div>
+                <div class="cname" id="childName">Loading…</div>
+                <div class="ccls" id="childClass"></div>
               </div>
             </div>
             <div class="child-stats">
-              <div class="cstat"><b id="pStreak">12</b><span data-i18n="p.streak">day streak</span></div>
-              <div class="cstat"><b id="pHours">6.2h</b><span data-i18n="p.week">this week</span></div>
-              <div class="cstat"><b id="pAllTime">49h</b><span data-i18n="p.total">all-time</span></div>
+              <div class="cstat"><b id="pStreak">—</b><span data-i18n="p.streak">day streak</span></div>
+              <div class="cstat"><b id="pHours">—</b><span data-i18n="p.week">this week</span></div>
+              <div class="cstat"><b id="pAllTime">—</b><span data-i18n="p.total">all-time</span></div>
             </div>
             <div style="display:flex;align-items:center;gap:9px;">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg>
-              <span class="mono" style="color:var(--muted)" data-i18n="p.lastActive" id="childLastActive">Last active · today, 7:42 PM</span>
+              <span class="mono" style="color:var(--muted)" id="childLastActive"></span>
             </div>
             <button type="button" id="relinkChildToggle" class="mono" style="background:none;border:none;color:var(--muted);text-decoration:underline;cursor:pointer;padding:10px 0 0;font-size:12px;">Wrong child linked? Fix it</button>
             <form id="relinkChildForm" style="display:none;margin-top:10px;padding-top:12px;border-top:1px solid var(--line);gap:8px;flex-direction:column;">
@@ -1355,9 +1355,7 @@ var I18N = {
     's.fix':'Fix this gap', 's.continue':'Continue learning', 's.all':'All chapters →',
     't.avg':'Class average', 't.weak':'Weak topics this week', 't.students':'Students',
     't.sortHint':'Click mastery to sort', 't.share':'Share a test', 't.copy':'Copy link', 't.cancel':'Cancel',
-    'p.class':'Class 7 · CBSE · Science stream-curious',
     'p.streak':'day streak', 'p.week':'this week', 'p.total':'all-time',
-    'p.lastActive':'Last active · today, 7:42 PM',
     'p.screen':'Learning time this week', 'p.alerts':'Alerts',
     'p.reassureH':'Built to never block learning',
     'p.reassureP':'All learning works offline — videos, practice and tests run without internet, and usage syncs automatically when you are back online.',
@@ -1378,9 +1376,7 @@ var I18N = {
     's.fix':'यह कमी दूर करें', 's.continue':'सीखना जारी रखें', 's.all':'सभी अध्याय →',
     't.avg':'कक्षा का औसत', 't.weak':'इस हफ़्ते के कमज़ोर विषय', 't.students':'विद्यार्थी',
     't.sortHint':'क्रम बदलने के लिए महारत पर क्लिक करें', 't.share':'टेस्ट साझा करें', 't.copy':'लिंक कॉपी करें', 't.cancel':'रद्द करें',
-    'p.class':'कक्षा 7 · CBSE · विज्ञान में रुचि',
     'p.streak':'दिन की स्ट्रीक', 'p.week':'इस हफ़्ते', 'p.total':'कुल',
-    'p.lastActive':'आख़िरी बार सक्रिय · आज, शाम 7:42',
     'p.screen':'इस हफ़्ते सीखने का समय', 'p.alerts':'सूचनाएँ',
     'p.reassureH':'सीखना कभी न रुके, ऐसा बनाया गया',
     'p.reassureP':'पूरी पढ़ाई ऑफ़लाइन चलती है — वीडियो, अभ्यास और टेस्ट बिना इंटरनेट के चलते हैं, और ऑनलाइन आते ही उपयोग अपने आप सिंक हो जाता है।',
@@ -1709,34 +1705,42 @@ function animateContinue(){
    TEACHER — class average + weak topic bars
 ------------------------------------------------------------ */
 var RING_R = 56, RING_C = 2 * Math.PI * 56;
+// Real class-average mastery % (mean of each roster student's masteryPct) —
+// set by applyTeacherInsights once real data arrives. Starts at 0 so a
+// logged-in teacher never sees a fabricated number before/without real data.
+var TEACHER_AVG_MASTERY = 0;
 function animateTeacherRing(){
   var ring = $('#avgRing');
+  var pct = TEACHER_AVG_MASTERY / 100;
   ring.style.strokeDasharray = RING_C;
   ring.style.strokeDashoffset = RING_C;
   void ring.getBoundingClientRect();
   setTimeout(function(){
-    ring.style.strokeDashoffset = (RING_C * (1 - 0.76)).toFixed(1);
+    ring.style.strokeDashoffset = (RING_C * (1 - pct)).toFixed(1);
   }, RM ? 0 : 250);
-  countUp($('#avgNum'), 76, 1500, '%');
+  countUp($('#avgNum'), TEACHER_AVG_MASTERY, 1500, '%');
 }
 
-var WEAK_TOPICS = [
-  { name:'Photosynthesis',       pct:64, color:'#FFB454' },
-  { name:'Acids, Bases & Salts', pct:58, color:'#FF7AA2' },
-  { name:'Heat',                 pct:71, color:'#7C9BFF' },
-  { name:'Respiration',          pct:77, color:'#7C9BFF' },
-  { name:'Motion & Time',        pct:82, color:'#3DE8C5' }
-];
+// Real weak-topic breakdown, derived from the roster's actual weakSubject
+// tallies — set by applyTeacherInsights. Empty until real data arrives.
+var WEAK_TOPICS = [];
+var WEAK_COLORS = ['#FFB454', '#FF7AA2', '#7C9BFF', '#3DE8C5', '#C2A8FF'];
 function buildHbars(){
+  var host = $('#hbars');
+  if (!WEAK_TOPICS.length){
+    host.innerHTML = '<p class="empty-hint">No test activity yet this week — weak topics appear here once students start practicing.</p>';
+    return;
+  }
   var html = '';
-  WEAK_TOPICS.forEach(function(t){
+  WEAK_TOPICS.forEach(function(t, i){
+    var color = WEAK_COLORS[i % WEAK_COLORS.length];
     html += '<div class="hbar">';
-    html += '<span class="hlab">' + t.name + '</span>';
-    html += '<span class="htrack"><span class="hfill" data-p="' + t.pct + '" style="background:linear-gradient(90deg,' + t.color + 'cc,' + t.color + ');width:' + t.pct + '%"></span></span>';
+    html += '<span class="hlab">' + escapeHtml(t.name) + '</span>';
+    html += '<span class="htrack"><span class="hfill" data-p="' + t.pct + '" style="background:linear-gradient(90deg,' + color + 'cc,' + color + ');width:' + t.pct + '%"></span></span>';
     html += '<span class="hval">' + t.pct + '%</span>';
     html += '</div>';
   });
-  $('#hbars').innerHTML = html;
+  host.innerHTML = html;
 }
 function animateHbars(){
   $$('#hbars .hfill').forEach(function(f, i){
@@ -1749,20 +1753,11 @@ function animateHbars(){
 /* ------------------------------------------------------------
    TEACHER — roster table (sortable)
 ------------------------------------------------------------ */
-var ROSTER = [
-  { n:'Aarav Mehta',     t:252, m:88, w:'Heat' },
-  { n:'Ananya Sharma',   t:370, m:91, w:'Acids & Bases' },
-  { n:'Diya Reddy',      t:214, m:76, w:'Photosynthesis' },
-  { n:'Vihaan Patel',    t:158, m:64, w:'Photosynthesis' },
-  { n:'Ishita Verma',    t:241, m:82, w:'Motion & Time' },
-  { n:'Kabir Singh',     t:96,  m:58, w:'Acids & Bases' },
-  { n:'Meera Krishnan',  t:312, m:95, w:'—' },
-  { n:'Rohan Gupta',     t:187, m:71, w:'Heat' },
-  { n:'Sanya Joshi',     t:142, m:67, w:'Respiration' },
-  { n:'Aditya Rao',      t:228, m:84, w:'Heat' },
-  { n:'Tara Menon',      t:74,  m:49, w:'Photosynthesis' },
-  { n:'Yash Kulkarni',   t:196, m:73, w:'Acids & Bases' }
-];
+// Starts empty — filled with the real backend roster once EduAPI.getDashboard()
+// resolves (see applyDashboardData). Never seed this with fake names: this
+// table is only ever shown after a real logged-in teacher's request, so
+// there is no "logged-out preview" case where fake students would be OK.
+var ROSTER = [];
 var AV_GRADS = [
   ['#3DE8C5','#7C9BFF'], ['#FFB454','#FF7AA2'], ['#7C9BFF','#C2A8FF'],
   ['#FF7AA2','#FFB454'], ['#3DE8C5','#FFB454'], ['#7C9BFF','#3DE8C5']
@@ -1792,6 +1787,11 @@ function avatarSVG(name, idx){
 }
 
 function renderRoster(){
+  if (!ROSTER.length){
+    $('#rosterBody').innerHTML =
+      '<tr><td colspan="5"><p class="empty-hint" style="padding:14px 4px;">Loading your class roster…</p></td></tr>';
+    return;
+  }
   var rows = ROSTER.slice();
   if (sortDir === 1)  rows.sort(function(a, b){ return b.m - a.m; });
   if (sortDir === -1) rows.sort(function(a, b){ return a.m - b.m; });
@@ -1958,9 +1958,16 @@ function renderAttention(){
   var camReps = reps.filter(function(r){ return typeof r.onScreenPct === 'number'; });
 
   if(!camReps.length){
+    // Use the real linked child's first name if it's loaded by now; a
+    // neutral "your child" otherwise (never the old hardcoded "Ananya").
+    var childNameEl = document.getElementById('childName');
+    var childFirst = 'your child';
+    if (childNameEl && childNameEl.textContent && childNameEl.textContent !== 'Loading…' && childNameEl.textContent !== 'No child linked yet') {
+      childFirst = childNameEl.textContent.trim().split(/\s+/)[0];
+    }
     host.innerHTML =
       '<div style="flex:1;min-width:220px"><p style="color:var(--muted);font-size:14px;line-height:1.6">' +
-      'No camera-monitored class yet. When Ananya joins a <a href="live.html" style="color:var(--teal)">live class</a> and turns on attention monitoring, PAL watches whether she is looking at the screen and the focus report appears here.</p>' +
+      'No camera-monitored class yet. When ' + escapeHtml(childFirst) + ' joins a <a href="live.html" style="color:var(--teal)">live class</a> and turns on attention monitoring, PAL watches whether they are looking at the screen and the focus report appears here.</p>' +
       '<span class="mono" style="color:var(--muted);display:inline-flex;align-items:center;gap:7px;margin-top:6px">' +
       '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>' +
       'Video stays on the device — only the score is shared</span></div>';
@@ -2324,6 +2331,7 @@ function applyDashboardData(user, data){
       setText('#pStreak', 0); setText('#pHours', '0h'); setText('#pAllTime', '0h');
       var la0 = document.getElementById('childLastActive');
       if (la0){ la0.removeAttribute('data-i18n'); la0.textContent = 'Last active · —'; }
+      try { renderAttention(); } catch(e){}
       return;
     }
     var c = kids[0];
@@ -2347,6 +2355,7 @@ function applyDashboardData(user, data){
     if (c.dayStreak != null) applyStudentInsights({
       dayStreak: c.dayStreak, weekly: c.weekly, thisWeek: c.thisWeek
     });
+    try { renderAttention(); } catch(e){}
   }
 }
 
@@ -2405,6 +2414,32 @@ function applyTeacherInsights(data){
         }).join('')
       : '<p class="empty-hint">Everyone was active this week 🎉</p>';
   }
+
+  // Real class-average mastery + weak-topic breakdown, derived from the
+  // roster's own masteryPct/weakSubject fields (replaces the old hardcoded
+  // 76% ring and fixed Photosynthesis/Heat/etc. bars).
+  var roster = Array.isArray(data.roster) ? data.roster : [];
+  TEACHER_AVG_MASTERY = roster.length
+    ? Math.round(roster.reduce(function(sum, s){ return sum + (s.masteryPct || 0); }, 0) / roster.length)
+    : 0;
+
+  var weakCounts = {};
+  roster.forEach(function(s){
+    if (!s.weakSubject || s.weakSubject === '—') return;
+    weakCounts[s.weakSubject] = (weakCounts[s.weakSubject] || 0) + 1;
+  });
+  var totalFlagged = Object.keys(weakCounts).reduce(function(sum, k){ return sum + weakCounts[k]; }, 0);
+  WEAK_TOPICS = Object.keys(weakCounts)
+    .map(function(name){
+      // % of the roster that's weak in this topic — an honest, real signal,
+      // not a mastery score (which the roster doesn't break down per-topic).
+      return { name: name, pct: totalFlagged ? Math.round((weakCounts[name] / totalFlagged) * 100) : 0 };
+    })
+    .sort(function(a, b){ return b.pct - a.pct; })
+    .slice(0, 5);
+
+  try { animateTeacherRing(); } catch(e){}
+  try { buildHbars(); animateHbars(); } catch(e){}
 }
 
 function escapeHtml(s){

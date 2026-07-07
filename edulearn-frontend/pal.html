@@ -819,11 +819,13 @@ function sendMessage(text){
         input.focus();
       });
     }).catch(function(err){
-      // Graceful fallback: use local engine
+      // A logged-in user gets an honest error, never the local demo engine's
+      // fabricated data (teacherReply's ROSTER is fake — presenting it as a
+      // real answer about a real teacher's real class would be actively
+      // misleading, not just an unpolished fallback).
       var row = document.getElementById('typingRow');
       if(row) row.remove();
-      var r = reply(text);
-      var m = { who:'pal', text: r.text, quiz: r.quiz || null, quizDone: null, chips: r.chips || null };
+      var m = { who:'pal', text: 'Sorry, I could not reach PAL just now (' + (err && err.message ? err.message : 'connection issue') + '). Please try again in a moment.', quiz: null, quizDone: null, chips: null };
       streamIn(m, function(){
         c.msgs.push(m);
         save();

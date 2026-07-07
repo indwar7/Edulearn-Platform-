@@ -207,7 +207,7 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
       </div>
 
       <div class="pcard rv" style="animation-delay:.5s">
-        <div class="pcard__eyebrow">This week&rsquo;s leaderboard <span class="mono" style="margin-left:auto">demo data</span></div>
+        <div class="pcard__eyebrow" id="lbEyebrow">This hour&rsquo;s leaderboard</div>
         <div class="lb" id="lbList"></div>
       </div>
 
@@ -314,6 +314,183 @@ function playedThisHour(){
 var playCard = document.getElementById('playCard');
 var playTimer = null, countdownTimer = null;
 
+// A logged-in student plays the REAL backend challenge (real question pool,
+// real per-account scoring, real leaderboard) instead of the local BANK/
+// localStorage demo engine below, which stays for logged-out visitors only.
+var REAL_MODE = !!(window.EduAPI && EduAPI.getToken && EduAPI.getToken());
+var realQuestion = null; // current backend question, once fetched
+
+function renderReadyReal(question){
+  realQuestion = question;
+  playCard.innerHTML =
+    '<div class="mono">This hour&rsquo;s drop</div>' +
+    '<div class="play__hour">' + hourLabel(new Date()) + ' question</div>' +
+    '<div class="play__sub">Same question for every student in your class right now · ' + esc(question.subject || '') + '</div>' +
+    '<div class="blurbox"><p>The question stays hidden until you start. No previews, no head starts.</p></div>' +
+    '<div class="startrow">' +
+      '<button class="btn-primary" id="startBtn" type="button">Reveal &amp; start 45s</button>' +
+      '<span class="startnote">The timer starts the moment you reveal.</span>' +
+    '</div>';
+  document.getElementById('startBtn').addEventListener('click', function(){ startPlayReal(question); });
+}
+
+function startPlayReal(question){
+  var deadline = Date.now() + WINDOW_SEC * 1000;
+  var startedAt = Date.now();
+  var locked = false;
+  var C = 2 * Math.PI * 30;
+
+  var optsHtml = '';
+  question.options.forEach(function(o, i){
+    optsHtml += '<button class="opt" data-i="' + i + '" type="button"><span class="ltr">' +
+      String.fromCharCode(65 + i) + '</span><span>' + esc(o) + '</span></button>';
+  });
+
+  playCard.innerHTML =
+    '<div class="qhead">' +
+      '<div class="timer">' +
+        '<svg width="74" height="74" viewBox="0 0 74 74">' +
+          '<circle cx="37" cy="37" r="30" fill="none" stroke="var(--line)" stroke-width="6"/>' +
+          '<circle id="tArc" cx="37" cy="37" r="30" fill="none" stroke="var(--teal)" stroke-width="6" stroke-linecap="round" stroke-dasharray="' + C.toFixed(1) + '" stroke-dashoffset="0"/>' +
+        '</svg>' +
+        '<span class="timer__num" id="tNum">' + WINDOW_SEC + '</span>' +
+      '</div>' +
+      '<div><div class="mono">' + esc(question.subject || '') + ' · ' + hourLabel(new Date()) + ' drop</div>' +
+      '<div class="play__sub" style="margin-top:4px">Answer before the ring runs out.</div></div>' +
+    '</div>' +
+    '<div class="qtext">' + esc(question.text) + '</div>' +
+    '<div class="opts" id="optGrid">' + optsHtml + '</div>';
+
+  function finish(pickedIdx){
+    if(locked) return;
+    locked = true;
+    cancelAnimationFrame(playTimer);
+    var msTaken = Date.now() - startedAt;
+
+    // pickedIdx === null means time ran out with no answer — still submit so
+    // the one-attempt-per-hour lock is real, matching the local demo's "missed" case.
+    EduAPI.answerChallenge(question.id, pickedIdx === null ? -1 : pickedIdx, msTaken)
+      .then(function(res){
+        var grid = document.getElementById('optGrid');
+        grid.querySelectorAll('.opt').forEach(function(b){
+          b.disabled = true;
+          var i = parseInt(b.getAttribute('data-i'), 10);
+          if(i === res.correctIndex) b.classList.add('is-right');
+          else if(i === pickedIdx) b.classList.add('is-wrong');
+        });
+        setTimeout(function(){
+          renderDoneReal(res, pickedIdx === null);
+          refreshRealStats();
+          renderLBReal();
+        }, 1600);
+      })
+      .catch(function(err){
+        playCard.innerHTML =
+          '<div class="mono">Couldn&rsquo;t submit your answer</div>' +
+          '<div class="play__sub" style="margin-top:10px">' + esc(err.message || 'Please refresh and try again.') + '</div>';
+      });
+  }
+
+  document.getElementById('optGrid').querySelectorAll('.opt').forEach(function(b){
+    b.addEventListener('click', function(){ finish(parseInt(b.getAttribute('data-i'), 10)); });
+  });
+
+  function frame(){
+    var remaining = (deadline - Date.now()) / 1000;
+    if(remaining <= 0){ finish(null); return; }
+    var arc = document.getElementById('tArc');
+    var num = document.getElementById('tNum');
+    if(arc && num){
+      num.textContent = Math.ceil(remaining);
+      arc.setAttribute('stroke-dashoffset', (C * (1 - remaining / WINDOW_SEC)).toFixed(1));
+      arc.setAttribute('stroke', remaining > 20 ? 'var(--teal)' : remaining > 10 ? 'var(--amber)' : 'var(--rose)');
+    }
+    playTimer = requestAnimationFrame(frame);
+  }
+  playTimer = requestAnimationFrame(frame);
+}
+
+function renderDoneReal(res, missed){
+  var verdict, detail;
+  if(missed){
+    verdict = '<span style="color:var(--amber)">Time&rsquo;s up</span>';
+    detail = 'The window closed. Next hour, reveal only when you&rsquo;re ready to sprint.';
+  } else if(res.correct){
+    verdict = '<span style="color:var(--teal)">Correct</span>';
+    detail = 'Speed bonus banked. Come back next hour to keep the streak alive.';
+  } else {
+    verdict = '<span style="color:var(--rose)">Not this time</span>';
+    detail = (res.explanation ? esc(res.explanation) + ' ' : '') + 'A new drop lands at the top of the hour.';
+  }
+  playCard.innerHTML =
+    '<div class="mono">' + hourLabel(new Date()) + ' drop — played</div>' +
+    '<div style="margin-top:16px" class="res__points">+' + (res.points || 0) + '</div>' +
+    '<div class="res__verdict">' + verdict + '</div>' +
+    '<div class="res__detail">' + detail + '</div>' +
+    '<div class="nextdrop">' +
+      '<div class="mono">Next drop in</div>' +
+      '<b id="nextClock">--:--</b>' +
+      '<div class="hourbar"><i id="hourFill" style="width:0%"></i></div>' +
+    '</div>';
+  tickCountdown();
+  countdownTimer = setInterval(tickCountdown, 1000);
+}
+
+// Refetches the real per-account stats from the backend leaderboard's "you"
+// field — the only per-user stat the backend currently exposes. Streak/best-
+// streak/accuracy/hours-played aren't tracked server-side yet, so those rail
+// stats stay honestly blank in real mode rather than showing a fabricated number.
+function refreshRealStats(){
+  EduAPI.getChallengeLeaderboard().then(function(res){
+    setText('statPoints', res.you ? res.you.points : 0);
+    setText('statStreak', '—');
+    setText('statBest', '—');
+    setText('statAcc', res.you ? (res.you.correct ? '100%' : '0%') : '—');
+    setText('statPlayed', res.you ? '1' : '0');
+  }).catch(function(){});
+}
+function setText(id, v){ var el = document.getElementById(id); if (el) el.textContent = v; }
+
+function renderLBReal(){
+  EduAPI.getChallengeLeaderboard().then(function(res){
+    var rows = (res.leaderboard || []).map(function(r){ return [r.name, r.points, false]; });
+    var meIn = (res.leaderboard || []).length && res.you && res.leaderboard.some(function(r){ return r.points === res.you.points; });
+    if (res.you && !meIn) rows.push(['You', res.you.points, true]);
+    var html = rows.length
+      ? rows.map(function(r, i){
+          return '<div class="lb__row' + (r[2] ? ' is-you' : '') + '">' +
+            '<span class="lb__rank">' + pad(i + 1) + '</span><span>' + esc(r[0]) + '</span>' +
+            '<span class="lb__pts">' + r[1] + ' pts</span></div>';
+        }).join('')
+      : '<p class="empty-hint" style="padding:6px 2px">No one has played this hour yet — be the first.</p>';
+    document.getElementById('lbList').innerHTML = html;
+  }).catch(function(){
+    document.getElementById('lbList').innerHTML =
+      '<p class="empty-hint" style="padding:6px 2px">Could not load the leaderboard right now.</p>';
+  });
+}
+
+// ---------- boot (real backend) ----------
+function bootReal(){
+  var lbEyebrow = document.getElementById('lbEyebrow');
+  if (lbEyebrow) lbEyebrow.textContent = "This hour's leaderboard";
+  document.getElementById('histWrap').style.display = 'none'; // per-hour history isn't tracked server-side yet
+
+  EduAPI.getChallenge().then(function(res){
+    if (res.alreadyPlayed){
+      renderDoneReal({ points: res.points, correct: true }, false);
+    } else {
+      renderReadyReal(res.question);
+    }
+  }).catch(function(err){
+    playCard.innerHTML =
+      '<div class="mono">Arena</div>' +
+      '<div class="play__sub" style="margin-top:10px">' + esc(err.message || "Couldn't load this hour's question.") + '</div>';
+  });
+  refreshRealStats();
+  renderLBReal();
+}
+
 function renderReady(){
   var nowD = new Date();
   playCard.innerHTML =
@@ -383,7 +560,7 @@ function startPlay(){
       if(i === qData.a) b.classList.add('is-right');
       else if(i === pickedIdx) b.classList.add('is-wrong');
     });
-    setTimeout(function(){ renderDone(); renderStats(); renderLB(); renderHist(); }, 1600);
+    setTimeout(function(){ renderDone(); renderStats(); renderLBDemo(); renderHist(); }, 1600);
   }
 
   document.getElementById('optGrid').querySelectorAll('.opt').forEach(function(b){
@@ -462,21 +639,14 @@ function renderStats(){
     store.history.length ? Math.round(right / store.history.length * 100) + '%' : '—';
 }
 
-var DEMO_LB = [
-  ['Aarav P.', 2840], ['Diya S.', 2710], ['Ishaan K.', 2580],
-  ['Meera R.', 2390], ['Kabir J.', 2200], ['Ananya T.', 2050], ['Riya G.', 1880]
-];
-function renderLB(){
-  var rows = DEMO_LB.slice();
-  rows.push(['You', store.points]);
-  rows.sort(function(a, b){ return b[1] - a[1]; });
-  var html = '';
-  rows.forEach(function(r, i){
-    html += '<div class="lb__row' + (r[0] === 'You' ? ' is-you' : '') + '">' +
-      '<span class="lb__rank">' + pad(i + 1) + '</span><span>' + esc(r[0]) + '</span>' +
-      '<span class="lb__pts">' + r[1] + ' pts</span></div>';
-  });
-  document.getElementById('lbList').innerHTML = html;
+// Logged-out preview only: a single real row ("You") plus an honest note that
+// this is a preview, not a real cross-student ranking (that requires being
+// logged in — see renderLBReal above for the real backend leaderboard).
+function renderLBDemo(){
+  document.getElementById('lbList').innerHTML =
+    '<div class="lb__row is-you"><span class="lb__rank">01</span><span>You</span>' +
+    '<span class="lb__pts">' + store.points + ' pts</span></div>' +
+    '<p class="empty-hint" style="padding:10px 2px 2px">Sign in to see the real leaderboard for your class.</p>';
 }
 
 function renderHist(){
@@ -497,12 +667,24 @@ function renderHist(){
 }
 
 /* boot */
-if(playedThisHour()) renderDone(); else renderReady();
-renderStats(); renderLB(); renderHist();
+// REAL_MODE was computed above from a synchronous localStorage check, before
+// api.js (loaded after this script tag) exists — re-check once EduAPI is
+// actually available, then never show the local demo engine to a logged-in
+// student, only the real backend-driven challenge.
+window.__eduBootChallenge = function(){
+  REAL_MODE = !!(window.EduAPI && EduAPI.getToken && EduAPI.getToken());
+  if (REAL_MODE){
+    bootReal();
+  } else {
+    if(playedThisHour()) renderDone(); else renderReady();
+    renderStats(); renderLBDemo(); renderHist();
+  }
+};
 
 })();
 </script>
 <script src="api.js"></script>
+<script>window.__eduBootChallenge();</script>
 <script src="account-menu.js"></script>
 <script src="../theme.js"></script>
 <script src="../features-panel.js"></script>
