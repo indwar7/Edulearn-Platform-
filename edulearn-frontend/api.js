@@ -128,6 +128,18 @@
     return data.user;
   }
 
+  // Re-verify and replace a parent's child link (fixes a mismatched link
+  // without requiring a brand-new signup). This isn't a new login, so — unlike
+  // setSession — it must NOT wipe this parent's own per-user data.
+  async function relinkChild(childRollNumber, childName, childClass) {
+    var data = await request('/api/auth/relink-child', {
+      method: 'POST',
+      body: { childRollNumber: childRollNumber, childName: childName, childClass: childClass },
+    });
+    if (data.user) localStorage.setItem(USER_KEY, JSON.stringify(data.user));
+    return data.user;
+  }
+
   async function getDashboard() {
     return request('/api/dashboard');
   }
@@ -320,6 +332,7 @@
     getUser: getUser,
     getToken: getToken,
     requireAuth: requireAuth,
+    relinkChild: relinkChild,
     clearSession: clearSession,
     listLive: listLive,
     createLive: createLive,

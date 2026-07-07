@@ -116,9 +116,10 @@
     '<div class="acct-msg" id="acctMsg" style="display:none"></div>' +
     '<div class="acct-sec"><h3>Profile</h3>' + fieldsForRole(user) + '</div>' +
     '<div class="acct-sec"><h3>Preferences</h3>' +
-      '<div class="acct-field"><label>Language</label><select id="acctLang">' +
-        '<option value="en"' + (prefs.language==='en'?' selected':'') + '>English</option>' +
-        '<option value="hi"' + (prefs.language==='hi'?' selected':'') + '>हिन्दी</option>' +
+      // Hindi disabled platform-wide (learn.html's ~190 chapter titles have no
+      // Hindi text yet) — English only, no switcher, not even here.
+      '<div class="acct-field"><label>Language</label><select id="acctLang" disabled>' +
+        '<option value="en" selected>English</option>' +
       '</select></div>' +
       '<div class="acct-field"><label>Theme</label><select id="acctTheme">' +
         '<option value="system"' + (prefs.theme==='system'?' selected':'') + '>System</option>' +
