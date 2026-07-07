@@ -256,6 +256,11 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
   transition:border-color .4s var(--ease),transform .4s var(--ease),box-shadow .4s var(--ease);
 }
 .card:hover{border-color:var(--hair-2);}
+.feat-target-flash{animation:featTargetFlash 1.2s var(--ease);}
+@keyframes featTargetFlash{
+  0%{box-shadow:0 0 0 3px var(--teal, #3DE8C5);}
+  100%{box-shadow:0 0 0 0 transparent;}
+}
 .card-head{display:flex;align-items:baseline;justify-content:space-between;gap:14px;margin-bottom:20px;}
 .card-title{font-family:'Fraunces',serif;font-weight:500;font-size:21px;letter-spacing:-.01em;}
 .span12{grid-column:span 12;}
@@ -864,7 +869,7 @@ html.dark-mode [data-theme-toggle] {
                 </div>
                 <h4>Light</h4>
                 <p>It has been 19 days since you finished this chapter. A 6-minute recap will keep reflection rules fresh.</p>
-                <a class="btn-fix" href="lesson.html">
+                <a class="btn-fix" href="lesson.html?class=7&subject=science&ch=c7-sci-light">
                   <span data-i18n="s.fix">Fix this gap</span>
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
                 </a>
@@ -876,7 +881,7 @@ html.dark-mode [data-theme-toggle] {
                 </div>
                 <h4>Percentages</h4>
                 <p>You are at 87% mastery — one focused practice set away from your fourth medallion.</p>
-                <a class="btn-fix" href="lesson.html">
+                <a class="btn-fix" href="lesson.html?class=7&subject=maths&ch=c7-math-comparing-quantities">
                   <span data-i18n="s.fix">Fix this gap</span>
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
                 </a>
@@ -1220,14 +1225,14 @@ html.dark-mode [data-theme-toggle] {
         <p class="foot-tag" data-i18n="foot.tag">Made for Bharat. 11 languages. Works fully offline.</p>
         <p class="foot-mono">CBSE · NCERT · 20+ STATE BOARDS</p>
       </div>
-      <div>
+      <div id="footProductCol">
         <h5>Product</h5>
-        <a href="learn.html">Learn</a>
+        <a href="learn.html" class="foot-learn-link">Learn</a>
         <a href="lesson.html">Lessons</a>
         <a href="pal.html">PAL Adaptive AI</a>
         <a href="dashboard.html">Dashboard</a>
       </div>
-      <div>
+      <div id="footClassesCol">
         <h5>Classes</h5>
         <a href="learn.html" style="color:var(--teal)">Class 6</a>
         <a href="learn.html" style="color:var(--amber)">Class 7</a>
@@ -1642,12 +1647,19 @@ function buildBadges(){
    STUDENT — continue learning cards
 ------------------------------------------------------------ */
 var CHAPTER_META = {
-  'c7-sci-photosynthesis': { title:'Nutrition in Plants',     sub:'Science · Chapter 1',  cls:7 },
-  'c7-math-fractions':     { title:'Fractions and Decimals',  sub:'Maths · Chapter 2',    cls:7 },
-  'c7-sci-heat':           { title:'Heat',                    sub:'Science · Chapter 4',  cls:7 },
-  'c7-sst-mughal-empire':  { title:'The Mughal Empire',       sub:'SST · Chapter 4',      cls:7 },
-  'c6-math-integers':      { title:'Integers',                sub:'Maths · Chapter 1',    cls:6 }
+  'c7-sci-photosynthesis': { title:'Nutrition in Plants',     sub:'Science · Chapter 1',  cls:7, subject:'science' },
+  'c7-math-fractions':     { title:'Fractions and Decimals',  sub:'Maths · Chapter 2',    cls:7, subject:'maths' },
+  'c7-sci-heat':           { title:'Heat',                    sub:'Science · Chapter 4',  cls:7, subject:'science' },
+  'c7-sst-mughal-empire':  { title:'The Mughal Empire',       sub:'SST · Chapter 4',      cls:7, subject:'social' },
+  'c6-math-integers':      { title:'Integers',                sub:'Maths · Chapter 1',    cls:6, subject:'maths' }
 };
+
+// Build the same lesson.html?class=&subject=&ch= URL that learn.html's
+// lessonHref() produces, so links from here land on the real chapter's
+// video instead of falling back to lesson.html's generic placeholder.
+function chapterHref(id, meta){
+  return 'lesson.html?class=' + meta.cls + '&subject=' + meta.subject + '&ch=' + encodeURIComponent(id);
+}
 
 function buildContinue(){
   var grid = $('#contGrid');
@@ -1666,7 +1678,7 @@ function buildContinue(){
   rows = rows.slice(0, 3);
   var html = '';
   rows.forEach(function(r){
-    html += '<a class="cont-card" href="lesson.html">';
+    html += '<a class="cont-card" href="' + chapterHref(r.id, r.meta) + '">';
     html += '<div class="cc-row"><span class="cls-chip c' + r.meta.cls + '">Class ' + r.meta.cls + '</span>';
     html += '<svg width="26" height="26" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="12" stroke="var(--hair-2)" stroke-width="1"/><path d="M10.5 8.5 L17.5 13 L10.5 17.5 Z" stroke="#F2EDE3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';
     html += '<h4>' + r.meta.title + '</h4>';
@@ -2102,6 +2114,20 @@ function initEvents(){
   $('#shareTestBtn').addEventListener('click', openModal);
   var featShare = document.getElementById('featShareTest');
   if (featShare) featShare.addEventListener('click', function(e){ e.preventDefault(); openModal(); });
+  // Parent feat-cards ("Child's Progress" / "Attendance") jump to same-page
+  // cards. A bare anchor-scroll is easy to miss (no visible state change),
+  // so scroll smoothly and flash the target card to make it obvious it "opened".
+  ['childProgress', 'attnCard'].forEach(function(id){
+    var link = document.querySelector('.feat-card[href="#' + id + '"]');
+    var target = document.getElementById(id);
+    if (!link || !target) return;
+    link.addEventListener('click', function(e){
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      target.classList.add('feat-target-flash');
+      setTimeout(function(){ target.classList.remove('feat-target-flash'); }, 1200);
+    });
+  });
   $('#modalClose').addEventListener('click', closeModal);
   $('#modalCancel').addEventListener('click', closeModal);
   modalBg.addEventListener('click', function(e){ if (e.target === modalBg) closeModal(); });
@@ -2140,6 +2166,14 @@ function lockToRole(role){
   }
   if (role === 'parent'){
     if (navPal) navPal.style.display = 'none';
+  }
+
+  // Footer also links to the student "Learn" page (Product + Classes columns) —
+  // hide those for non-students so it doesn't leak into teacher/parent dashboards.
+  if (role === 'parent' || role === 'teacher'){
+    document.querySelectorAll('.foot-learn-link').forEach(function(a){ a.style.display = 'none'; });
+    var classesCol = document.getElementById('footClassesCol');
+    if (classesCol) classesCol.style.display = 'none';
   }
 }
 
@@ -2181,6 +2215,16 @@ async function bootAuth(){
     applyDashboardData(user, data);
   } catch (e) {
     console.warn('Dashboard data load failed:', e.message);
+    // A failed fetch used to leave the roster/dashboard silently on whatever
+    // static markup was already there, indistinguishable from "no data yet" —
+    // show a real error so a teacher whose roster "won't open" can tell the
+    // difference between an empty class and a broken request.
+    var rosterBody = document.getElementById('rosterBody');
+    if (user.role === 'teacher' && rosterBody) {
+      rosterBody.innerHTML =
+        '<tr><td colspan="5"><p class="empty-hint" style="padding:14px 4px;color:var(--rose)">' +
+        'Could not load your class roster right now. Please refresh the page — if this keeps happening, let support know.</p></td></tr>';
+    }
   }
 }
 

@@ -18,6 +18,12 @@
   document.querySelectorAll('a.btn-primary[href="login.html"]').forEach(function (el) {
     el.style.display = 'none';
   });
+  // The logo/brand link defaults to index.html (the logged-out landing page)
+  // on every page except dashboard.html. Clicking it while logged in should
+  // never require signing back in — send it to the dashboard instead.
+  document.querySelectorAll('a.brand[href="index.html"]').forEach(function (el) {
+    el.setAttribute('href', 'dashboard.html');
+  });
   if (user.role === 'parent' || user.role === 'teacher') {
     document.querySelectorAll('a.nav__link[href="learn.html"]').forEach(function (el) {
       el.style.display = 'none';

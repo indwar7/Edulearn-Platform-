@@ -631,7 +631,20 @@ document.querySelectorAll('[data-test]').forEach(function(b){
   b.addEventListener('click', function(){ startTest(b.getAttribute('data-test')); });
 });
 renderAttempts();
-show('setup');
+
+// A shared-test link (dashboard.html's "Share a test" modal) adds ?chapter=
+// so every student who opens it lands on the actual test, not the generic
+// picker screen every link used to show regardless of which chapter was sent.
+var CHAPTER_SUBJECT = {
+  'nutrition-in-plants': 'science', 'heat': 'science', 'acids-bases-salts': 'science',
+  'respiration': 'science', 'motion-and-time': 'science', 'electric-current': 'science', 'light': 'science'
+};
+var sharedChapter = new URLSearchParams(location.search).get('chapter');
+if (sharedChapter && CHAPTER_SUBJECT[sharedChapter]) {
+  startTest(CHAPTER_SUBJECT[sharedChapter]);
+} else {
+  show('setup');
+}
 
 })();
 </script>

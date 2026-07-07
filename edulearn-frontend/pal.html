@@ -361,11 +361,21 @@ var ROSTER = [
 /* ============================================================
    STORAGE
    ============================================================ */
-// Determine the authenticated user's role (or fallback to 'student' for demo).
+// Determine the authenticated user's role (or fallback to guest/demo).
+// PAL is reachable both logged-in (from the dashboard) and logged-out (from
+// the landing page, as a try-before-signup demo) — so this can't hard-require
+// auth. But it must not trust a stale 'edulearn_user' with no matching token
+// (e.g. left over from an interrupted session): that would misattribute chat
+// history to an identity that isn't actually logged in. (api.js loads later
+// on this page, so read localStorage directly rather than via EduAPI.)
 var _authUser = null;
-try {
-  _authUser = JSON.parse(localStorage.getItem('edulearn_user') || 'null');
-} catch(e) { _authUser = null; }
+var _authToken = '';
+try { _authToken = localStorage.getItem('edulearn_token') || ''; } catch(e) {}
+if (_authToken) {
+  try { _authUser = JSON.parse(localStorage.getItem('edulearn_user') || 'null'); } catch(e) { _authUser = null; }
+} else {
+  try { localStorage.removeItem('edulearn_user'); } catch(e) {}
+}
 var AUTH_ROLE = (_authUser && _authUser.role) || null;
 
 // Chat store is namespaced PER USER so one account's chats are never shown
@@ -886,10 +896,49 @@ setRole(store.role, true);
 renderChatList();
 renderThread();
 
+// Expose what the post-load restore script (below, after api.js) needs.
+window._palStore = store;
+window._palSave = save;
+window._palRenderChatList = renderChatList;
+window._palRenderThread = renderThread;
+
 })();
 </script>
 <script src="api.js"></script>
 <script src="account-menu.js"></script>
+<script>
+// Chat history lives only in this browser's localStorage — logging out wipes
+// it (by design, so the next person on a shared device can't read it) and
+// nothing restores it on the next login, so a same-user logout→login cycle
+// looked like PAL had "erased" the conversation even though the backend still
+// has it. Once logged in with an empty local store, pull the most recent
+// backend session back in as a read-only chat so it isn't gone for good.
+(function () {
+  if (!window.EduAPI || !EduAPI.getToken || !EduAPI.getToken()) return;
+  var store = window._palStore;
+  if (!store || !store.chats.length) return;
+  var onlyEmptyChat = store.chats.length === 1 && store.chats[0].msgs.length === 0;
+  if (!onlyEmptyChat) return;
+
+  EduAPI.listPalSessions().then(function (res) {
+    var sessions = (res && res.sessions) || [];
+    if (!sessions.length) return;
+    return EduAPI.getPalSession(sessions[0].id).then(function (res2) {
+      var session = res2 && res2.session;
+      var msgs = (session && session.messages) || [];
+      if (!msgs.length) return;
+      store.chats[0].msgs = msgs.map(function (m) {
+        return { who: m.role === 'assistant' ? 'pal' : 'user', text: m.content };
+      });
+      store.chats[0].title = sessions[0].title || 'Restored chat';
+      store.chats[0].backendSessionId = sessions[0].id;
+      window._palSave();
+      window._palRenderChatList();
+      window._palRenderThread();
+    });
+  }).catch(function () {}); // best-effort — never block the page on this
+})();
+</script>
 <script src="../theme.js"></script>
 <script src="../features-panel.js"></script>
 </body>

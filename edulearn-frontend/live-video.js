@@ -25,10 +25,12 @@
   // Connect to the LiveKit room for a backend live-session id.
   async function connect(sessionId) {
     if (!global.LivekitClient) {
+      showStage(false);
       setStatus('Live video library not loaded.');
       return false;
     }
     if (!global.EduAPI || !EduAPI.getToken()) {
+      showStage(false);
       setStatus('Please log in to join the video.');
       return false;
     }

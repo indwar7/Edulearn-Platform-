@@ -565,6 +565,13 @@
 
   <script src="api.js"></script>
   <script>
+    // Already signed in (e.g. arrived here via a stale bookmark or the logo
+    // fallback) — skip the login form entirely instead of asking to re-enter
+    // credentials for a session that's still valid.
+    if (window.EduAPI && EduAPI.getUser()) {
+      location.replace('dashboard.html');
+    }
+
     var selectedRole = 'student';
 
     // Demo-credential autofill per role for a smooth demo.

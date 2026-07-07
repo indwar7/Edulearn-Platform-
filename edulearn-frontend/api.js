@@ -17,29 +17,22 @@
     return localStorage.getItem(TOKEN_KEY) || '';
   }
   function setSession(token, user) {
+    // A previous session on this device may not have been cleanly logged out
+    // (tab closed, direct navigation, etc.) — its per-user data would still be
+    // sitting in localStorage. Wipe it before establishing the new session so
+    // it never leaks into this login/signup, even for the same returning user.
+    clearUserDataKeys();
     if (token) localStorage.setItem(TOKEN_KEY, token);
     if (user) localStorage.setItem(USER_KEY, JSON.stringify(user));
   }
-  function getUser() {
-    try {
-      return JSON.parse(localStorage.getItem(USER_KEY) || 'null');
-    } catch (e) {
-      return null;
-    }
-  }
-  function clearSession() {
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(USER_KEY);
-    // Wipe per-user cached data so the next person on a shared device never
-    // sees the previous user's chats, bookings or progress. Keeps device-level
-    // settings like the API override ('edulearn_api').
+  function clearUserDataKeys() {
     var USER_DATA_KEYS = [
       'edulearn_pal_chats',
       'edulearn_live',
       'edutok_state',
-      'edulearn_mock', // mocktest.html — mock-test attempt history
-      'edulearn_arena', // challenge.html — Arena scores/streaks
-      'edulearn_state', // learn.html — chapter progress, streaks, badges
+      'edulearn_mock',
+      'edulearn_arena',
+      'edulearn_state',
     ];
     var doomed = [];
     for (var i = 0; i < localStorage.length; i++) {
@@ -55,6 +48,21 @@
     doomed.forEach(function (k) {
       localStorage.removeItem(k);
     });
+  }
+  function getUser() {
+    try {
+      return JSON.parse(localStorage.getItem(USER_KEY) || 'null');
+    } catch (e) {
+      return null;
+    }
+  }
+  function clearSession() {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
+    // Wipe per-user cached data so the next person on a shared device never
+    // sees the previous user's chats, bookings or progress. Keeps device-level
+    // settings like the API override ('edulearn_api').
+    clearUserDataKeys();
   }
 
   // Core fetch wrapper. Adds JSON headers + bearer token, parses errors nicely.
@@ -272,6 +280,17 @@
     });
   }
 
+  // ---- Assessments (mock tests) ----
+  async function startMockTest(subject, chapterSlug, count) {
+    var body = { subject: subject };
+    if (chapterSlug) body.chapterSlug = chapterSlug;
+    if (count) body.count = count;
+    return request('/api/assessments/mock/start', {
+      method: 'POST',
+      body: body
+    });
+  }
+
   // Guard: redirect to login if not authenticated. Optionally require a role.
   function requireAuth(requiredRole) {
     var user = getUser();
@@ -310,6 +329,7 @@
     liveRoster: liveRoster,
     listVideos: listVideos,
     recordVideoView: recordVideoView,
+    startMockTest: startMockTest,
     sendOtp: sendOtp,
     verifyOtp: verifyOtp,
     listPalSessions: listPalSessions,

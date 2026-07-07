@@ -382,7 +382,7 @@
 
   <nav>
     <div>
-      <div class="logo">
+      <a class="logo" id="navLogo" href="index.html" style="text-decoration:none;color:inherit">
         <svg class="logo-mark" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 1.5 L14.6 9.4 L22.5 12 L14.6 14.6 L12 22.5 L9.4 14.6 L1.5 12 L9.4 9.4 Z" fill="url(#auroraGrad)"/>
         </svg>
@@ -396,17 +396,17 @@
           </defs>
         </svg>
         <span class="logo-text">EduLearn</span>
-      </div>
+      </a>
       <div class="nav-links">
         <a href="learn.html">Explore</a>
         <a href="live.html">Live</a>
         <a href="pal.html">PAL AI</a>
         <a href="#features">Features</a>
       </div>
-      <div class="auth-buttons">
+      <div class="auth-buttons" id="authButtons">
         <button class="theme-toggle" data-theme-toggle title="Toggle dark mode"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg></button>
-        <a href="login.html" class="btn-ghost">Sign in</a>
-        <a href="signup.html" class="btn-primary">Get started</a>
+        <a href="login.html" class="btn-ghost" id="navSignIn">Sign in</a>
+        <a href="signup.html" class="btn-primary" id="navGetStarted">Get started</a>
       </div>
     </div>
   </nav>
@@ -635,6 +635,22 @@
     <p>© 2026 EduLearn Learning Pvt. Ltd. · Made for Bharat · <a href="#" style="color:var(--teal)">Privacy Policy</a> · <a href="#" style="color:var(--teal)">Terms</a></p>
   </footer>
 
+  <script src="api.js"></script>
+  <script>
+    // If a session already exists, this is the logged-out landing page shown
+    // to a logged-in user by mistake (e.g. clicking the logo from another
+    // page) — send them straight to their dashboard instead of asking them
+    // to sign in again, and swap the nav CTAs accordingly.
+    (function () {
+      if (!window.EduAPI || !EduAPI.getUser()) return;
+      var logo = document.getElementById('navLogo');
+      if (logo) logo.setAttribute('href', 'dashboard.html');
+      var signIn = document.getElementById('navSignIn');
+      var getStarted = document.getElementById('navGetStarted');
+      if (signIn) { signIn.textContent = 'Dashboard'; signIn.setAttribute('href', 'dashboard.html'); }
+      if (getStarted) getStarted.style.display = 'none';
+    })();
+  </script>
   <script src="../theme.js"></script>
 <script src="../features-panel.js"></script>
 
