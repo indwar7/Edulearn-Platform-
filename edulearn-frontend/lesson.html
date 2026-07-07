@@ -283,10 +283,18 @@ EduAPI.listVideos({ className: LESSON.cls, subject: LESSON.subject, topic: searc
       'By ' + (v.uploadedByName || 'Teacher') + ' · ' + v.views + ' views';
 
     var player = document.getElementById('player');
-    player.src = EduAPI.API_BASE + '/api/videos/' + v.id + '/stream';
+    // <video src> can't send an Authorization header, and streaming is
+    // eligibility-gated server-side — pass the token as a query param.
+    player.src = EduAPI.API_BASE + '/api/videos/' + v.id + '/stream?token=' + encodeURIComponent(EduAPI.getToken());
     player.addEventListener('play', function onFirstPlay(){
       EduAPI.recordVideoView(v.id);
       player.removeEventListener('play', onFirstPlay);
+    });
+    // Not actually eligible for this specific video (e.g. wrong class/subject)
+    // — fall back to the honest placeholder instead of a broken player.
+    player.addEventListener('error', function(){
+      stage.style.display = 'none';
+      document.getElementById('placeholderStage').style.display = 'flex';
     });
   })
   .catch(function(){ /* lookup failed — leave the honest placeholder showing */ });

@@ -193,10 +193,12 @@
 
     function play(id, title){
       document.getElementById('playerTitle').textContent = title;
-      player.src = API + '/api/videos/' + id + '/stream';
+      // <video src> can't send an Authorization header, and streaming is now
+      // eligibility-gated server-side — pass the token as a query param.
+      player.src = API + '/api/videos/' + id + '/stream?token=' + encodeURIComponent(EduAPI.getToken());
       modal.classList.add('open');
       player.play().catch(function(){});
-      fetch(API + '/api/videos/' + id + '/view', { method:'POST' }).catch(function(){});
+      EduAPI.recordVideoView(id);
     }
     function closePlayer(){
       player.pause(); player.removeAttribute('src'); player.load();
