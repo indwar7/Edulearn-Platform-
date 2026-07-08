@@ -924,10 +924,6 @@ html.dark-mode [data-theme-toggle] {
               <span class="fc-ico">📝</span><span class="fc-title">Create a Test</span>
               <span class="fc-sub">Timed, auto-graded — get a link to share</span>
             </a>
-            <a class="feat-card" href="#" id="featShareTest">
-              <span class="fc-ico">🔗</span><span class="fc-title">Share a Test</span>
-              <span class="fc-sub">Assign a mock test to your class</span>
-            </a>
             <a class="feat-card" href="#rosterAnchor">
               <span class="fc-ico">👥</span><span class="fc-title">Class Roster</span>
               <span class="fc-sub">View students & performance</span>
@@ -940,10 +936,10 @@ html.dark-mode [data-theme-toggle] {
 
           <div class="span12 stag t-head" style="--i:0">
             <h2 id="tClassHead">Class <em>7-B</em> · Science · 32 students</h2>
-            <button class="btn-primary" id="shareTestBtn">
+            <a class="btn-primary" href="create-test.html">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="12" r="3"/><circle cx="18" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><path d="M8.7 10.6l6.6-3.2"/><path d="M8.7 13.4l6.6 3.2"/></svg>
-              <span data-i18n="t.share">Share a test</span>
-            </button>
+              <span>Create a test</span>
+            </a>
           </div>
 
           <!-- (a) class average ring -->
@@ -1179,48 +1175,6 @@ html.dark-mode [data-theme-toggle] {
   </div>
 </main>
 
-<!-- ============================================================
-     SHARE-A-TEST MODAL
-============================================================ -->
-<div class="modal-bg" id="modalBg" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-  <div class="modal">
-    <button class="mclose" id="modalClose" aria-label="Close dialog">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6 6l12 12"/><path d="M18 6L6 18"/></svg>
-    </button>
-    <h3 id="modalTitle" data-i18n="t.share">Share a test</h3>
-    <p class="msub">Pick a chapter — every student in 7-B gets the test instantly, even the ones currently offline.</p>
-    <label class="field-lab eyebrow" for="chapSel">CHAPTER · CLASS 7 SCIENCE</label>
-    <div class="sel-wrap">
-      <select id="chapSel">
-        <option value="nutrition-in-plants">Ch 1 · Nutrition in Plants</option>
-        <option value="heat" selected>Ch 4 · Heat</option>
-        <option value="acids-bases-salts">Ch 5 · Acids, Bases and Salts</option>
-        <option value="respiration">Ch 10 · Respiration in Organisms</option>
-        <option value="motion-and-time">Ch 13 · Motion and Time</option>
-        <option value="electric-current">Ch 14 · Electric Current and its Effects</option>
-        <option value="light">Ch 15 · Light</option>
-      </select>
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-    </div>
-    <div class="link-box">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M10 13.5a4 4 0 0 0 6 .5l3-3a4 4 0 0 0-5.6-5.6l-1.7 1.7"/><path d="M14 10.5a4 4 0 0 0-6-.5l-3 3a4 4 0 0 0 5.6 5.6l1.7-1.7"/></svg>
-      <span id="shareLink">https://edulearn.app/t/7b-science-heat?key=DEMO</span>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-primary" id="copyLinkBtn">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15H4.5A1.5 1.5 0 0 1 3 13.5v-9A1.5 1.5 0 0 1 4.5 3h9A1.5 1.5 0 0 1 15 4.5V5"/></svg>
-        <span data-i18n="t.copy">Copy link</span>
-      </button>
-      <button class="btn-ghost" id="modalCancel" data-i18n="t.cancel">Cancel</button>
-    </div>
-  </div>
-</div>
-
-<!-- toast -->
-<div id="toast" role="status" aria-live="polite">
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
-  <span id="toastTxt">Link copied — shared with 7-B</span>
-</div>
 
 <!-- ============================================================
      FOOTER (slim)
@@ -1358,7 +1312,7 @@ var I18N = {
     's.reco':'AI recommends', 's.recoSub':'Tokky found 3 gaps worth fixing before your next test.',
     's.fix':'Fix this gap', 's.continue':'Continue learning', 's.all':'All chapters →',
     't.avg':'Class average', 't.weak':'Weak topics this week', 't.students':'Students',
-    't.sortHint':'Click mastery to sort', 't.share':'Share a test', 't.copy':'Copy link', 't.cancel':'Cancel',
+    't.sortHint':'Click mastery to sort',
     'p.streak':'day streak', 'p.week':'this week', 'p.total':'all-time',
     'p.screen':'Learning time this week', 'p.alerts':'Alerts',
     'p.reassureH':'Built to never block learning',
@@ -1379,7 +1333,7 @@ var I18N = {
     's.reco':'AI की सलाह', 's.recoSub':'टोकी ने अगले टेस्ट से पहले सुधारने लायक 3 कमियाँ ढूँढी हैं।',
     's.fix':'यह कमी दूर करें', 's.continue':'सीखना जारी रखें', 's.all':'सभी अध्याय →',
     't.avg':'कक्षा का औसत', 't.weak':'इस हफ़्ते के कमज़ोर विषय', 't.students':'विद्यार्थी',
-    't.sortHint':'क्रम बदलने के लिए महारत पर क्लिक करें', 't.share':'टेस्ट साझा करें', 't.copy':'लिंक कॉपी करें', 't.cancel':'रद्द करें',
+    't.sortHint':'क्रम बदलने के लिए महारत पर क्लिक करें',
     'p.streak':'दिन की स्ट्रीक', 'p.week':'इस हफ़्ते', 'p.total':'कुल',
     'p.screen':'इस हफ़्ते सीखने का समय', 'p.alerts':'सूचनाएँ',
     'p.reassureH':'सीखना कभी न रुके, ऐसा बनाया गया',
@@ -2048,44 +2002,6 @@ function setRole(role, instant){
 }
 
 /* ------------------------------------------------------------
-   MODAL + clipboard + toast
------------------------------------------------------------- */
-var modalBg = $('#modalBg');
-function openModal(){ modalBg.classList.add('open'); updateShareLink(); }
-function closeModal(){ modalBg.classList.remove('open'); }
-function updateShareLink(){
-  // Real, working link: the deployed mock-test page for the picked chapter.
-  var base = location.href.split('#')[0].split('?')[0].replace(/dashboard\.html$/, 'mocktest.html');
-  $('#shareLink').textContent = base + '?chapter=' + encodeURIComponent($('#chapSel').value);
-}
-function copyText(txt){
-  if (navigator.clipboard && navigator.clipboard.writeText){
-    return navigator.clipboard.writeText(txt);
-  }
-  return new Promise(function(resolve, reject){
-    var ta = document.createElement('textarea');
-    ta.value = txt;
-    ta.style.position = 'fixed';
-    ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.select();
-    try {
-      document.execCommand('copy');
-      resolve();
-    } catch (e) { reject(e); }
-    document.body.removeChild(ta);
-  });
-}
-var toastTimer = null;
-function showToast(msg){
-  var toast = $('#toast');
-  $('#toastTxt').textContent = msg;
-  toast.classList.add('show');
-  if (toastTimer) clearTimeout(toastTimer);
-  toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 2800);
-}
-
-/* ------------------------------------------------------------
    scroll reveals
 ------------------------------------------------------------ */
 function initReveals(){
@@ -2129,10 +2045,6 @@ function initEvents(){
     $('#masteryTh').classList.toggle('desc', sortDir === 1);
     renderRoster();
   });
-  // modal
-  $('#shareTestBtn').addEventListener('click', openModal);
-  var featShare = document.getElementById('featShareTest');
-  if (featShare) featShare.addEventListener('click', function(e){ e.preventDefault(); openModal(); });
   // Parent feat-cards ("Child's Progress" / "Attendance") jump to same-page
   // cards. A bare anchor-scroll is easy to miss (no visible state change),
   // so scroll smoothly and flash the target card to make it obvious it "opened".
@@ -2145,20 +2057,6 @@ function initEvents(){
       target.scrollIntoView({ behavior: 'smooth', block: 'center' });
       target.classList.add('feat-target-flash');
       setTimeout(function(){ target.classList.remove('feat-target-flash'); }, 1200);
-    });
-  });
-  $('#modalClose').addEventListener('click', closeModal);
-  $('#modalCancel').addEventListener('click', closeModal);
-  modalBg.addEventListener('click', function(e){ if (e.target === modalBg) closeModal(); });
-  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeModal(); });
-  $('#chapSel').addEventListener('change', updateShareLink);
-  $('#copyLinkBtn').addEventListener('click', function(){
-    var link = $('#shareLink').textContent;
-    copyText(link).then(function(){
-      closeModal();
-      showToast(STATE.lang === 'hi' ? 'लिंक कॉपी हुआ — 7-B के साथ साझा' : 'Link copied — shared with 7-B');
-    }).catch(function(){
-      showToast('Copy failed — link: ' + link);
     });
   });
 
