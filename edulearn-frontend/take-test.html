@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Take Test — EduLearn</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,480&family=Schibsted+Grotesk:wght@400;500;600;700&family=Fragment+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --ink:#1A1F36;--bg:#F7F9FC;--card:#FFFFFF;--muted:#6B7280;--bg2:#F5F7FA;
+      --line:rgba(15,23,42,.10);--teal:#0FA983;--rose:#E2484D;--amber:#C77B14;
+      --aurora:linear-gradient(115deg,#3DE8C5 0%,#7C9BFF 48%,#FFB454 100%);
+      --ease:cubic-bezier(.22,1,.36,1);--shadow:0 18px 44px rgba(15,23,42,.10);
+    }
+    *{box-sizing:border-box;}
+    body{margin:0;font-family:'Schibsted Grotesk',system-ui,sans-serif;background:var(--bg);color:var(--ink);}
+    .wrap{max-width:640px;margin:0 auto;padding:40px 24px 80px;}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:30px;}
+    .center{text-align:center;padding:60px 20px;color:var(--muted);}
+    .center a{color:var(--teal);font-weight:600;}
+
+    .qhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+    .qhead .mono{font-family:'Fragment Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
+    .timer{font-family:'Fraunces',serif;font-weight:600;font-size:22px;}
+    .timer.low{color:var(--rose);}
+    .progress-track{height:6px;background:var(--bg2);border-radius:99px;overflow:hidden;margin-bottom:24px;}
+    .progress-fill{height:100%;background:var(--aurora);border-radius:99px;transition:width .3s linear;}
+
+    .qtext{font-family:'Fraunces',serif;font-weight:500;font-size:22px;line-height:1.35;margin-bottom:22px;}
+    .opt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:1px solid var(--line);background:var(--bg2);border-radius:14px;padding:14px 16px;font-size:15px;font-family:inherit;color:inherit;cursor:pointer;margin-bottom:10px;transition:border-color .2s,transform .15s;}
+    .opt:hover:not(:disabled){border-color:#3DE8C5;transform:translateY(-1px);}
+    .opt:disabled{cursor:default;}
+    .opt.is-picked{border-color:var(--teal);background:rgba(15,169,131,.1);}
+    .opt .ltr{width:26px;height:26px;border-radius:8px;background:var(--card);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:'Fragment Mono',monospace;font-size:11px;flex:none;}
+    .locked-note{text-align:center;color:var(--muted);font-size:13px;margin-top:6px;}
+
+    .score-num{font-family:'Fraunces',serif;font-weight:600;font-size:56px;text-align:center;background:var(--aurora);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1;}
+    .score-sub{text-align:center;color:var(--muted);font-size:14px;margin-top:6px;}
+    .review-row{border-top:1px solid var(--line);padding:14px 0;}
+    .review-row:first-of-type{border-top:none;}
+    .review-row .qt{font-weight:600;font-size:14.5px;margin-bottom:6px;}
+    .review-row .ans{font-size:13px;color:var(--muted);}
+    .review-row .ans.correct{color:var(--teal);}
+    .review-row .ans.wrong{color:var(--rose);}
+    .btn{border:none;border-radius:12px;background:var(--aurora);color:#0B1224;font-weight:700;font-size:15px;padding:13px 20px;cursor:pointer;text-decoration:none;display:inline-block;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div id="host" class="card">
+      <div class="center">Loading your test…</div>
+    </div>
+  </div>
+
+  <script src="api.js"></script>
+  <script>
+    var user = EduAPI.requireAuth('student'); // redirects if not logged in / wrong role
+    var host = document.getElementById('host');
+
+    function esc(s){
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+    function center(html){
+      host.innerHTML = '<div class="center">' + html + '</div>';
+    }
+
+    if (user) {
+      var params = new URLSearchParams(location.search);
+      var subject = params.get('subject');
+      var chapter = params.get('chapter');
+      var count = parseInt(params.get('count'), 10) || 10;
+      var secondsPerQ = Math.max(5, parseInt(params.get('time'), 10) || 30);
+      var testTitle = params.get('title') || 'Test';
+
+      if (!subject) {
+        center('This test link is missing information. Ask your teacher to re-share it.');
+      } else {
+        runTest();
+      }
+    }
+
+    var STATE = null; // { attemptId, total, questions, i, answers, timer, remaining }
+
+    async function runTest(){
+      center('Loading your test…');
+      var res;
+      try {
+        res = await EduAPI.startMockTest(subject, chapter, count);
+      } catch (err) {
+        center(esc(err.message || 'Could not load this test.') + '<br><br><a href="dashboard.html">Back to dashboard</a>');
+        return;
+      }
+      if (!res.questions || !res.questions.length) {
+        center('No questions available for this test right now.<br><br><a href="dashboard.html">Back to dashboard</a>');
+        return;
+      }
+      STATE = {
+        attemptId: res.attemptId,
+        total: res.questions.length,
+        questions: res.questions,
+        i: 0,
+        answers: new Array(res.questions.length).fill(-1),
+        timerId: null,
+        remaining: secondsPerQ
+      };
+      renderQuestion();
+    }
+
+    function renderQuestion(){
+      var q = STATE.questions[STATE.i];
+      var pct = (STATE.i / STATE.total) * 100;
+      var optsHtml = q.options.map(function(o, i){
+        return '<button class="opt" type="button" data-i="' + i + '">' +
+          '<span class="ltr">' + String.fromCharCode(65 + i) + '</span><span>' + esc(o) + '</span></button>';
+      }).join('');
+
+      host.innerHTML =
+        '<div class="qhead">' +
+          '<span class="mono">' + esc(testTitle) + ' &middot; Question ' + (STATE.i + 1) + ' of ' + STATE.total + '</span>' +
+          '<span class="timer" id="timerNum">' + secondsPerQ + 's</span>' +
+        '</div>' +
+        '<div class="progress-track"><div class="progress-fill" style="width:' + pct + '%"></div></div>' +
+        '<div class="qtext">' + esc(q.text) + '</div>' +
+        '<div id="optGrid">' + optsHtml + '</div>' +
+        '<div class="locked-note" id="lockedNote"></div>';
+
+      document.querySelectorAll('#optGrid .opt').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          lockAnswer(parseInt(btn.getAttribute('data-i'), 10));
+        });
+      });
+
+      STATE.remaining = secondsPerQ;
+      updateTimerDisplay();
+      clearInterval(STATE.timerId);
+      STATE.timerId = setInterval(function(){
+        STATE.remaining--;
+        updateTimerDisplay();
+        if (STATE.remaining <= 0){
+          lockAnswer(-1); // time's up, no answer picked
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay(){
+      var el = document.getElementById('timerNum');
+      if (!el) return;
+      el.textContent = Math.max(0, STATE.remaining) + 's';
+      el.classList.toggle('low', STATE.remaining <= 5);
+    }
+
+    var locking = false;
+    function lockAnswer(chosenIdx){
+      if (locking) return; // ignore a click that lands right as the timer also fires
+      locking = true;
+      clearInterval(STATE.timerId);
+      STATE.answers[STATE.i] = chosenIdx;
+
+      var buttons = document.querySelectorAll('#optGrid .opt');
+      buttons.forEach(function(b){ b.disabled = true; });
+      if (chosenIdx >= 0 && buttons[chosenIdx]) buttons[chosenIdx].classList.add('is-picked');
+      var note = document.getElementById('lockedNote');
+      if (note) note.textContent = chosenIdx >= 0 ? 'Answer locked in.' : "Time's up — moving on.";
+
+      setTimeout(function(){
+        locking = false;
+        STATE.i++;
+        if (STATE.i < STATE.total) {
+          renderQuestion();
+        } else {
+          finishTest();
+        }
+      }, 700);
+    }
+
+    async function finishTest(){
+      center('Grading your test…');
+      var res;
+      try {
+        res = await EduAPI.submitMockTest(STATE.attemptId, STATE.answers);
+      } catch (err) {
+        center(esc(err.message || 'Could not submit your test.') + '<br><br><a href="dashboard.html">Back to dashboard</a>');
+        return;
+      }
+      renderResults(res);
+    }
+
+    function renderResults(res){
+      var pct = res.total ? Math.round((res.score / res.total) * 100) : 0;
+      var reviewHtml = (res.review || []).map(function(r, i){
+        var q = STATE.questions[i];
+        var yourAns = r.chosen >= 0 && q.options[r.chosen] ? q.options[r.chosen] : 'No answer';
+        var rightAns = q.options[r.correctIndex] || '—';
+        return '<div class="review-row">' +
+          '<div class="qt">' + (i + 1) + '. ' + esc(q.text) + '</div>' +
+          '<div class="ans ' + (r.correct ? 'correct' : 'wrong') + '">' +
+            (r.correct ? '✓ Correct — ' + esc(yourAns) : '✗ Your answer: ' + esc(yourAns) + ' &middot; Correct: ' + esc(rightAns)) +
+          '</div></div>';
+      }).join('');
+
+      host.innerHTML =
+        '<div class="score-num">' + res.score + ' / ' + res.total + '</div>' +
+        '<div class="score-sub">' + pct + '% correct &middot; ' + esc(testTitle) + '</div>' +
+        '<div style="margin-top:26px">' + reviewHtml + '</div>' +
+        '<div style="text-align:center;margin-top:26px"><a class="btn" href="dashboard.html">Back to dashboard</a></div>';
+    }
+  </script>
+  <script src="account-menu.js"></script>
+  <script src="../theme.js"></script>
+</body>
+</html>

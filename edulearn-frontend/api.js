@@ -303,6 +303,24 @@
     });
   }
 
+  // Server-grades the attempt and returns { score, total, review[] }.
+  async function submitMockTest(attemptId, answers) {
+    return request('/api/assessments/mock/' + attemptId + '/submit', {
+      method: 'POST',
+      body: { answers: answers }
+    });
+  }
+
+  // Teacher/admin only: author one question into the bank (used by the test
+  // builder — one call per question, all tagged with the same chapterSlug so
+  // a test's questions form their own isolated pool).
+  async function createQuestion(fields) {
+    return request('/api/assessments/questions', {
+      method: 'POST',
+      body: fields
+    });
+  }
+
   // ---- Assessments (hourly challenge / Arena) ----
   // Real per-hour question (or { alreadyPlayed: true, points } if already played).
   async function getChallenge() {
@@ -361,6 +379,8 @@
     listVideos: listVideos,
     recordVideoView: recordVideoView,
     startMockTest: startMockTest,
+    submitMockTest: submitMockTest,
+    createQuestion: createQuestion,
     getChallenge: getChallenge,
     answerChallenge: answerChallenge,
     getChallengeLeaderboard: getChallengeLeaderboard,
