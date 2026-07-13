@@ -806,14 +806,11 @@ html.dark-mode [data-theme-toggle] {
             </div>
             <div class="chart-wrap">
               <svg class="barchart" id="barchart" viewBox="0 0 380 188" role="img" aria-label="Bar chart of minutes learned per day"></svg>
-              <div class="chart-tip" id="barTip"><b>68</b> MIN · THU</div>
+              <div class="chart-tip" id="barTip" style="display:none"></div>
             </div>
             <div class="bar-foot">
-              <div class="big"><span id="weekTotal">370</span><small data-i18n="s.minWeek">min this week</small></div>
-              <span class="delta-chip">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg>
-                +18% vs last week
-              </span>
+              <div class="big"><span id="weekTotal">0</span><small data-i18n="s.minWeek">min this week</small></div>
+              <span class="delta-chip" id="weekDelta" style="display:none"></span>
             </div>
           </div>
 
@@ -855,46 +852,16 @@ html.dark-mode [data-theme-toggle] {
               </svg>
               <div>
                 <h3 class="card-title" data-i18n="s.reco">AI recommends</h3>
-                <p style="font-size:13px;color:var(--muted);margin-top:2px;" data-i18n="s.recoSub">Tokky found 3 gaps worth fixing before your next test.</p>
+                <p style="font-size:13px;color:var(--muted);margin-top:2px;" id="recoSub">Personalised gap analysis appears here as you practise.</p>
               </div>
             </div>
-            <div class="reco-grid">
-              <div class="reco-card">
-                <div class="rc-top">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18"/><path d="M3 12h9"/></svg>
-                  <span class="rc-tag rose">Gap · Class 6</span>
-                </div>
-                <h4>Fractions</h4>
-                <p>Your division of fractions slipped in 4 of the last 6 questions. The gap traces back to Class 6, Chapter 7.</p>
-                <a class="btn-fix" href="pal.html">
-                  <span data-i18n="s.fix">Fix this gap</span>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
-                </a>
-              </div>
-              <div class="reco-card">
-                <div class="rc-top">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3"/><path d="M12 19v3"/><path d="M2 12h3"/><path d="M19 12h3"/><path d="M4.9 4.9l2.1 2.1"/><path d="M17 17l2.1 2.1"/><path d="M19.1 4.9L17 7"/><path d="M7 17l-2.1 2.1"/></svg>
-                  <span class="rc-tag amber">Revise</span>
-                </div>
-                <h4>Light</h4>
-                <p>It has been 19 days since you finished this chapter. A 6-minute recap will keep reflection rules fresh.</p>
-                <a class="btn-fix" href="lesson.html?class=7&subject=science&ch=c7-sci-light">
-                  <span data-i18n="s.fix">Fix this gap</span>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
-                </a>
-              </div>
-              <div class="reco-card">
-                <div class="rc-top">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 5L5 19"/><circle cx="7" cy="7" r="2.6"/><circle cx="17" cy="17" r="2.6"/></svg>
-                  <span class="rc-tag teal">Almost there</span>
-                </div>
-                <h4>Percentages</h4>
-                <p>You are at 87% mastery — one focused practice set away from your fourth medallion.</p>
-                <a class="btn-fix" href="lesson.html?class=7&subject=maths&ch=c7-math-comparing-quantities">
-                  <span data-i18n="s.fix">Fix this gap</span>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
-                </a>
-              </div>
+            <!-- Real, per-student gap analysis is rendered into #recoGrid once the
+                 backend surfaces it. Until then, an honest empty state (no fake
+                 "Fractions/Light/Percentages" demo cards). -->
+            <div class="reco-grid" id="recoGrid">
+              <p class="empty-hint" style="grid-column:1/-1;color:var(--muted);font-size:13.5px;padding:6px 2px;">
+                No gaps flagged yet — take a mock test or complete a chapter and Tokky will point out exactly what to revise.
+              </p>
             </div>
           </div>
 
@@ -944,7 +911,7 @@ html.dark-mode [data-theme-toggle] {
           </nav>
 
           <div class="span12 stag t-head" style="--i:0">
-            <h2 id="tClassHead">Class <em>7-B</em> · Science · 32 students</h2>
+            <h2 id="tClassHead">Your class · <em>loading…</em></h2>
             <a class="btn-primary" href="create-test.html">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="12" r="3"/><circle cx="18" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><path d="M8.7 10.6l6.6-3.2"/><path d="M8.7 13.4l6.6 3.2"/></svg>
               <span>Create a test</span>
@@ -956,17 +923,14 @@ html.dark-mode [data-theme-toggle] {
             <div class="card-head">
               <h3 class="card-title" data-i18n="t.avg">Class average</h3>
             </div>
-            <svg class="ring-big" viewBox="0 0 130 130" role="img" aria-label="Class average 76 percent">
+            <svg class="ring-big" viewBox="0 0 130 130" role="img" aria-label="Class average mastery">
               <circle class="trk" cx="65" cy="65" r="56"/>
               <circle class="val" id="avgRing" cx="65" cy="65" r="56"/>
               <text class="ring-num" id="avgNum" x="65" y="68">0%</text>
               <text class="ring-sub" x="65" y="86">MASTERY</text>
             </svg>
             <div class="avg-foot">
-              <span class="delta-chip">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg>
-                +4.2% week over week
-              </span>
+              <span class="delta-chip" id="avgDelta" style="display:none"></span>
             </div>
           </div>
 
@@ -1074,35 +1038,12 @@ html.dark-mode [data-theme-toggle] {
               <h3 class="card-title" data-i18n="p.alerts">Alerts</h3>
               <span class="eyebrow">THIS WEEK</span>
             </div>
-            <div class="alerts">
-              <div class="alert-row">
-                <span class="adot rose"></span>
-                <div style="flex:1">
-                  <div class="atxt">Missed practice on Tuesday — Heat, exercise set 2</div>
-                  <div class="atime">TUE · 18:00 IST</div>
-                </div>
-              </div>
-              <div class="alert-row">
-                <span class="adot teal"></span>
-                <div style="flex:1">
-                  <div class="atxt">Earned the Photosynthesis medallion after 3 mastery rounds</div>
-                  <div class="atime">WED · 19:42 IST</div>
-                </div>
-              </div>
-              <div class="alert-row">
-                <span class="adot peri"></span>
-                <div style="flex:1">
-                  <div class="atxt">Test score 85% in Science — Nutrition in Plants</div>
-                  <div class="atime">THU · 20:15 IST</div>
-                </div>
-              </div>
-              <div class="alert-row">
-                <span class="adot amber"></span>
-                <div style="flex:1">
-                  <div class="atxt">Revised Class 6 Fractions with PAL — gap closing, 87% remedial mastery</div>
-                  <div class="atime">SAT · 17:30 IST</div>
-                </div>
-              </div>
+            <!-- Real activity alerts render here once the child has activity.
+                 No fabricated "85% in Science" / medallion demo rows. -->
+            <div class="alerts" id="parentAlerts">
+              <p class="empty-hint" style="color:var(--muted);font-size:13.5px;padding:6px 2px;">
+                No activity yet this week — alerts about your child's tests, streaks and gaps will appear here.
+              </p>
             </div>
           </div>
 
