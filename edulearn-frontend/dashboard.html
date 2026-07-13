@@ -2000,6 +2000,10 @@ function setRole(role, instant){
     void nextView.getBoundingClientRect();
     nextView.classList.add('shown');
     if (VIEW_ANIMATORS[role]) VIEW_ANIMATORS[role]();
+    // "Learning rhythm" is a student learning metric — hide it for teachers and
+    // parents, whose dashboards are teaching/monitoring focused, not learning.
+    var rail = document.querySelector('.rail');
+    if (rail) rail.style.display = (role === 'student') ? '' : 'none';
   }
 
   if (instant || prev === role || !prevView.classList.contains('active')){
