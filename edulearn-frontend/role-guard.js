@@ -50,18 +50,16 @@
   // denied (hard redirect on direct access + its nav link hidden).
   // 'admin' is handled specially below (may open everything).
   //
-  // Derived from the app's actual role intent:
-  //   * PAL serves all three roles (students ask doubts, parents ask about
-  //     progress, teachers generate worksheets) — but the parent nav
-  //     historically hid it, so parents keep it off. Students & teachers get it.
-  //   * Learn (chapter browser) is a learner surface — students only.
-  //   * Arena (challenge) & Tests (mocktest) are taken by students; teachers
-  //     reach Tests via create-test; parents get neither.
+  // Derived from the app's role intent:
+  //   * Learn (chapters), Arena (challenge), and Tests (mocktest) are STUDENT
+  //     surfaces — teachers and parents must NOT see or open them. Teachers
+  //     author tests via create-test.html, not the student mocktest page.
+  //   * PAL serves students, teachers (worksheets), and parents (progress).
   //   * create-test / upload are teacher tools (each also self-gates in-page).
-  //   * Live, Videos, Dashboard are shared.
+  //   * Live, Videos, Dashboard are shared by all roles.
   var ACCESS = {
     student: ['learn.html', 'live.html', 'challenge.html', 'mocktest.html', 'pal.html', 'lesson.html', 'videos.html', 'dashboard.html'],
-    teacher: ['live.html', 'mocktest.html', 'create-test.html', 'upload.html', 'pal.html', 'videos.html', 'dashboard.html'],
+    teacher: ['live.html', 'create-test.html', 'upload.html', 'pal.html', 'videos.html', 'dashboard.html'],
     parent: ['live.html', 'pal.html', 'videos.html', 'dashboard.html'],
     admin: null // null = unrestricted
   };
