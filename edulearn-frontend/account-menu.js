@@ -127,8 +127,32 @@
     m.textContent = text; m.className = 'acct-msg ' + (ok ? 'ok' : 'err'); m.style.display = 'block';
   }
 
+  // ---------- theme: apply from Settings (replaces the removed auth-page toggle) ----------
+  // App pages theme via the `dark-mode` class (theme.js); the login/signup pages
+  // read the same 'edulearn-theme' key. 'system' follows the OS preference.
+  function resolveTheme(pref){
+    if (pref === 'dark') return 'dark';
+    if (pref === 'light') return 'light';
+    // system
+    return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+  }
+  function applyTheme(pref){
+    var mode = resolveTheme(pref);
+    var root = document.documentElement;
+    root.classList.toggle('dark-mode', mode === 'dark');
+    try { localStorage.setItem('edulearn-theme', mode); } catch (e) {}
+    if (window.themeManager && typeof themeManager.setDarkMode === 'function') {
+      // keep theme.js's toggle buttons/icons in sync where present
+      try { themeManager.setDarkMode(mode === 'dark'); } catch (e) {}
+    }
+  }
+  // live preview: apply as soon as the user changes the dropdown
+  var themeSel = document.getElementById('acctTheme');
+  if (themeSel) themeSel.addEventListener('change', function(){ applyTheme(themeSel.value); });
+
   document.getElementById('acctSave').addEventListener('click', async function(){
     var btn = this; btn.disabled = true; btn.textContent = 'Saving…';
+    applyTheme(val('acctTheme')); // apply immediately on save too
     var body = { name: val('acctName'), preferences: {
       language: val('acctLang'), theme: val('acctTheme'),
       emailNotifications: document.getElementById('acctEmail').checked
