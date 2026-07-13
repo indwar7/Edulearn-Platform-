@@ -37,7 +37,7 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
 
 /* nav */
 .nav{position:sticky;top:0;z-index:80;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);background:var(--navbg);border-bottom:1px solid var(--line)}
-.nav__inner{max-width:1320px;margin:0 auto;padding:0 40px;height:72px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.nav__inner{max-width:1600px;margin:0 auto;padding:0 40px;height:72px;display:flex;align-items:center;justify-content:space-between;gap:24px}
 .brand{display:flex;align-items:center;gap:10px}
 .brand__word{font-family:'Fraunces',serif;font-weight:600;font-size:22px}
 .nav__links{display:flex;gap:30px}
@@ -49,7 +49,7 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
 .btn-primary{display:inline-flex;align-items:center;gap:8px;background:var(--aurora);color:var(--on-accent);font-weight:700;font-size:14.5px;padding:11px 22px;border-radius:999px;box-shadow:0 8px 32px rgba(61,232,197,.35);transition:transform .4s var(--ease),box-shadow .4s var(--ease)}
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 44px rgba(61,232,197,.5)}
 
-.wrap{max-width:1320px;margin:0 auto;padding:0 40px}
+.wrap{max-width:1600px;margin:0 auto;padding:0 40px}
 
 /* hero */
 .hero{padding:52px 0 26px}
@@ -1150,10 +1150,31 @@ function setupTeacherComposer(){
 }
 
 // Fetch the backend sessions this user can join and render them on top.
+// Normalize a class label ("Class 7" / "7") to a bare number string for
+// comparison, and a section to an upper-case letter.
+function normClass(v){ var m = String(v||'').match(/\d+/); return m ? m[0] : ''; }
+function normSec(v){ return String(v||'').trim().toUpperCase(); }
+
+// STRICT: a student may only ever see live classes for their OWN class AND
+// section. This is enforced client-side regardless of what the API returns,
+// so a Class 7A student never sees another class's live session.
+function scopeSessionsToUser(list){
+  if (!liveUser || liveUser.role !== 'student') return list; // teacher/parent unchanged
+  var myClass = normClass(liveUser.className);
+  var mySec = normSec(liveUser.section);
+  if (!myClass) return list; // no class on record → don't over-filter
+  return list.filter(function(s){
+    if (normClass(s.className) !== myClass) return false;
+    // If the student has a section, require it to match (when the session has one).
+    if (mySec && s.section && normSec(s.section) !== mySec) return false;
+    return true;
+  });
+}
+
 async function loadRealSessions(){
   if (!liveUser || !window.EduAPI || !EduAPI.getToken()) return;
   try {
-    realSessions = await EduAPI.listLive();
+    realSessions = scopeSessionsToUser(await EduAPI.listLive());
   } catch (e) {
     realSessions = [];
   }

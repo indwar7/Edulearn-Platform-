@@ -116,7 +116,7 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
   border-bottom:1px solid var(--line);
 }
 .nav-inner{
-  max-width:1320px;margin:0 auto;padding:0 32px;
+  max-width:1600px;margin:0 auto;padding:0 32px;
   height:68px;display:flex;align-items:center;gap:28px;
 }
 .logo{display:flex;align-items:center;gap:10px;flex-shrink:0;}
@@ -168,7 +168,7 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
 /* ============================================================
    TOP STRIP
    ============================================================ */
-.shell{position:relative;z-index:1;max-width:1320px;margin:0 auto;padding:0 32px;}
+.shell{position:relative;z-index:1;max-width:1600px;margin:0 auto;padding:0 32px;}
 .topstrip{
   display:flex;align-items:flex-end;justify-content:space-between;
   gap:24px;padding:52px 0 30px;flex-wrap:wrap;
@@ -575,7 +575,7 @@ footer{
   font-size:clamp(96px,15vw,210px);line-height:1;letter-spacing:-.02em;
   color:var(--hair);white-space:nowrap;pointer-events:none;user-select:none;
 }
-.foot-inner{max-width:1320px;margin:0 auto;padding:48px 32px 130px;position:relative;}
+.foot-inner{max-width:1600px;margin:0 auto;padding:48px 32px 130px;position:relative;}
 .foot-cols{display:grid;grid-template-columns:1.4fr repeat(4,1fr);gap:28px;margin-bottom:36px;}
 .foot-cols h5{font-family:'Fragment Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:400;margin-bottom:12px;}
 .foot-cols a,.foot-cols li{display:block;font-size:13px;color:var(--muted);margin-bottom:8px;list-style:none;transition:color .3s ease;}
@@ -782,9 +782,9 @@ html.dark-mode [data-theme-toggle] {
               <span class="fc-ico">⚔️</span><span class="fc-title">Arena</span>
               <span class="fc-sub">Challenges & leaderboards</span>
             </a>
-            <a class="feat-card" href="live.html">
-              <span class="fc-ico">🎥</span><span class="fc-title">Join Live Class</span>
-              <span class="fc-sub">Attend your scheduled classes</span>
+            <a class="feat-card" href="live.html" id="liveClassCard">
+              <span class="fc-ico" id="liveClassIco">🎥</span><span class="fc-title" id="liveClassTitle">Join Live Class</span>
+              <span class="fc-sub" id="liveClassSub">Attend your scheduled classes</span>
             </a>
           </nav>
 
@@ -2163,6 +2163,11 @@ async function bootAuth(){
   // Re-render greeting now that we know the real user.
   renderGreeting();
 
+  // Live-class indicator: if a class the user belongs to is LIVE right now,
+  // turn the "Join Live Class" card into a pulsing "LIVE NOW — Join" call to
+  // action that links straight into the session.
+  checkLiveNow(user);
+
   // Pull real data from the backend and inject role-specific numbers.
   try {
     var data = await EduAPI.getDashboard();
@@ -2180,6 +2185,42 @@ async function bootAuth(){
         'Could not load your class roster right now. Please refresh the page — if this keeps happening, let support know.</p></td></tr>';
     }
   }
+}
+
+// Show a "LIVE NOW — Join" state on the Join-Live-Class card when a class the
+// user belongs to is actually live. Students are scoped to their own class.
+async function checkLiveNow(user){
+  var card = document.getElementById('liveClassCard');
+  if (!card || !window.EduAPI || typeof EduAPI.listLive !== 'function') return;
+  var sessions;
+  try { sessions = await EduAPI.listLive(); } catch (e) { return; }
+  if (!Array.isArray(sessions) || !sessions.length) return;
+
+  function num(v){ var m = String(v||'').match(/\d+/); return m ? m[0] : ''; }
+  function sec(v){ return String(v||'').trim().toUpperCase(); }
+  var live = sessions.filter(function(s){ return s.live || s.status === 'live' || s.isLive; });
+  if (!live.length) live = sessions; // some backends only return active sessions
+
+  if (user.role === 'student'){
+    var myC = num(user.className), myS = sec(user.section);
+    live = live.filter(function(s){
+      if (num(s.className) !== myC) return false;
+      if (myS && s.section && sec(s.section) !== myS) return false;
+      return true;
+    });
+  }
+  if (!live.length) return;
+
+  var s = live[0];
+  var ico = document.getElementById('liveClassIco');
+  var title = document.getElementById('liveClassTitle');
+  var sub = document.getElementById('liveClassSub');
+  if (ico) ico.textContent = '🔴';
+  if (title) title.textContent = 'LIVE NOW — Join';
+  if (sub) sub.textContent = (s.subject ? s.subject + ' · ' : '') + (s.title || 'Class in progress') + ' — tap to join';
+  card.setAttribute('href', 'live.html');
+  card.style.borderColor = 'rgba(255,90,95,.5)';
+  card.style.boxShadow = '0 0 0 1px rgba(255,90,95,.4), 0 10px 30px -8px rgba(255,90,95,.3)';
 }
 
 // Inject real backend numbers into the rendered views (best-effort, by role).
