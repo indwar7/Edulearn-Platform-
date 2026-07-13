@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <!-- Apply saved theme before paint to avoid a light-mode flash. -->
+  <script>try{if(localStorage.getItem('edulearn-theme')==='dark')document.documentElement.classList.add('dark-mode');}catch(e){}</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Database — EduLearn Admin</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,6 +15,16 @@
       --aurora:linear-gradient(115deg,#3DE8C5 0%,#7C9BFF 48%,#FFB454 100%);
       --ease:cubic-bezier(.22,1,.36,1);--shadow:0 18px 44px rgba(15,23,42,.10);
     }
+    /* Dark mode: remap the page's own variables so the whole UI flips. */
+    html.dark-mode{
+      --ink:#F5F7FA;--bg:#0F172A;--bg2:#1E293B;--card:#1A2847;
+      --muted:#94A3B8;--line:rgba(255,255,255,.12);
+      --shadow:0 18px 44px rgba(0,0,0,.45);
+    }
+    /* Override hardcoded light colors that variables can't reach. */
+    html.dark-mode thead th{background:#16223F;}
+    html.dark-mode tbody tr:hover{background:#16223F;}
+    html.dark-mode .filters button.on{background:#25324F;}
     *{box-sizing:border-box;}
     body{margin:0;font-family:'Schibsted Grotesk',system-ui,sans-serif;background:var(--bg);color:var(--ink);}
     .wrap{max-width:1180px;margin:0 auto;padding:36px 24px 60px;}
@@ -93,6 +105,7 @@
   </div>
 
   <script src="api.js"></script>
+  <script src="../theme.js"></script>
   <script>
     var API = (localStorage.getItem('edulearn_api') || 'https://d3cxm67a2ygkx3.cloudfront.net');
     var filter = 'all';
