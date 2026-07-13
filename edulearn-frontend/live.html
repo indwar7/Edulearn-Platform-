@@ -1468,6 +1468,14 @@ if (!isLoggedIn) {
   renderSessions();
   renderMyList();
   renderReports();
+} else {
+  // Already signed in: the navbar ships a static "Start free" CTA that links to
+  // login.html. account-menu.js also hides it, but only after api.js loads —
+  // hide it here synchronously (token is available immediately) so a logged-in
+  // user never sees, or clicks, a button that bounces them to the login screen.
+  document.querySelectorAll('a.btn-primary[href="login.html"]').forEach(function (el) {
+    el.style.display = 'none';
+  });
 }
 
 /* real backend live classes — run AFTER api.js has loaded. The inline boot
