@@ -140,14 +140,22 @@
     async function load(){
       var sub = document.getElementById('sub');
       try {
-        // Students see their class; teachers/parents see all (could refine later).
+        // Students see ONLY their own class; teachers/parents see all.
         var q = '';
         if (user.role === 'student' && user.className) q = '?className=' + encodeURIComponent(user.className);
-        var data = await EduAPI.getDashboard ? null : null; // (kept simple)
         var res = await fetch(API + '/api/videos' + q, { headers:{ 'Authorization':'Bearer '+EduAPI.getToken() }, credentials:'include' });
         if (!res.ok) throw new Error('Server '+res.status);
         var j = await res.json();
         ALL = j.videos || [];
+        // Defense-in-depth: even if the API returns extra, a student never sees
+        // videos outside their own class (compare by class NUMBER, section-agnostic).
+        if (user.role === 'student' && user.className){
+          var myNum = (String(user.className).match(/\d+/) || [])[0];
+          if (myNum) ALL = ALL.filter(function(v){
+            var vn = (String(v.className||'').match(/\d+/) || [])[0];
+            return vn === myNum;
+          });
+        }
         sub.textContent = user.role==='student'
           ? (user.className ? ('Lectures for ' + user.className) : 'All lectures')
           : 'All lectures on the platform';

@@ -118,6 +118,37 @@
       document.getElementById('gate').style.display = 'block';
     }
 
+    // Pre-select the teacher's OWN class + subject so a lecture is uploaded for
+    // the class they actually teach — students of that class then see it.
+    (function preselectTeacherClass(){
+      if (!user || user.role !== 'teacher') return;
+      var teaches = (user.teaches && user.teaches.length) ? user.teaches
+                  : (user.className ? [{ className: user.className, subject: user.subject }] : []);
+      if (!teaches.length) return;
+      var t = teaches[0];
+      function setSelect(id, val){
+        var sel = document.getElementById(id);
+        if (!sel || !val) return;
+        var want = String(val).trim().toLowerCase();
+        for (var i = 0; i < sel.options.length; i++){
+          if (sel.options[i].text.trim().toLowerCase() === want){ sel.selectedIndex = i; return; }
+        }
+      }
+      setSelect('className', t.className);
+      setSelect('subject', t.subject);
+      // If the teacher teaches multiple subjects/classes, let them pick — but
+      // limit the class dropdown to classes they actually teach.
+      var classSel = document.getElementById('className');
+      if (classSel){
+        var myClasses = {};
+        teaches.forEach(function(x){ if (x.className) myClasses[String(x.className).trim().toLowerCase()] = true; });
+        Array.prototype.slice.call(classSel.options).forEach(function(o){
+          if (!myClasses[o.text.trim().toLowerCase()]) o.disabled = true;
+        });
+        setSelect('className', t.className);
+      }
+    })();
+
     var fileInput = document.getElementById('file');
     var drop = document.getElementById('drop');
     drop.addEventListener('click', function(){ fileInput.click(); });

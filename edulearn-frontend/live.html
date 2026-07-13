@@ -372,7 +372,7 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
       <span class="tag tag--live">Live</span>
       <h2 id="clsTopic">Class</h2>
       <span class="mono" id="clsClock">00:00</span>
-      <span class="mono">14 in class</span>
+      <span class="mono" id="clsCount" style="display:none"></span>
       <div class="attn">
         <div class="attn__ring">
           <svg width="54" height="54" viewBox="0 0 54 54">
@@ -418,7 +418,7 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
           <span class="handchip" id="handChip">Hand raised</span>
           <div class="selftile" id="selfTile">
             <video id="selfCam" autoplay muted playsinline></video>
-            <span class="self-fallback" id="selfFallback"><span class="you">AN</span></span>
+            <span class="self-fallback" id="selfFallback"><span class="you" id="selfInitials">You</span></span>
             <span class="gaze-badge" id="gazeBadge">Looking</span>
             <span class="st" id="selfStatus">mic on · cam on</span>
           </div>
@@ -1089,6 +1089,16 @@ document.getElementById('tryAttn').addEventListener('click', function(){
 var liveUser = (window.EduAPI && EduAPI.getUser) ? EduAPI.getUser() : null;
 var realSessions = []; // backend LiveSession objects
 
+// Real self-tile initials from the logged-in user (was a hardcoded "AN").
+(function(){
+  var el = document.getElementById('selfInitials');
+  if (el && liveUser && liveUser.name){
+    var parts = String(liveUser.name).trim().split(/\s+/);
+    var ini = (parts[0][0] || '') + (parts.length > 1 ? parts[parts.length-1][0] : '');
+    el.textContent = (ini || 'You').toUpperCase();
+  }
+})();
+
 function subjColor(subject){
   var k = String(subject || '').toLowerCase();
   if (k.indexOf('math') === 0) return '#7C9BFF';
@@ -1509,15 +1519,11 @@ window.LiveRT = LiveRT; // expose so the chat/leave handlers can reach it
 // not even briefly — check localStorage directly (synchronous, available
 // immediately) rather than waiting for api.js to load before hiding them,
 // which left a flash-of-fake-content window on slower connections.
-var isLoggedIn = false;
-try { isLoggedIn = !!localStorage.getItem('edulearn_token'); } catch(e) {}
-if (!isLoggedIn) {
-  renderSessions();
-  renderMyList();
-  renderReports();
-}
-// (The navbar "Start free" CTA and role-based nav visibility are handled
-//  centrally by role-guard.js, loaded in <head>.)
+// Live classes are shown ONLY from the real backend (loadRealSessions →
+// #liveGrid). The old demo tutors/sessions/reports are never rendered — this
+// page is auth-gated (role-guard sends logged-out visitors to login), and a
+// logged-in user only ever sees their own class's real sessions. No fake data.
+// (Navbar CTA + role-based nav are handled by role-guard.js.)
 
 /* real backend live classes — run AFTER api.js has loaded. The inline boot
    executes before the <script src="api.js"> tags below it, so EduAPI may not
