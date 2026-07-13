@@ -9,31 +9,11 @@
   var user = EduAPI.getUser();
   if (!user) return; // not logged in → no account menu
 
-  // ---------- fix the page's own nav bar for a logged-in user ----------
-  // Several pages (live.html, learn.html, challenge.html, mocktest.html,
-  // pal.html) ship a static, logged-out-by-default nav: it shows a
-  // "Start free" button that links to login.html even when already logged
-  // in, and Learn/Arena/Tests/PAL links regardless of role. Fix that here
-  // instead of duplicating role logic in every page's inline script.
-  document.querySelectorAll('a.btn-primary[href="login.html"]').forEach(function (el) {
-    el.style.display = 'none';
-  });
-  // The logo/brand link defaults to index.html (the logged-out landing page)
-  // on every page except dashboard.html. Clicking it while logged in should
-  // never require signing back in — send it to the dashboard instead.
-  document.querySelectorAll('a.brand[href="index.html"]').forEach(function (el) {
-    el.setAttribute('href', 'dashboard.html');
-  });
-  if (user.role === 'parent' || user.role === 'teacher') {
-    document.querySelectorAll('a.nav__link[href="learn.html"]').forEach(function (el) {
-      el.style.display = 'none';
-    });
-  }
-  if (user.role === 'parent') {
-    document.querySelectorAll('a.nav__link[href="pal.html"], a.nav__link[href="challenge.html"], a.nav__link[href="mocktest.html"]').forEach(function (el) {
-      el.style.display = 'none';
-    });
-  }
+  // ---------- nav access control lives in role-guard.js ----------
+  // Hiding the "Start free" CTA, rewriting the brand link, and hiding nav
+  // links the current role may not use is now owned by role-guard.js (the
+  // single source of truth, loaded in <head> before the body paints). This
+  // file only renders the settings/logout panel below.
 
   // ---------- styles (theme-aware: light default + dark-mode override) ----------
   var css = '' +

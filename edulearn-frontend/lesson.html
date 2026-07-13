@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- Centralized role guard + nav access control. MUST load first (before body
+     paints) so a disallowed user is redirected without seeing page content. -->
+<script src="role-guard.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lesson — EduLearn</title>
 <meta name="description" content="EduLearn lesson player. AI animated video lectures, practice, notes and tests.">

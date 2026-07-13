@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- Centralized role guard + nav access control. MUST load first (before body
+     paints) so a disallowed user is redirected without seeing page content. -->
+<script src="role-guard.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Live Classes — EduLearn</title>
 <meta name="description" content="Small-group live classes with real tutors. Book a seat, get it on your calendar, join in one tap — with an attentiveness report sent to parents.">
@@ -1468,15 +1471,9 @@ if (!isLoggedIn) {
   renderSessions();
   renderMyList();
   renderReports();
-} else {
-  // Already signed in: the navbar ships a static "Start free" CTA that links to
-  // login.html. account-menu.js also hides it, but only after api.js loads —
-  // hide it here synchronously (token is available immediately) so a logged-in
-  // user never sees, or clicks, a button that bounces them to the login screen.
-  document.querySelectorAll('a.btn-primary[href="login.html"]').forEach(function (el) {
-    el.style.display = 'none';
-  });
 }
+// (The navbar "Start free" CTA and role-based nav visibility are handled
+//  centrally by role-guard.js, loaded in <head>.)
 
 /* real backend live classes — run AFTER api.js has loaded. The inline boot
    executes before the <script src="api.js"> tags below it, so EduAPI may not
