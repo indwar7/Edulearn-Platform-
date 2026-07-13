@@ -232,14 +232,18 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
 /* ============================================================
    LAYOUT GRID
    ============================================================ */
-.layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:28px;align-items:start;padding-bottom:90px;}
+/* Full-width single-column layout — no more empty right rail. The rhythm card
+   (formerly the sidebar) now sits inline as a full-width section. */
+.layout{display:block;padding-bottom:90px;}
 .boards{position:relative;min-width:0;}
 .view{display:none;}
 .view.active{display:block;}
 .view.leaving{opacity:0;transform:translateY(-10px);transition:opacity .25s ease,transform .25s ease;}
 .vgrid{display:grid;grid-template-columns:repeat(12,1fr);gap:22px;}
 /* Role-based feature menu */
-.feat-menu{grid-column:span 12;display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:16px;margin-bottom:6px;}
+.feat-menu{grid-column:span 12;display:grid;grid-template-columns:repeat(6,1fr);gap:16px;margin-bottom:6px;}
+@media (max-width:1120px){.feat-menu{grid-template-columns:repeat(3,1fr);}}
+@media (max-width:680px){.feat-menu{grid-template-columns:repeat(2,1fr);}}
 .feat-card{position:relative;display:flex;flex-direction:column;gap:8px;padding:20px 18px 18px;border:1px solid var(--line);border-radius:18px;background:var(--card);text-decoration:none;color:inherit;overflow:hidden;transition:transform .28s var(--ease),border-color .28s var(--ease),box-shadow .28s var(--ease);}
 .feat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--aurora);opacity:0;transition:opacity .28s var(--ease);}
 .feat-card:hover{transform:translateY(-4px);border-color:transparent;box-shadow:var(--shadow-card);}
@@ -483,7 +487,11 @@ table.roster{width:100%;border-collapse:collapse;min-width:640px;}
 /* ============================================================
    RIGHT RAIL
    ============================================================ */
-.rail{display:flex;flex-direction:column;gap:22px;position:sticky;top:92px;}
+/* Rail is now a full-width block below the main content (not a narrow sidebar). */
+.rail{display:block;margin-top:22px;}
+.rail > .card{width:100%;}
+/* Rhythm heatmap spreads across the full width so it never looks cramped. */
+.rail .heatmap{justify-content:flex-start;}
 .heatmap{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,13px);grid-auto-columns:13px;gap:4px;justify-content:center;margin:6px 0 12px;}
 .hcell{width:13px;height:13px;border-radius:3.5px;background:rgba(61,232,197,.07);opacity:0;transition:opacity .5s ease,transform .3s var(--ease);cursor:default;}
 .hcell.in{opacity:1;}
@@ -624,8 +632,6 @@ html.dark-mode [data-theme-toggle] {
 </head>
 <body>
 
-  <button data-theme-toggle>Dark</button>
-
 <!-- ======== atmosphere ======== -->
 <div class="blobs" aria-hidden="true">
   <div class="blob b1"></div>
@@ -675,10 +681,10 @@ html.dark-mode [data-theme-toggle] {
       <span class="wordmark">EduLearn</span>
     </a>
     <div class="nav-links pl" style="--d:60ms">
-      <a class="nav-link" href="index.html" data-i18n="nav.home">Home</a>
+      <a class="nav-link current" href="dashboard.html" aria-current="page" data-i18n="nav.dashboard">Dashboard</a>
       <a class="nav-link" id="navLearn" href="learn.html" data-i18n="nav.learn">Learn</a>
       <a class="nav-link" id="navPal" href="pal.html" data-i18n="nav.pal">PAL Adaptive AI</a>
-      <a class="nav-link current" href="dashboard.html" aria-current="page" data-i18n="nav.dashboard">Dashboard</a>
+      <a class="nav-link" href="index.html" data-i18n="nav.home">Home</a>
     </div>
     <div class="nav-right pl" style="--d:120ms">
       <!-- Hindi disabled in production for consistency with learn.html,
