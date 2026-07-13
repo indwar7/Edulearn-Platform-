@@ -156,21 +156,44 @@
     function stat(n,l){ return '<div class="stat"><b>'+n+'</b><span>'+l+'</span></div>'; }
     function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
 
+    var pollTimer = null;
+    function stopPolling(){ if (pollTimer){ clearInterval(pollTimer); pollTimer = null; } }
+
     async function load(manual){
       document.getElementById('errBox').innerHTML='';
+      var res;
       try {
-        var res = await fetch(API + '/api/admin/users');
-        if (!res.ok) throw new Error('Server returned ' + res.status);
+        res = await fetch(API + '/api/admin/users');
+      } catch(e){
+        // A thrown fetch means the host is genuinely unreachable (DNS, offline,
+        // CORS block) — this is the only real "backend is down" case.
+        document.getElementById('errBox').innerHTML =
+          '<div class="err">Cannot reach the backend at '+esc(API)+'. It may be offline or blocked. ('+esc(e.message)+')</div>';
+        return;
+      }
+      if (res.ok){
         DATA = await res.json();
         renderStats(); render();
-      } catch(e){
-        document.getElementById('errBox').innerHTML =
-          '<div class="err">Cannot reach the backend at '+API+'. Make sure it is running (npm run demo). '+esc(e.message)+'</div>';
+        return;
+      }
+      // The backend responded but refused the request — surface ITS message and
+      // status, not a misleading "run npm run demo". 403 here means the admin
+      // endpoint is disabled/not configured on this server, so stop retrying.
+      var serverMsg = '';
+      try { serverMsg = (await res.json()).error || ''; } catch(_) {}
+      var box = document.getElementById('errBox');
+      if (res.status === 403 || res.status === 401){
+        stopPolling();
+        box.innerHTML = '<div class="err"><b>Admin view unavailable ('+res.status+').</b> '
+          + (serverMsg ? esc(serverMsg)+'. ' : '')
+          + 'This endpoint is disabled on the live backend — it needs the admin key configured server-side. The rest of the site is working normally.</div>';
+      } else {
+        box.innerHTML = '<div class="err">Backend returned '+res.status+'. '+esc(serverMsg)+'</div>';
       }
     }
 
     load();
-    setInterval(function(){ load(); }, 5000);
+    pollTimer = setInterval(function(){ load(); }, 5000);
   </script>
 </body>
 </html>
