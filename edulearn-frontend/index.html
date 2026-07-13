@@ -656,17 +656,33 @@
   <script src="api.js"></script>
   <script>
     // If a session already exists, this is the logged-out landing page shown
-    // to a logged-in user by mistake (e.g. clicking the logo from another
-    // page) — send them straight to their dashboard instead of asking them
-    // to sign in again, and swap the nav CTAs accordingly.
+    // to a logged-in user (e.g. via the Home nav link) — never send them back
+    // to a login/signup screen. Swap the nav CTAs and repoint EVERY auth link
+    // (nav "Get started", hero "Start Learning Free", etc.) to the dashboard.
     (function () {
-      if (!window.EduAPI || !EduAPI.getUser()) return;
+      var loggedIn = false;
+      try { loggedIn = !!localStorage.getItem('edulearn_token'); } catch (e) {}
+      // Prefer EduAPI when present, but fall back to the token so this works
+      // even if api.js hasn't finished loading.
+      if (window.EduAPI && EduAPI.getUser && EduAPI.getUser()) loggedIn = true;
+      if (!loggedIn) return;
+
       var logo = document.getElementById('navLogo');
       if (logo) logo.setAttribute('href', 'dashboard.html');
+
       var signIn = document.getElementById('navSignIn');
-      var getStarted = document.getElementById('navGetStarted');
       if (signIn) { signIn.textContent = 'Dashboard'; signIn.setAttribute('href', 'dashboard.html'); }
+
+      var getStarted = document.getElementById('navGetStarted');
       if (getStarted) getStarted.style.display = 'none';
+
+      // Catch-all: any remaining link to login.html / signup.html would bounce a
+      // logged-in user to auth — send those to the dashboard instead. Skip the
+      // "Get started" button we just hid.
+      document.querySelectorAll('a[href="signup.html"], a[href="login.html"]').forEach(function (el) {
+        if (el === getStarted) return;
+        el.setAttribute('href', 'dashboard.html');
+      });
     })();
   </script>
   <script src="../theme.js"></script>
