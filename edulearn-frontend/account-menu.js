@@ -153,7 +153,8 @@
   if (themeSel) themeSel.addEventListener('change', function(){ applyTheme(themeSel.value); });
 
   document.getElementById('acctSave').addEventListener('click', async function(){
-    var btn = this; btn.disabled = true; btn.textContent = 'Saving…';
+    var btn = this; var origText = 'Save changes';
+    btn.disabled = true; btn.textContent = 'Saving…';
     applyTheme(val('acctTheme')); // apply immediately on save too
     var body = { name: val('acctName'), preferences: {
       language: val('acctLang'), theme: val('acctTheme'),
@@ -166,10 +167,20 @@
     }
     try {
       await EduAPI.updateProfile(body);
-      msg('Saved! Your profile has been updated.', true);
+      msg('Saved! Your changes have been updated.', true);
+      // Clear, on-the-button confirmation right where the user is looking.
+      btn.textContent = '✓ Saved';
+      btn.style.background = 'linear-gradient(115deg,#0FA983,#3DE8C5)';
+      btn.style.color = '#04121A';
+      // Auto-close the panel shortly after a successful save.
+      setTimeout(function(){
+        btn.textContent = origText; btn.style.background = ''; btn.style.color = ''; btn.disabled = false;
+        close();
+      }, 1100);
+      return;
     } catch (e){
-      msg(e.message, false);
+      msg(e.message || 'Could not save. Please try again.', false);
+      btn.disabled = false; btn.textContent = origText;
     }
-    btn.disabled = false; btn.textContent = 'Save changes';
   });
 })();
