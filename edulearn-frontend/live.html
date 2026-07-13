@@ -332,6 +332,7 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
           <form id="startForm" class="composer__form">
             <input id="startTitle" type="text" class="composer__field" placeholder="Class topic, e.g. Photosynthesis" required>
             <select id="startAssign" class="composer__field" required></select>
+            <input id="startMeetLink" type="url" class="composer__field" placeholder="Optional: paste a Google Meet link (meet.google.com/...) to use Meet instead of in-app video" pattern="https://meet\.google\.com/.*">
             <button class="btn-try composer__go" type="submit">Go live</button>
             <span id="startMsg" class="empty-hint composer__msg"></span>
           </form>
@@ -1172,6 +1173,10 @@ function renderRealSessions(){
     var color = subjColor(s.subject);
     var teacher = (s.teacherId && s.teacherId.name) ? s.teacherId.name : 'Your class';
     var mine = liveUser && liveUser.role === 'teacher';
+    var isMeet = s.videoProvider === 'google-meet';
+    var actBtn = isMeet
+      ? '<button class="btn-join" data-meet-join="' + esc(s.videoRoom||'') + '" type="button">Join Google Meet</button>'
+      : '<button class="btn-join" data-real-join="' + s._id + '" type="button">' + (mine ? 'Enter class' : 'Join live') + '</button>';
     return '' +
       '<article class="sess" style="--sa:' + color + '">' +
         '<div class="sess__avatar">' + esc((s.subject||'?').slice(0,2).toUpperCase()) + '</div>' +
@@ -1180,18 +1185,21 @@ function renderRealSessions(){
           '<div class="sess__meta"><b>' + esc(teacher) + '</b> · code ' + esc(s.joinCode||'') + '</div>' +
           '<div class="sess__tags">' +
             '<span class="tag tag--subj">' + esc(s.className) + ' · ' + esc(s.section) + ' · ' + esc(s.subject) + '</span>' +
-            '<span class="tag tag--live">Live now</span>' +
+            '<span class="tag tag--live">' + (isMeet ? 'Live on Google Meet' : 'Live now') + '</span>' +
           '</div>' +
         '</div>' +
-        '<div class="sess__act">' +
-          '<button class="btn-join" data-real-join="' + s._id + '" type="button">' +
-            (mine ? 'Enter class' : 'Join live') + '</button>' +
-        '</div>' +
+        '<div class="sess__act">' + actBtn + '</div>' +
       '</article>';
   }).join('');
 
   host.querySelectorAll('[data-real-join]').forEach(function(btn){
     btn.addEventListener('click', function(){ joinRealClass(btn.getAttribute('data-real-join')); });
+  });
+  host.querySelectorAll('[data-meet-join]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var link = btn.getAttribute('data-meet-join');
+      if (link) window.open(link, '_blank', 'noopener');
+    });
   });
 }
 
@@ -1213,13 +1221,17 @@ function wireJoinCode(){
     try {
       var res = await EduAPI.joinLiveByCode(code);
       if (res && res.ok && res.session){
-        // Shape the session for joinRealClass (it expects _id + fields).
         var s = res.session;
-        joinRealClass(s.id, {
-          _id: s.id, title: s.title, className: s.className,
-          section: s.section, subject: s.subject,
-          teacherId: null
-        });
+        if (s.videoProvider === 'google-meet' && s.videoRoom){
+          window.open(s.videoRoom, '_blank', 'noopener');
+        } else {
+          // Shape the session for joinRealClass (it expects _id + fields).
+          joinRealClass(s.id, {
+            _id: s.id, title: s.title, className: s.className,
+            section: s.section, subject: s.subject,
+            teacherId: null
+          });
+        }
       } else {
         msg.textContent = 'Could not join with that code.';
       }
@@ -1246,20 +1258,31 @@ function wireStartForm(){
     var title = document.getElementById('startTitle').value.trim();
     var idx = document.getElementById('startAssign').value;
     var assign = (liveUser.teaches || [])[idx];
+    var meetLink = document.getElementById('startMeetLink').value.trim();
     if (!title || !assign){ msg.textContent = 'Pick a class and enter a topic.'; return; }
+    if (meetLink && !/^https:\/\/meet\.google\.com\/[a-z0-9-]+$/i.test(meetLink)){
+      msg.textContent = 'That doesn\'t look like a Google Meet link (expected https://meet.google.com/xxx-xxxx-xxx).';
+      return;
+    }
     msg.textContent = 'Starting…';
     try {
       var session = await EduAPI.createLive({
         title: title,
         className: assign.className,
         section: assign.section,
-        subject: assign.subject
+        subject: assign.subject,
+        meetLink: meetLink || undefined
       });
       msg.textContent = '';
       document.getElementById('startTitle').value = '';
+      document.getElementById('startMeetLink').value = '';
       realSessions.unshift(session);
       renderRealSessions();
-      joinRealClass(session._id, session); // enter the classroom immediately
+      if (session.videoProvider === 'google-meet' && session.videoRoom){
+        window.open(session.videoRoom, '_blank', 'noopener'); // open Meet directly, skip the in-app classroom
+      } else {
+        joinRealClass(session._id, session); // enter the classroom immediately
+      }
     } catch (err) {
       msg.textContent = err.message || 'Could not start the class.';
     }

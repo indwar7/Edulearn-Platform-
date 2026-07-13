@@ -59,6 +59,14 @@
       return false;
     }
 
+    // This class is running on the Google Meet fallback (no LiveKit token) —
+    // point the user at the Meet link instead of connecting a room here.
+    if (data.videoProvider === 'google-meet') {
+      showStage(false);
+      setStatus('This class is on Google Meet — use the "Join Google Meet" button above.');
+      return { meetLink: data.videoRoom };
+    }
+
     // 2. Connect to the LiveKit room.
     var LK = global.LivekitClient;
     room = new LK.Room({ adaptiveStream: true, dynacast: true });
