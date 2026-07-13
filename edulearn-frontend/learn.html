@@ -993,7 +993,7 @@ input{font-family:inherit;color:inherit}
           <li><a href="index.html">Pricing — ₹299/mo</a></li>
         </ul>
       </div>
-      <div class="fcol">
+      <div class="fcol" id="footerClasses">
         <h4>Classes</h4>
         <ul>
           <li><a href="learn.html?class=6">Class 6</a></li>
@@ -1558,8 +1558,51 @@ Object.keys(CURRICULUM).forEach(function(cls){
    5 · VIEW STATE  (?class= & ?subject= query params)
    ------------------------------------------------------------ */
 var params = new URLSearchParams(window.location.search);
-var activeClass = parseInt(params.get('class'), 10);
-if(!(activeClass >= 6 && activeClass <= 9)) activeClass = 7;
+
+/* ------------------------------------------------------------
+   CLASS ACCESS CONTROL (strict, zero-tolerance)
+   A student may ONLY browse their own class. Their class comes from the
+   authenticated session (localStorage 'edulearn_user'), NOT from the URL —
+   so ?class=9 tampering is ignored. Non-students (teacher/parent/admin) may
+   browse across classes (they need to see multiple classes by design).
+   ------------------------------------------------------------ */
+var SESSION_USER = (function(){
+  try { return JSON.parse(localStorage.getItem('edulearn_user') || 'null'); } catch(e){ return null; }
+})();
+function classNumFromLabel(v){
+  var m = String(v || '').match(/\d+/);
+  return m ? parseInt(m[0], 10) : null;
+}
+// The single class a student is locked to (null for teacher/parent/admin/guest).
+var LOCKED_CLASS = (SESSION_USER && SESSION_USER.role === 'student')
+  ? classNumFromLabel(SESSION_USER.className)
+  : null;
+
+// A locked student shouldn't see other-class links in the footer either.
+if (LOCKED_CLASS) {
+  (function(){
+    function hideOtherClasses(){
+      var fc = document.getElementById('footerClasses');
+      if (fc) fc.querySelectorAll('a').forEach(function(a){
+        var n = (a.getAttribute('href') || '').match(/class=(\d+)/);
+        if (n && parseInt(n[1], 10) !== LOCKED_CLASS) {
+          var li = a.closest('li'); if (li) li.style.display = 'none';
+        }
+      });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', hideOtherClasses);
+    else hideOtherClasses();
+  })();
+}
+
+var activeClass;
+if (LOCKED_CLASS && LOCKED_CLASS >= 6 && LOCKED_CLASS <= 9) {
+  // Student: always their own class — URL param cannot override it.
+  activeClass = LOCKED_CLASS;
+} else {
+  var urlClass = parseInt(params.get('class'), 10);
+  activeClass = (urlClass >= 6 && urlClass <= 9) ? urlClass : 7;
+}
 var activeSubject = params.get('subject');
 if(!SUBJECTS.some(function(s){ return s.key === activeSubject; })) activeSubject = 'science';
 var query = '';
@@ -1616,8 +1659,10 @@ function lessonHref(cls, subj, slug){
    ------------------------------------------------------------ */
 function renderTabs(){
   var host = document.getElementById('classTabs');
+  // A locked student only ever sees their own class — no other class is shown.
+  var classes = LOCKED_CLASS ? [LOCKED_CLASS] : [6,7,8,9];
   var html = '';
-  [6,7,8,9].forEach(function(cls){
+  classes.forEach(function(cls){
     html +=
       '<button class="ctab' + (cls === activeClass ? ' is-active' : '') + '" data-class="' + cls + '" type="button" aria-pressed="' + (cls === activeClass) + '">' +
         '<span class="ctab__num">' + cls + '</span>' +
@@ -1631,7 +1676,8 @@ function renderTabs(){
   host.querySelectorAll('.ctab').forEach(function(btn){
     btn.addEventListener('click', function(){
       var cls = parseInt(btn.getAttribute('data-class'), 10);
-      if(cls === activeClass) return;
+      // Students can never switch class; ignore any attempt.
+      if(LOCKED_CLASS || cls === activeClass) return;
       activeClass = cls;
       syncURL();
       renderTabs();

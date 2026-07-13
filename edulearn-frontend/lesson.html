@@ -233,6 +233,23 @@ var cls = params.get('class');
 var subject = params.get('subject');
 var slug = null;
 
+/* ------------------------------------------------------------
+   CLASS ACCESS CONTROL (strict): a student may only open lessons for
+   their OWN class. If the URL points at any other class, bounce them
+   back to their own class page. Non-students are unrestricted.
+   ------------------------------------------------------------ */
+(function enforceStudentClass(){
+  var u = null;
+  try { u = JSON.parse(localStorage.getItem('edulearn_user') || 'null'); } catch(e){}
+  if (!u || u.role !== 'student') return;
+  var own = (String(u.className || '').match(/\d+/) || [])[0];
+  var req = (String(cls || '').match(/\d+/) || [])[0];
+  if (own && req && req !== own) {
+    // requested a class that isn't theirs → send to their own Learn page
+    window.location.replace('learn.html');
+  }
+})();
+
 if(track && TRACKS[track]){
   crumb.textContent = 'Beyond academics';
   title.textContent = TRACKS[track];

@@ -341,14 +341,17 @@
 
   function loadProgress() {
     if (progressLoaded) return;
-    progressLoaded = true;
 
     var api = window.EduAPI;
+    // Not signed in (no token at all) → show the signed-out note, but DON'T mark
+    // as loaded, so it re-checks the next time the panel opens (e.g. after api.js
+    // finishes loading or the user logs in).
     if (!api || typeof api.getDashboard !== 'function' || !api.getToken || !api.getToken()) {
       renderSignedOut();
       return;
     }
 
+    progressLoaded = true; // we have a real session — load it once
     api.getDashboard().then(function (data) {
       var cells = statsFromDashboard(data);
       if (cells) {
@@ -358,7 +361,9 @@
         renderEmpty(u && u.name);
       }
     }).catch(function () {
-      // On any error (expired token, network), don't invent numbers.
+      // On any error (expired token, network), don't invent numbers, and allow
+      // a retry on the next open.
+      progressLoaded = false;
       renderSignedOut();
     });
   }

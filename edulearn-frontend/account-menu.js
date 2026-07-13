@@ -75,7 +75,11 @@
   function esc(s){ return String(s).replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
 
   // ---------- build panel ----------
-  var prefs = user.preferences || { language: 'en', theme: 'system', emailNotifications: true };
+  var prefs = user.preferences || { language: 'en', theme: 'dark', emailNotifications: true };
+  // The theme currently applied on this device (explicit choice only).
+  var currentTheme = 'dark';
+  try { currentTheme = localStorage.getItem('edulearn-theme') || (prefs.theme === 'light' ? 'light' : 'dark'); } catch (e) {}
+  if (currentTheme !== 'light') currentTheme = 'dark';
   var fab = document.createElement('div');
   fab.className = 'acct-fab';
   fab.innerHTML =
@@ -101,10 +105,12 @@
       '<div class="acct-field"><label>Language</label><select id="acctLang" disabled>' +
         '<option value="en" selected>English</option>' +
       '</select></div>' +
+      // Theme is explicit-only (Dark / Light). No "System" option, so the theme
+      // NEVER changes on its own with the OS — it only changes when the user
+      // picks it here. Current value comes from the applied theme.
       '<div class="acct-field"><label>Theme</label><select id="acctTheme">' +
-        '<option value="system"' + (prefs.theme==='system'?' selected':'') + '>System</option>' +
-        '<option value="light"' + (prefs.theme==='light'?' selected':'') + '>Light</option>' +
-        '<option value="dark"' + (prefs.theme==='dark'?' selected':'') + '>Dark</option>' +
+        '<option value="light"' + (currentTheme==='light'?' selected':'') + '>Light</option>' +
+        '<option value="dark"' + (currentTheme!=='light'?' selected':'') + '>Dark</option>' +
       '</select></div>' +
       '<div class="acct-row"><span>Email notifications</span>' +
         '<input type="checkbox" id="acctEmail"' + (prefs.emailNotifications?' checked':'') + '></div>' +
@@ -128,16 +134,12 @@
   }
 
   // ---------- theme: apply from Settings (replaces the removed auth-page toggle) ----------
-  // App pages theme via the `dark-mode` class (theme.js); the login/signup pages
-  // read the same 'edulearn-theme' key. 'system' follows the OS preference.
-  function resolveTheme(pref){
-    if (pref === 'dark') return 'dark';
-    if (pref === 'light') return 'light';
-    // system
-    return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
-  }
+  // Explicit only: the theme is exactly what the user picked (dark/light). It is
+  // NEVER derived from the OS, so it never changes on its own — only when the
+  // user changes it here. App pages theme via the `dark-mode` class (theme.js);
+  // login/signup read the same 'edulearn-theme' key.
   function applyTheme(pref){
-    var mode = resolveTheme(pref);
+    var mode = (pref === 'light') ? 'light' : 'dark';
     var root = document.documentElement;
     root.classList.toggle('dark-mode', mode === 'dark');
     try { localStorage.setItem('edulearn-theme', mode); } catch (e) {}
