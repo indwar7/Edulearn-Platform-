@@ -8,7 +8,7 @@
    Exposes window.EduLive.{connect, disconnect}.
    ============================================================ */
 (function (global) {
-  var API = (localStorage.getItem('edulearn_api') || 'https://d3cxm67a2ygkx3.cloudfront.net');
+  var API = (localStorage.getItem('edulearn_api') || '/backend-api');
   var room = null;
 
   function setStatus(msg) {

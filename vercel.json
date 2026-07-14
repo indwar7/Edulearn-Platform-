@@ -5,5 +5,11 @@
       "destination": "/edulearn-frontend/:path*",
       "permanent": true
     }
+  ],
+  "rewrites": [
+    {
+      "source": "/backend-api/:path*",
+      "destination": "http://ec2-65-2-183-7.ap-south-1.compute.amazonaws.com/:path*"
+    }
   ]
 }
