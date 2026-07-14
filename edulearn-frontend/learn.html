@@ -1581,7 +1581,8 @@ var LOCKED_CLASS = (SESSION_USER && SESSION_USER.role === 'student')
 // A locked student shouldn't see other-class links in the footer either.
 if (LOCKED_CLASS) {
   (function(){
-    function hideOtherClasses(){
+    function personalizeHero(){
+      // Footer: hide other-class links.
       var fc = document.getElementById('footerClasses');
       if (fc) fc.querySelectorAll('a').forEach(function(a){
         var n = (a.getAttribute('href') || '').match(/class=(\d+)/);
@@ -1589,9 +1590,36 @@ if (LOCKED_CLASS) {
           var li = a.closest('li'); if (li) li.style.display = 'none';
         }
       });
+
+      // Hero: the generic "all classes unlocked / revisit any class" chips are
+      // wrong for a class-locked student and leave a big empty gap. Replace them
+      // with the student's OWN class context so the top of the page feels full
+      // and personal (name + class + subject/chapter counts).
+      var chips = document.querySelector('.hero__chips');
+      var sect = (SESSION_USER && SESSION_USER.section) ? (' · ' + SESSION_USER.section) : '';
+      var firstName = (SESSION_USER && SESSION_USER.name ? String(SESSION_USER.name).trim().split(/\s+/)[0] : '');
+      if (chips){
+        var subjCount = (typeof SUBJECTS !== 'undefined') ? SUBJECTS.length : 5;
+        var chapCount = (typeof classCount === 'function') ? classCount(LOCKED_CLASS) : '';
+        chips.innerHTML =
+          '<div class="chip chip--gold">' +
+            '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 3 8l9 5 9-5-9-5Z"/><path d="M3 8v6M21 8v6M7 11v4a5 3 0 0 0 10 0v-4"/></svg>' +
+            '<span>Class ' + LOCKED_CLASS + sect + ' · your syllabus</span>' +
+          '</div>' +
+          '<div class="chip chip--soft">' +
+            '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg>' +
+            '<span>' + subjCount + ' subjects · ' + chapCount + ' chapters</span>' +
+          '</div>';
+      }
+      // A warmer, personal heading for the student.
+      var title = document.querySelector('.hero__title');
+      if (title && firstName){
+        title.innerHTML = 'Ready to learn, <em>' + firstName.replace(/</g,'&lt;') + '?</em>';
+        title.removeAttribute('data-i18n');
+      }
     }
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', hideOtherClasses);
-    else hideOtherClasses();
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', personalizeHero);
+    else personalizeHero();
   })();
 }
 
