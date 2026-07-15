@@ -686,13 +686,7 @@ function loadLectureStage(s){
   var sim = document.getElementById('simAvatar');
   var note = document.getElementById('stageNote');
   if(!window.EduAPI || !EduAPI.listVideos){ return; }
-  var filters = {};
-  // Match the class the live session is for, so the lecture is relevant.
-  if (s.subj) filters.subject = s.subj;
-  EduAPI.listVideos(filters).then(function(list){
-    list = list || [];
-    // Prefer a smooth (▶) lecture if present; else first available.
-    var pick = list.filter(function(v){ return /▶/.test(v.title||''); })[0] || list[0];
+  function paint(pick){
     if(!pick){ return; } // no lecture available → keep avatar fallback
     if(sim) sim.style.display = 'none';
     stageEl.style.display = 'block';
@@ -701,7 +695,22 @@ function loadLectureStage(s){
     vid.play().catch(function(){});
     if(note) note.textContent = 'Live lecture playing · your camera is used only for attention monitoring (video stays on your device).';
     if (CLS){ CLS.lectureTitle = pick.title || ''; }
-  }).catch(function(){ /* keep avatar fallback */ });
+  }
+  function best(list){
+    list = list || [];
+    return list.filter(function(v){ return /▶/.test(v.title||''); })[0] || list[0] || null;
+  }
+  // Prefer a lecture matching the class's subject; if none exist for that
+  // subject, fall back to ANY lecture the student can access (so the stage is
+  // never the fake avatar when real content exists for their class).
+  var subjFilter = s.subj ? { subject: s.subj } : {};
+  EduAPI.listVideos(subjFilter).then(function(list){
+    var pick = best(list);
+    if (pick) return paint(pick);
+    return EduAPI.listVideos({}).then(function(all){ paint(best(all)); });
+  }).catch(function(){
+    EduAPI.listVideos({}).then(function(all){ paint(best(all)); }).catch(function(){});
+  });
 }
 function stopLectureStage(){
   var stageEl = document.getElementById('lectureStage');
