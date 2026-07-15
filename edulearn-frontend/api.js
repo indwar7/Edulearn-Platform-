@@ -264,6 +264,31 @@
     request('/api/videos/' + id + '/view', { method: 'POST' }).catch(function () {});
   }
 
+  // ---- Live-class attention/monitoring reports ----
+  // Persist a report server-side so it survives a device change and reaches the
+  // linked parent. Returns the saved report, or null if the endpoint isn't
+  // available yet (older backend) — callers fall back to local storage.
+  async function submitLiveReport(report) {
+    try {
+      var data = await request('/api/live/reports', { method: 'POST', body: report });
+      return (data && data.report) || null;
+    } catch (e) {
+      return null; // backend not deployed / offline → caller keeps the local copy
+    }
+  }
+
+  // Student: own reports. Parent: a linked child's (optional childId).
+  // Returns [] on any failure so the UI can fall back to local reports.
+  async function listLiveReports(childId) {
+    try {
+      var qs = childId ? ('?childId=' + encodeURIComponent(childId)) : '';
+      var data = await request('/api/live/reports' + qs);
+      return (data && data.reports) || [];
+    } catch (e) {
+      return [];
+    }
+  }
+
   // ---- PAL AI calls ----
   async function listPalSessions() {
     return request('/api/pal/sessions');
@@ -381,6 +406,8 @@
     liveRoster: liveRoster,
     listVideos: listVideos,
     recordVideoView: recordVideoView,
+    submitLiveReport: submitLiveReport,
+    listLiveReports: listLiveReports,
     startMockTest: startMockTest,
     submitMockTest: submitMockTest,
     createQuestion: createQuestion,

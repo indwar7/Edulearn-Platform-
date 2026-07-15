@@ -406,6 +406,13 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
           <div id="lkStage" style="display:none;width:100%;">
             <video id="lkMainVideo" autoplay playsinline style="width:100%;border-radius:14px;background:#000;max-height:60vh;"></video>
           </div>
+          <!-- Real in-app lecture stage: plays an actual lecture video as the
+               class content (used when there's no live LiveKit broadcast).
+               Camera attention monitoring runs alongside in the same tab. -->
+          <div id="lectureStage" style="display:none;width:100%;position:relative;">
+            <video id="lectureVideo" playsinline controls controlslist="nodownload" style="width:100%;border-radius:14px;background:#000;max-height:60vh;display:block;"></video>
+            <span id="lectureTitle" style="position:absolute;top:12px;left:14px;background:rgba(8,14,30,.6);backdrop-filter:blur(4px);color:#fff;font-size:13px;font-weight:600;padding:6px 12px;border-radius:9px;max-width:80%;"></span>
+          </div>
           <!-- Kept outside #lkStage so connection/permission errors stay
                visible even when the stage is hidden (e.g. still showing the
                placeholder avatar) instead of disappearing along with it. -->
@@ -670,6 +677,39 @@ function book(id){
 /* ---------- classroom + attentiveness ---------- */
 var CLS = null; /* live class state */
 
+/* Play a REAL lecture video as the class stage (in-app, same tab as the camera
+   monitor). Picks a lecture for the student's class from the backend; on any
+   failure it falls back to the existing avatar so the class still opens. */
+function loadLectureStage(s){
+  var stageEl = document.getElementById('lectureStage');
+  var vid = document.getElementById('lectureVideo');
+  var sim = document.getElementById('simAvatar');
+  var note = document.getElementById('stageNote');
+  if(!window.EduAPI || !EduAPI.listVideos){ return; }
+  var filters = {};
+  // Match the class the live session is for, so the lecture is relevant.
+  if (s.subj) filters.subject = s.subj;
+  EduAPI.listVideos(filters).then(function(list){
+    list = list || [];
+    // Prefer a smooth (▶) lecture if present; else first available.
+    var pick = list.filter(function(v){ return /▶/.test(v.title||''); })[0] || list[0];
+    if(!pick){ return; } // no lecture available → keep avatar fallback
+    if(sim) sim.style.display = 'none';
+    stageEl.style.display = 'block';
+    document.getElementById('lectureTitle').textContent = pick.title || 'Live lecture';
+    vid.src = API + '/api/videos/' + pick.id + '/stream?token=' + encodeURIComponent(EduAPI.getToken());
+    vid.play().catch(function(){});
+    if(note) note.textContent = 'Live lecture playing · your camera is used only for attention monitoring (video stays on your device).';
+    if (CLS){ CLS.lectureTitle = pick.title || ''; }
+  }).catch(function(){ /* keep avatar fallback */ });
+}
+function stopLectureStage(){
+  var stageEl = document.getElementById('lectureStage');
+  var vid = document.getElementById('lectureVideo');
+  if(vid){ try{ vid.pause(); vid.removeAttribute('src'); vid.load(); }catch(e){} }
+  if(stageEl) stageEl.style.display = 'none';
+}
+
 function joinClass(id){
   var s = SESSIONS.filter(function(x){ return x.id === id; })[0];
   if(!s) return;
@@ -681,9 +721,14 @@ function joinClass(id){
   document.getElementById('tutorCircle').textContent = initials(s.tutor);
   window.scrollTo(0, 0);
 
-  // Try to connect real LiveKit video (only works for backend sessions + when
-  // LiveKit keys are configured; otherwise the simulated stage stays).
-  if (global_EduLiveConnect) global_EduLiveConnect(s.backendId || s.id);
+  // Video stage: a REAL backend session with a live broadcast uses LiveKit;
+  // otherwise play an actual recorded lecture in-app as the class content
+  // (never the fake simulated avatar). Camera monitoring runs either way.
+  if (s.backendId){
+    if (global_EduLiveConnect) global_EduLiveConnect(s.backendId);
+  } else {
+    loadLectureStage(s);
+  }
 
   CLS = {
     session: s,
@@ -1018,6 +1063,26 @@ document.getElementById('leaveBtn').addEventListener('click', function(){
   };
   store.reports.push(report);
   saveLS();
+
+  /* Persist the report server-side so it survives a device change and reaches
+     the student's linked parent. Best-effort: if the endpoint isn't live yet
+     (older backend), the local copy above still shows it here. */
+  if (window.EduAPI && EduAPI.submitLiveReport){
+    EduAPI.submitLiveReport({
+      topic: CLS.lectureTitle || CLS.session.topic,
+      tutor: CLS.session.tutor || '',
+      className: (liveUser && liveUser.className) || '',
+      durationSec: durSec,
+      score: score,
+      camUsed: CLS.camOn,
+      onScreenPct: onScreenPct,
+      lookAwayCount: CLS.lookAwayCount,
+      awayCount: CLS.awayCount,
+      chats: CLS.chats,
+      events: CLS.events
+    });
+  }
+  stopLectureStage();
 
   /* disconnect live video + realtime chat; if this is a real backend class the
      host owns, end it server-side so every student's room is torn down too. */

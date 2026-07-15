@@ -1856,13 +1856,42 @@ function countUp(el, target, dur, suffix){
 /* ------------------------------------------------------------
    ROLE SWITCHING — fade + restagger
 ------------------------------------------------------------ */
-/* ---- live-class camera attention (reads edulearn_live.reports) ---- */
+/* ---- live-class camera attention ----
+   Prefer the backend (a parent sees their linked child's reports across any
+   device); fall back to this browser's local reports when the backend endpoint
+   isn't available yet or returns nothing. */
 function renderAttention(){
   var host = document.getElementById('attnBody');
   if(!host) return;
+  // Kick off the backend fetch; render local immediately, then upgrade.
+  if (window.EduAPI && EduAPI.listLiveReports){
+    EduAPI.listLiveReports().then(function(backendReps){
+      if (backendReps && backendReps.length){
+        // Normalise backend rows into the shape this card renders.
+        var mmss = function(sec){ sec=Math.round(sec||0); var m=Math.floor(sec/60); var x=sec%60; return m+':'+(x<10?'0':'')+x; };
+        var mapped = backendReps.map(function(r){
+          return {
+            onScreenPct: (typeof r.onScreenPct === 'number') ? r.onScreenPct : null,
+            lookAwayCount: r.lookAwayCount || 0,
+            chats: r.chats || 0,
+            duration: mmss(r.durationSec) + ' min',
+            dateISO: r.createdAt,
+            topic: r.topic || 'Live class'
+          };
+        }).reverse(); // paintAttention uses the LAST item as the newest
+        paintAttention(mapped);
+      }
+    }).catch(function(){});
+  }
   var data = null;
   try{ data = JSON.parse(localStorage.getItem('edulearn_live') || 'null'); }catch(e){}
   var reps = (data && data.reports) || [];
+  paintAttention(reps);
+}
+
+function paintAttention(reps){
+  var host = document.getElementById('attnBody');
+  if(!host) return;
   var camReps = reps.filter(function(r){ return typeof r.onScreenPct === 'number'; });
 
   if(!camReps.length){
