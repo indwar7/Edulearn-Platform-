@@ -19,7 +19,16 @@
     var lk = document.getElementById('lkStage');
     var sim = document.getElementById('simAvatar');
     if (lk) lk.style.display = on ? 'block' : 'none';
-    if (sim) sim.style.display = on ? 'none' : '';
+    if (sim) sim.style.display = 'none';
+    // When live video ends/fails, fall back to the formula board (not the avatar).
+    if (!on) { var b = document.getElementById('boardStage'); if (b) b.style.display = 'block'; }
+  }
+
+  // Hide the formula board once REAL video is actually on screen (a track
+  // attached), so a mere connect with no video keeps the board visible.
+  function hideBoard() {
+    var b = document.getElementById('boardStage');
+    if (b) b.style.display = 'none';
   }
 
   // Connect to the LiveKit room for a backend live-session id.
@@ -75,7 +84,7 @@
 
     // When a remote track arrives (e.g. teacher's camera for a student), show it.
     room.on(LK.RoomEvent.TrackSubscribed, function (track) {
-      if (track.kind === 'video' && mainVideo) track.attach(mainVideo);
+      if (track.kind === 'video' && mainVideo) { track.attach(mainVideo); hideBoard(); }
       if (track.kind === 'audio') track.attach();
     });
     room.on(LK.RoomEvent.Disconnected, function () { setStatus('Disconnected from live video.'); });
@@ -100,7 +109,7 @@
       try {
         await room.localParticipant.enableCameraAndMicrophone();
         var camPub = room.localParticipant.getTrackPublication(LK.Track.Source.Camera);
-        if (camPub && camPub.track && mainVideo) camPub.track.attach(mainVideo);
+        if (camPub && camPub.track && mainVideo) { camPub.track.attach(mainVideo); hideBoard(); }
         setStatus('You are live (teacher) · streaming to your class');
       } catch (e) {
         setStatus('Camera/mic blocked. Allow access to stream.');
