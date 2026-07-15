@@ -176,6 +176,9 @@
     </div>
 
     <div class="toolbar">
+      <!-- Demo/reviewer only: switch which class's library is shown. Hidden for
+           real students, who stay locked to their own class. -->
+      <div class="filters" id="classToggle" style="display:none" aria-label="Class"></div>
       <div class="filters" id="filters"></div>
       <div class="grow"></div>
       <div class="search"><input id="search" type="search" placeholder="Search lectures…" aria-label="Search lectures"></div>
@@ -232,6 +235,17 @@
     var searchQ = '';
     var view = localStorage.getItem('edulearn_videos_view') || 'rows';
 
+    // --- DEMO / reviewer mode -------------------------------------------------
+    // A demo account may browse EVERY class (with a Class 6 / Class 7 toggle) so
+    // a manager can review both libraries from one login. Real students are NEVER
+    // demo, so their strict single-class lock below is untouched.
+    var DEMO_EMAILS = ['c7.student.livetest@edulearn.test'];
+    var DEMO = !!(user && user.email &&
+      (DEMO_EMAILS.indexOf(user.email.toLowerCase()) >= 0 || /demo|reviewer/.test(user.email.toLowerCase())));
+    // Which class's library is on screen. For real students this is pinned to
+    // their own class; for demo it's toggleable and starts on their class.
+    var classFilter = (user && user.className && (String(user.className).match(/\d+/) || [])[0]) || 'all';
+
     function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
     function fmtDur(s){ if(!s||isNaN(s)) return ''; s=Math.round(s); var m=Math.floor(s/60),x=s%60; return m+':'+(x<10?'0':'')+x; }
 
@@ -263,29 +277,61 @@
       document.getElementById('stage').innerHTML =
         '<div class="grid">'+Array(4).fill('<div class="skel"></div>').join('')+'</div>';
       try {
+        // A real student is locked to their own class; a demo account (and
+        // teachers/parents) may load every class.
         var q = '';
-        if (user.role === 'student' && user.className) q = '?className=' + encodeURIComponent(user.className);
+        if (!DEMO && user.role === 'student' && user.className) q = '?className=' + encodeURIComponent(user.className);
         var res = await fetch(API + '/api/videos' + q, { headers:{ 'Authorization':'Bearer '+EduAPI.getToken() }, credentials:'include' });
         if (!res.ok) throw new Error('Server '+res.status);
         var j = await res.json();
         ALL = j.videos || [];
-        // Defense-in-depth: a student never sees videos outside their own class.
-        if (user.role === 'student' && user.className){
+        // Defense-in-depth: a real student never sees videos outside their own
+        // class. Skipped for demo so the reviewer can toggle between classes.
+        if (!DEMO && user.role === 'student' && user.className){
           var myNum = (String(user.className).match(/\d+/) || [])[0];
           if (myNum) ALL = ALL.filter(function(v){
             var vn = (String(v.className||'').match(/\d+/) || [])[0];
             return vn === myNum;
           });
         }
-        sub.innerHTML = (user.role==='student'
-          ? (user.className ? ('Lectures for <b>'+esc(user.className)+'</b>') : 'All lectures')
-          : 'All lectures on the platform')
-          + ' · <span style="font-family:\'Fragment Mono\',monospace;font-size:12px">'+ALL.length+' videos</span>';
-        buildFilters(); applyView(); render();
+        if (DEMO){
+          sub.innerHTML = '<b>Reviewer mode</b> · toggle a class to see its library'
+            + ' · <span style="font-family:\'Fragment Mono\',monospace;font-size:12px">'+ALL.length+' videos across classes</span>';
+        } else {
+          sub.innerHTML = (user.role==='student'
+            ? (user.className ? ('Lectures for <b>'+esc(user.className)+'</b>') : 'All lectures')
+            : 'All lectures on the platform')
+            + ' · <span style="font-family:\'Fragment Mono\',monospace;font-size:12px">'+ALL.length+' videos</span>';
+        }
+        buildClassToggle(); buildFilters(); applyView(); render();
       } catch(e){
         document.getElementById('stage').innerHTML='';
         document.getElementById('errBox').innerHTML = '<div class="err">Cannot load videos. Is the backend running? '+esc(e.message)+'</div>';
       }
+    }
+
+    // Demo-only: a Class 6 / Class 7 (etc.) toggle so a reviewer can switch
+    // between class libraries. Each class is its own separate section.
+    function buildClassToggle(){
+      var host = document.getElementById('classToggle');
+      if (!DEMO){ host.style.display = 'none'; return; }
+      var nums = Array.from(new Set(ALL.map(function(v){
+        return (String(v.className||'').match(/\d+/) || [])[0];
+      }).filter(Boolean))).sort(function(a,b){ return (+a)-(+b); });
+      if (nums.length < 2){ host.style.display = 'none'; return; } // nothing to toggle
+      if (nums.indexOf(classFilter) < 0) classFilter = nums[0];
+      host.style.display = '';
+      host.innerHTML = nums.map(function(n){
+        return '<button class="'+(n===classFilter?'on':'')+'" data-c="'+n+'">Class '+n+'</button>';
+      }).join('');
+      host.querySelectorAll('button').forEach(function(b){
+        b.addEventListener('click', function(){
+          host.querySelectorAll('button').forEach(function(x){x.classList.remove('on');});
+          b.classList.add('on'); classFilter = b.getAttribute('data-c');
+          document.getElementById('search').value=''; searchQ='';
+          render();
+        });
+      });
     }
 
     function buildFilters(){
@@ -303,6 +349,12 @@
 
     function visible(){
       return ALL.filter(function(v){
+        // Class scope: demo toggles between classes; real students are already
+        // class-locked in ALL, so this is a harmless no-op for them.
+        if (DEMO && classFilter!=='all'){
+          var vn = (String(v.className||'').match(/\d+/) || [])[0];
+          if (vn !== classFilter) return false;
+        }
         if (subjectFilter!=='all' && v.subject!==subjectFilter) return false;
         if (searchQ){
           var hay = ((v.title||'')+' '+(v.topic||'')+' '+(v.subject||'')).toLowerCase();
