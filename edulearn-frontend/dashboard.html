@@ -743,6 +743,30 @@ html.dark-mode body {
 html.dark-mode [data-theme-toggle] {
   color: var(--dm-text-primary);
 }
+
+/* Colourful dark mode: layer deep aurora glows over the dark base via
+   background-IMAGE (theme.css pins background-COLOR with !important, so this
+   never fights it — the glows sit on top of #0F172A). Matches the light-mode
+   canvas so both themes feel alive. */
+html.dark-mode body{
+  background-image:
+    radial-gradient(1200px 660px at 4% -12%, rgba(61,232,197,.20), transparent 55%),
+    radial-gradient(1150px 640px at 106% -6%, rgba(107,132,255,.26), transparent 54%),
+    radial-gradient(1000px 700px at 50% 118%, rgba(255,168,84,.13), transparent 58%),
+    radial-gradient(840px 560px at 90% 58%, rgba(168,130,255,.20), transparent 60%);
+  background-attachment:fixed;
+}
+
+/* Quick light/dark toggle that lives in the nav (both themes) */
+.nav-theme-toggle{
+  width:40px;height:40px;flex:none;border-radius:12px;
+  border:1px solid var(--line);background:var(--card2);color:var(--cream);
+  display:inline-flex;align-items:center;justify-content:center;cursor:pointer;
+  transition:transform .2s var(--ease),border-color .2s,box-shadow .2s,background .2s;
+}
+.nav-theme-toggle:hover{transform:translateY(-1px);border-color:var(--teal);box-shadow:0 6px 18px rgba(61,232,197,.22);}
+.nav-theme-toggle svg{display:block;}
+html.dark-mode .nav-theme-toggle{background:rgba(255,255,255,.05);border-color:rgba(233,238,248,.18);}
 </style>
   <link rel="stylesheet" href="../theme.css">
 </head>
@@ -812,6 +836,7 @@ html.dark-mode [data-theme-toggle] {
         <button id="langHi" aria-pressed="false">हिं</button>
       </div>
       -->
+      <button class="nav-theme-toggle" data-theme-toggle type="button" title="Toggle dark mode" aria-label="Toggle dark mode"></button>
       <a class="btn-primary" href="learn.html" id="navCta">
         <span data-i18n="nav.start">Start free</span>
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
