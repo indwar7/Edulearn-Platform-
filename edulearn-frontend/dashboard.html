@@ -114,6 +114,65 @@ html.dark-mode .hcell{background:rgba(61,232,197,.12);}
 html.dark-mode .hcell:not(.in){outline:1px solid rgba(233,238,248,.05);outline-offset:-1px;}
 html.dark-mode .areachart .axis{fill:rgba(233,238,248,.55);}
 
+/* ============================================================
+   LIGHT-MODE COLOUR PASS
+   Light mode read as flat white-on-white — white cards on a
+   near-white page with no separation. Add a soft aurora-tinted
+   background mesh so cards lift, tinted (not grey) shadows, an
+   aurora top-hairline, and colourful tool icons. Kept restrained
+   and professional. Scoped to light so dark mode is untouched.
+   ============================================================ */
+html:not(.dark-mode) body{
+  background:
+    radial-gradient(1200px 640px at 6% -10%, rgba(15,169,131,.20), transparent 56%),
+    radial-gradient(1150px 620px at 104% -4%, rgba(107,132,255,.24), transparent 54%),
+    radial-gradient(1000px 680px at 50% 116%, rgba(255,168,84,.16), transparent 58%),
+    radial-gradient(820px 520px at 88% 60%, rgba(197,168,255,.16), transparent 60%),
+    linear-gradient(180deg,#EAF0FA 0%,#E4E9F5 100%);
+  background-attachment:fixed;
+}
+/* cards float clearly off the tinted canvas: near-white with a hair of cool,
+   a crisp edge, and a soft tinted (not grey) shadow. */
+html:not(.dark-mode) .card{
+  background:linear-gradient(180deg,#FFFFFF 0%,#FBFCFF 100%);
+  border-color:rgba(15,23,42,.06);
+  box-shadow:0 1px 2px rgba(15,23,42,.04), 0 18px 40px rgba(85,112,230,.13);
+}
+html:not(.dark-mode) .card:hover{
+  border-color:rgba(85,112,230,.35);
+  box-shadow:0 1px 2px rgba(15,23,42,.05), 0 26px 54px rgba(85,112,230,.2);
+}
+/* aurora top-hairline — the same premium touch as dark mode */
+html:not(.dark-mode) .card::after{
+  content:'';position:absolute;top:0;left:16px;right:16px;height:2px;border-radius:2px;
+  background:linear-gradient(90deg,transparent,rgba(15,169,131,.7),rgba(85,112,230,.7),rgba(217,133,30,.55),transparent);
+  opacity:.7;pointer-events:none;
+}
+
+/* feature tiles: brighter float + genuinely colourful, per-tool icon chips */
+html:not(.dark-mode) .feat-card{
+  background:linear-gradient(180deg,#FFFFFF 0%,#FAFBFF 100%);
+  box-shadow:0 14px 34px rgba(85,112,230,.12);
+}
+html:not(.dark-mode) .feat-card:hover{
+  border-color:rgba(15,169,131,.45);
+  box-shadow:0 20px 44px rgba(15,169,131,.2);
+}
+html:not(.dark-mode) .feat-card:nth-child(6n+1) .fc-ico{background:rgba(15,169,131,.22);}
+html:not(.dark-mode) .feat-card:nth-child(6n+2) .fc-ico{background:rgba(85,112,230,.22);}
+html:not(.dark-mode) .feat-card:nth-child(6n+3) .fc-ico{background:rgba(217,133,30,.24);}
+html:not(.dark-mode) .feat-card:nth-child(6n+4) .fc-ico{background:rgba(226,92,134,.22);}
+html:not(.dark-mode) .feat-card:nth-child(6n+5) .fc-ico{background:rgba(139,92,246,.22);}
+html:not(.dark-mode) .feat-card:nth-child(6n+6) .fc-ico{background:rgba(14,165,183,.22);}
+
+/* stat tiles & sub-panels: a clear whisper of tint so they're not pure white */
+html:not(.dark-mode) .cstat{
+  background:linear-gradient(180deg,rgba(85,112,230,.08),rgba(85,112,230,.03));
+  border-color:rgba(85,112,230,.16);
+}
+/* section eyebrows get a touch of the brand accent instead of flat grey */
+html:not(.dark-mode) .feat-label{color:var(--teal);}
+
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
 body{
