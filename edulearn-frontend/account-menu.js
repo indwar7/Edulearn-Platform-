@@ -82,10 +82,29 @@
   if (currentTheme !== 'light') currentTheme = 'dark';
   var fab = document.createElement('div');
   fab.className = 'acct-fab';
+  var sunSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M18.7 5.3 17 7M7 17l-1.7 1.7"/></svg>';
+  var moonSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>';
   fab.innerHTML =
+    '<button class="acct-btn" id="acctTheme" title="Toggle light/dark" aria-label="Toggle light/dark"></button>' +
     '<button class="acct-btn" id="acctGear" title="Settings" aria-label="Settings">⚙️</button>' +
     '<button class="acct-btn" id="acctQuickLogout" title="Logout" aria-label="Logout">🚪</button>';
   document.body.appendChild(fab);
+
+  // Quick light/dark toggle — self-contained so it works regardless of whether
+  // theme.js has loaded yet. Shows on every logged-in screen.
+  var themeBtn = fab.querySelector('#acctTheme');
+  function paintThemeIcon(){
+    var dark = document.documentElement.classList.contains('dark-mode');
+    themeBtn.innerHTML = dark ? sunSvg : moonSvg;
+    themeBtn.title = dark ? 'Switch to light mode' : 'Switch to dark mode';
+  }
+  paintThemeIcon();
+  themeBtn.addEventListener('click', function(){
+    var dark = document.documentElement.classList.toggle('dark-mode');
+    try { localStorage.setItem('edulearn-theme', dark ? 'dark' : 'light'); } catch(e){}
+    paintThemeIcon();
+    window.dispatchEvent(new CustomEvent('theme-changed', { detail:{ isDarkMode: dark } }));
+  });
 
   var overlay = document.createElement('div');
   overlay.className = 'acct-overlay';
