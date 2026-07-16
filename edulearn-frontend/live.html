@@ -730,7 +730,7 @@ function loadLectureStage(s){
     if(board) board.style.display = 'none'; // real lecture replaces the board
     stageEl.style.display = 'block';
     document.getElementById('lectureTitle').textContent = pick.title || 'Live lecture';
-    vid.src = API + '/api/videos/' + pick.id + '/stream?token=' + encodeURIComponent(EduAPI.getToken());
+    vid.src = EduAPI.API_BASE + '/api/videos/' + pick.id + '/stream?token=' + encodeURIComponent(EduAPI.getToken());
     vid.play().catch(function(){});
     if(note) note.textContent = 'Live lecture playing · your camera is used only for attention monitoring (video stays on your device).';
     if (CLS){ CLS.lectureTitle = pick.title || ''; }

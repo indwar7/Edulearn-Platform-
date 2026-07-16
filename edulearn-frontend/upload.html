@@ -110,7 +110,7 @@
   <script src="api.js"></script>
   <script src="../theme.js"></script>
   <script>
-    var API = (localStorage.getItem('edulearn_api') || '/backend-api');
+    var API = (window.EduAPI && EduAPI.API_BASE) || (localStorage.getItem('edulearn_api') || '/backend-api');
     var user = EduAPI.getUser();
     // Only teachers (admin role-as-teacher) may upload.
     if (!user || user.role !== 'teacher') {
