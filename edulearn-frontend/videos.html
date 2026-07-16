@@ -68,7 +68,7 @@
     /* ---- shelves (Netflix rows) ---- */
     .shelf{margin:0 0 30px;}
     .shelf-head{display:flex;align-items:baseline;justify-content:space-between;margin:0 2px 12px;gap:12px;}
-    .shelf-title{font-family:'Fraunces',serif;font-weight:600;font-size:19px;letter-spacing:-.01em;display:flex;align-items:center;gap:10px;}
+    .shelf-title{font-family:'Fraunces',serif;font-weight:700;font-size:22px;letter-spacing:-.015em;display:flex;align-items:center;gap:11px;line-height:1.15;}
     .shelf-title .pip{width:10px;height:10px;border-radius:3px;flex:none;}
     .shelf-count{font-family:'Fragment Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.05em;}
     .rail-outer{position:relative;}
@@ -109,7 +109,7 @@
     .listwrap{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:var(--shadow-sm);}
     .lgroup-head{padding:15px 20px 12px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;background:var(--bg2);}
     .lgroup-head .pip{width:9px;height:9px;border-radius:3px;}
-    .lgroup-head b{font-family:'Fraunces',serif;font-weight:600;font-size:16px;}
+    .lgroup-head b{font-family:'Fraunces',serif;font-weight:700;font-size:18px;letter-spacing:-.01em;}
     .lgroup-head .c{font-family:'Fragment Mono',monospace;font-size:11px;color:var(--muted);margin-left:auto;}
     .lrow{display:flex;align-items:center;gap:14px;padding:11px 18px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .14s;}
     .lrow:last-child{border-bottom:none;}
@@ -368,7 +368,18 @@
     function groupBy(list, keyFn){
       var order=[], map={};
       list.forEach(function(v){ var k=keyFn(v)||'More lectures'; if(!map[k]){map[k]=[];order.push(k);} map[k].push(v); });
-      return order.map(function(k){ return {key:k, items:map[k]}; });
+      return order.map(function(k){ return {key:k, items:sortByPart(map[k])}; });
+    }
+    // A part number embedded in the title ("Part 3 — …") drives ordering + labels.
+    function partOf(v){ var m=String(v&&v.title||'').match(/\bpart\s*(\d+)/i); return m?parseInt(m[1],10):null; }
+    // The chapter heading + a number badge already convey position, so show the
+    // human title without the "Part N — " prefix.
+    function cleanTitle(v){ return String(v&&v.title||'').replace(/^\s*part\s*\d+\s*[-–—:.]\s*/i,''); }
+    // Ascending by part number; un-numbered lectures keep their original order after.
+    function sortByPart(items){
+      return items.map(function(v,i){ var p=partOf(v); return {v:v,k:(p!=null?p:1000+i)}; })
+                  .sort(function(a,b){ return a.k-b.k; })
+                  .map(function(x){ return x.v; });
     }
 
     // ---------- cover card markup ----------
@@ -386,10 +397,11 @@
     function cardHTML(v, epLabel){
       var sj = subjOf(v);
       var initial = (v.uploadedByName||'T').trim().charAt(0).toUpperCase();
-      return '<div class="vcard" tabindex="0" role="button" data-id="'+v.id+'" data-title="'+esc(v.title)+'" aria-label="Play '+esc(v.title)+'">'+
+      var ct = cleanTitle(v);
+      return '<div class="vcard" tabindex="0" role="button" data-id="'+v.id+'" data-title="'+esc(ct)+'" aria-label="Play '+esc(ct)+'">'+
         coverInner(v, sj, epLabel)+
         '<div class="vbody">'+
-          '<div class="vtitle">'+esc(v.title)+'</div>'+
+          '<div class="vtitle">'+esc(ct)+'</div>'+
           '<div class="vmeta"><span class="tag">'+esc(v.className)+'</span><span class="tag">'+esc(v.subject)+'</span>'+(v.topic?'<span>'+esc(v.topic)+'</span>':'')+'</div>'+
           '<div class="by"><span class="av">'+esc(initial)+'</span>'+esc(v.uploadedByName||'Teacher')+' · '+(v.views||0)+' views</div>'+
         '</div></div>';
@@ -427,7 +439,7 @@
           '<span class="shelf-count">'+g.items.length+' '+(g.items.length===1?'lecture':'lectures')+'</span></div>'+
           '<div class="rail-outer"><button class="rail-btn prev" data-rail="'+gi+'" data-dir="-1" aria-label="Scroll left">‹</button>'+
           '<div class="rail" id="rail'+gi+'">'+
-            g.items.map(function(v,i){ return cardHTML(v, 'EP '+(i+1)); }).join('')+
+            g.items.map(function(v,i){ return cardHTML(v, 'Part '+(partOf(v)||(i+1))); }).join('')+
           '</div>'+
           '<button class="rail-btn next" data-rail="'+gi+'" data-dir="1" aria-label="Scroll right">›</button></div>'+
         '</section>';
@@ -439,13 +451,13 @@
     function heroHTML(v){
       if(!v) return '';
       var sj = subjOf(v);
-      return '<div class="hero" id="heroCard" tabindex="0" role="button" aria-label="Play '+esc(v.title)+'">'+
+      return '<div class="hero" id="heroCard" tabindex="0" role="button" aria-label="Play '+esc(cleanTitle(v))+'">'+
         '<div class="hero-art" style="background:'+sj.grad+'"></div>'+
         '<div class="hero-glyph">'+sj.glyph+'</div>'+
         '<div class="scrim"></div>'+
         '<div class="hero-inner">'+
           '<div class="hero-eyebrow"><span class="dot"></span>Featured · '+esc(v.subject||'Lecture')+'</div>'+
-          '<h2>'+esc(v.title)+'</h2>'+
+          '<h2>'+esc(cleanTitle(v))+'</h2>'+
           '<p>'+esc(v.description || (v.topic? (v.topic+' — start watching now.') : 'Tap to start watching this lecture.'))+'</p>'+
           '<div><span class="hero-cta">▶ Play now</span>'+
           '<span class="hero-meta"><span>'+esc(v.className)+'</span><span>'+(v.views||0)+' views</span>'+(v.durationLabel?'<span>'+esc(v.durationLabel)+'</span>':'')+'</span></div>'+
@@ -460,12 +472,12 @@
         html += '<div class="listwrap" style="margin-bottom:20px">'+
           '<div class="lgroup-head"><span class="pip" style="background:'+sj.pip+'"></span><b>'+esc(g.key)+'</b><span class="c">'+g.items.length+' videos</span></div>'+
           g.items.map(function(v,i){
-            var s2 = subjOf(v); var pct=pctOf(v.id);
-            return '<div class="lrow" tabindex="0" role="button" data-id="'+v.id+'" data-title="'+esc(v.title)+'" aria-label="Play '+esc(v.title)+'">'+
-              '<span class="lnum">'+(i+1)+'</span>'+
+            var s2 = subjOf(v); var pct=pctOf(v.id); var ct=cleanTitle(v);
+            return '<div class="lrow" tabindex="0" role="button" data-id="'+v.id+'" data-title="'+esc(ct)+'" aria-label="Play '+esc(ct)+'">'+
+              '<span class="lnum">'+(partOf(v)||(i+1))+'</span>'+
               '<div class="lthumb" style="background:'+s2.grad+'"><span class="cglyph">'+s2.glyph+'</span>'+
                 (pct>0&&pct<92?'<div class="prog"><span style="width:'+pct+'%"></span></div>':'')+'</div>'+
-              '<div class="linfo"><div class="t">'+esc(v.title)+(isWatched(v.id)?' <span style="color:var(--teal)">✓</span>':'')+'</div>'+
+              '<div class="linfo"><div class="t">'+esc(ct)+(isWatched(v.id)?' <span style="color:var(--teal)">✓</span>':'')+'</div>'+
                 '<div class="m"><span class="tag">'+esc(v.subject)+'</span><span>'+esc(v.uploadedByName||'Teacher')+'</span><span>'+(v.views||0)+' views</span></div></div>'+
               (v.durationLabel?'<span class="ldur">'+esc(v.durationLabel)+'</span>':'')+
               '<span class="lplay">▶</span>'+
