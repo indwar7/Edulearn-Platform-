@@ -347,8 +347,15 @@
       });
     }
 
+    // A stray test upload ("science" under a bogus "cells" topic) belongs to a
+    // different teacher account and can't be removed via the API, so hide it.
+    function isJunk(v){
+      var t=(v.topic||'').trim().toLowerCase(), ti=(v.title||'').trim().toLowerCase();
+      return t==='cells' && ti==='science';
+    }
     function visible(){
       return ALL.filter(function(v){
+        if (isJunk(v)) return false;
         // Class scope: demo toggles between classes; real students are already
         // class-locked in ALL, so this is a harmless no-op for them.
         if (DEMO && classFilter!=='all'){
@@ -380,6 +387,20 @@
       return items.map(function(v,i){ var p=partOf(v); return {v:v,k:(p!=null?p:1000+i)}; })
                   .sort(function(a,b){ return a.k-b.k; })
                   .map(function(x){ return x.v; });
+    }
+    // Video topics are stored as curriculum slug-words (so the lesson page can
+    // match them); map the known ones to their proper NCERT chapter name for a
+    // clean heading. Anything not listed shows its own topic as-is.
+    var CHAPTER_DISPLAY = {
+      'adolescence': 'Adolescence: A Stage of Growth and Change',
+      'metals nonmetals': 'The World of Metals and Non-metals',
+      'physical chemical changes': 'Changes Around Us: Physical and Chemical',
+      'electricity': 'Electricity: Circuits and their Components',
+      'electricity circuits': 'Electricity: Circuits and their Components'
+    };
+    function chapterName(v){
+      var t = (v && v.topic || '').trim();
+      return CHAPTER_DISPLAY[t.toLowerCase()] || t || v.subject;
     }
 
     // ---------- cover card markup ----------
@@ -430,7 +451,7 @@
     function renderRows(stage, list){
       // Featured = most-viewed (ties → first). Rest grouped by topic/chapter.
       var featured = list.slice().sort(function(a,b){return (b.views||0)-(a.views||0);})[0];
-      var groups = groupBy(list, function(v){ return v.topic || v.subject; });
+      var groups = groupBy(list, function(v){ return chapterName(v); });
       var html = heroHTML(featured);
       groups.forEach(function(g, gi){
         var sj = subjOf(g.items[0]);
@@ -465,7 +486,7 @@
     }
 
     function renderList(stage, list){
-      var groups = groupBy(list, function(v){ return v.topic || v.subject; });
+      var groups = groupBy(list, function(v){ return chapterName(v); });
       var html = '';
       groups.forEach(function(g){
         var sj = subjOf(g.items[0]);
