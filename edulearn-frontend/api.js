@@ -3,15 +3,9 @@
    Connects the static pages to the EduLearn backend.
    ============================================================ */
 (function (global) {
-  // Backend base URL. We call a SAME-ORIGIN path ('/backend-api') that Vercel
-  // rewrites (server-side) to the HTTP EC2 origin — see vercel.json "rewrites".
-  // This keeps the browser on HTTPS (no mixed-content block) AND skips the
-  // CloudFront WAF that was blocking video uploads. The EC2 origin is HTTP-only,
-  // so the browser must never hit it directly.
+  // Backend base URL — points directly at the backend EC2 origin.
   // For local dev, override it: localStorage.setItem('edulearn_api','http://localhost:4000')
-  var API_BASE =
-    localStorage.getItem('edulearn_api') ||
-    '/backend-api';
+  var API_BASE = 'http://65.2.183.7';
 
   var TOKEN_KEY = 'edulearn_token';
   var USER_KEY = 'edulearn_user';
