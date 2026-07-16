@@ -1679,8 +1679,12 @@ function highlight(name, q){
          esc(name.slice(idx + q.length));
 }
 
-function lessonHref(cls, subj, slug){
-  return 'lesson.html?class=' + cls + '&subject=' + subj.key + '&ch=' + chapterId(cls, subj, slug);
+function lessonHref(cls, subj, slug, name){
+  var url = 'lesson.html?class=' + cls + '&subject=' + subj.key + '&ch=' + chapterId(cls, subj, slug);
+  // Pass the exact chapter title so the lesson hub/notes show the real NCERT
+  // name (e.g. "Food: Where Does It Come From?") rather than a title-cased slug.
+  if(name) url += '&t=' + encodeURIComponent(name);
+  return url;
 }
 
 /* ------------------------------------------------------------
@@ -1773,7 +1777,7 @@ function chapterRowHTML(cls, subj, ch, number, delay, withTag){
         : '<span class="chrow__arrow">' + ICONS.arrow + '</span>') +
     '</span>';
   return (
-    '<a class="chrow rv" href="' + lessonHref(cls, subj, ch[0]) + '"' +
+    '<a class="chrow rv" href="' + lessonHref(cls, subj, ch[0], ch[1]) + '"' +
       ' style="--cc:' + cc + ';animation-delay:' + delay + 'ms">' +
       '<span class="chrow__num">' + (number < 10 ? '0' : '') + number + '</span>' +
       '<span class="chrow__body">' +
@@ -1883,7 +1887,7 @@ function renderContinue(){
         t('class_word') + ' ' + meta.cls + ' · ' + esc(subjName(meta.subject)) +
       '</div>' +
       '<div class="continue__name">' + esc(meta.name) + '</div>' +
-      '<a class="btn-resume" href="' + lessonHref(meta.cls, meta.subject, meta.slug) + '">' +
+      '<a class="btn-resume" href="' + lessonHref(meta.cls, meta.subject, meta.slug, meta.name) + '">' +
         ICONS.play + '<span>' + t('resume') + '</span>' +
       '</a>' +
     '</div>';
