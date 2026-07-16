@@ -127,7 +127,7 @@
       // Theme is explicit-only (Dark / Light). No "System" option, so the theme
       // NEVER changes on its own with the OS — it only changes when the user
       // picks it here. Current value comes from the applied theme.
-      '<div class="acct-field"><label>Theme</label><select id="acctTheme">' +
+      '<div class="acct-field"><label>Theme</label><select id="acctThemeSel">' +
         '<option value="light"' + (currentTheme==='light'?' selected':'') + '>Light</option>' +
         '<option value="dark"' + (currentTheme!=='light'?' selected':'') + '>Dark</option>' +
       '</select></div>' +
@@ -168,15 +168,15 @@
     }
   }
   // live preview: apply as soon as the user changes the dropdown
-  var themeSel = document.getElementById('acctTheme');
+  var themeSel = document.getElementById('acctThemeSel');
   if (themeSel) themeSel.addEventListener('change', function(){ applyTheme(themeSel.value); });
 
   document.getElementById('acctSave').addEventListener('click', async function(){
     var btn = this; var origText = 'Save changes';
     btn.disabled = true; btn.textContent = 'Saving…';
-    applyTheme(val('acctTheme')); // apply immediately on save too
+    applyTheme(val('acctThemeSel')); // apply immediately on save too
     var body = { name: val('acctName'), preferences: {
-      language: val('acctLang'), theme: val('acctTheme'),
+      language: val('acctLang'), theme: val('acctThemeSel'),
       emailNotifications: document.getElementById('acctEmail').checked
     }};
     if (user.role === 'student'){
