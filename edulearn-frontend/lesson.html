@@ -134,6 +134,16 @@ main{
 .vplayer-wrap video{display:block;width:100%;max-height:70vh;background:#000}
 .vmeta{display:flex;gap:10px;flex-wrap:wrap;align-items:center;color:var(--muted);font-size:13px}
 .vmeta .tag{border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-family:'Fragment Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase}
+/* Playlist — all uploaded parts for a chapter, in order */
+.vplaylist{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.vplaylist__hd{color:var(--muted);font-family:'Fragment Mono',monospace;text-transform:uppercase;letter-spacing:.1em;font-size:11px;margin-bottom:2px}
+.vpitem{display:flex;align-items:center;gap:12px;padding:10px 14px;border:1px solid var(--line);border-radius:14px;background:var(--card);cursor:pointer;text-align:left;transition:border-color .2s,transform .2s,background .2s;width:100%}
+.vpitem:hover{border-color:var(--muted);transform:translateX(3px)}
+.vpitem.is-active{border-color:#3DE8C5;background:var(--card2)}
+.vpitem__n{flex:none;width:26px;height:26px;border-radius:50%;background:var(--card2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:'Fragment Mono',monospace;font-size:12px}
+.vpitem.is-active .vpitem__n{background:#3DE8C5;color:#04121A;border-color:transparent}
+.vpitem__t{flex:1;font-size:14px;color:var(--ink)}
+.vpitem__meta{flex:none;color:var(--muted);font-size:11px;font-family:'Fragment Mono',monospace}
 </style>
 <link rel="stylesheet" href="../theme.css">
 </head>
@@ -180,6 +190,7 @@ main{
       <span class="tag" id="videoSubjectTag"></span>
       <span id="videoByline"></span>
     </div>
+    <div class="vplaylist" id="videoPlaylist" style="display:none"></div>
   </div>
 
   <!-- Placeholder: shown when no video has been uploaded yet for this chapter. -->
@@ -289,26 +300,74 @@ var searchTerm = LESSON.slug.replace(/-/g, ' ');
 EduAPI.listVideos({ className: LESSON.cls, subject: LESSON.subject, topic: searchTerm })
   .then(function(videos){
     if (!videos.length) return; // no upload yet — keep showing the placeholder
-    var v = videos[0]; // most recent match (API sorts newest first)
+
+    // A chapter can have several parts. If every title carries an explicit part
+    // number ("… — Part 3", "Ep 2", "4. Foo") use that; otherwise fall back to
+    // upload order (oldest first), which is how the parts were uploaded.
+    videos.forEach(function(v){
+      var m = String(v.title || '').match(/(?:part|episode|ep)\s*(\d+)|^\s*(\d+)\s*[.)\-–—]|[-–—]\s*(\d+)\s*$/i);
+      v._num = m ? parseInt(m[1] || m[2] || m[3], 10) : null;
+    });
+    var allNumbered = videos.every(function(v){ return v._num != null; });
+    videos.sort(function(a, b){
+      return allNumbered ? a._num - b._num
+                         : new Date(a.createdAt) - new Date(b.createdAt);
+    });
+    videos.forEach(function(v, i){ v._part = allNumbered ? v._num : i + 1; });
 
     document.getElementById('placeholderStage').style.display = 'none';
     var stage = document.getElementById('videoStage');
     stage.style.display = 'flex';
     document.getElementById('videoCrumb').textContent = LESSON.chapterCrumb;
-    document.getElementById('videoTitle').textContent = v.title || LESSON.chapterTitle;
-    document.getElementById('videoClassTag').textContent = v.className;
-    document.getElementById('videoSubjectTag').textContent = v.subject;
-    document.getElementById('videoByline').textContent =
-      'By ' + (v.uploadedByName || 'Teacher') + ' · ' + v.views + ' views';
+    document.getElementById('videoClassTag').textContent = videos[0].className;
+    document.getElementById('videoSubjectTag').textContent = videos[0].subject;
 
-    var player = document.getElementById('player');
+    var player   = document.getElementById('player');
+    var titleEl  = document.getElementById('videoTitle');
+    var byline   = document.getElementById('videoByline');
+    var playlist = document.getElementById('videoPlaylist');
+    var viewed   = {};
+
     // <video src> can't send an Authorization header, and streaming is
     // eligibility-gated server-side — pass the token as a query param.
-    player.src = EduAPI.API_BASE + '/api/videos/' + v.id + '/stream?token=' + encodeURIComponent(EduAPI.getToken());
-    player.addEventListener('play', function onFirstPlay(){
-      EduAPI.recordVideoView(v.id);
-      player.removeEventListener('play', onFirstPlay);
+    function select(v, autoplay){
+      titleEl.textContent = v.title || LESSON.chapterTitle;
+      byline.textContent  = 'By ' + (v.uploadedByName || 'Teacher') + ' · ' + v.views + ' views';
+      player.src = EduAPI.API_BASE + '/api/videos/' + v.id + '/stream?token=' + encodeURIComponent(EduAPI.getToken());
+      player.setAttribute('data-id', v.id);
+      Array.prototype.forEach.call(playlist.querySelectorAll('.vpitem'), function(el){
+        el.classList.toggle('is-active', el.getAttribute('data-id') === v.id);
+      });
+      if (autoplay) player.play().catch(function(){});
+    }
+
+    // Count a view once per part, on first play.
+    player.addEventListener('play', function(){
+      var id = player.getAttribute('data-id');
+      if (id && !viewed[id]) { viewed[id] = true; EduAPI.recordVideoView(id); }
     });
+
+    // Render the part list only when there's more than one.
+    if (videos.length > 1) {
+      playlist.style.display = 'flex';
+      playlist.innerHTML = '<div class="vplaylist__hd">' + videos.length + ' parts in this chapter</div>';
+      videos.forEach(function(v){
+        var b = document.createElement('button');
+        b.className = 'vpitem';
+        b.setAttribute('data-id', v.id);
+        b.innerHTML = '<span class="vpitem__n">' + v._part + '</span>' +
+                      '<span class="vpitem__t"></span>' +
+                      '<span class="vpitem__meta">' + v.views + ' views</span>';
+        // Badge already shows the number, so drop a leading "Part N — " prefix.
+        b.querySelector('.vpitem__t').textContent =
+          (v.title || ('Part ' + v._part)).replace(/^\s*part\s*\d+\s*[-–—:.]\s*/i, '');
+        b.addEventListener('click', function(){ select(v, true); });
+        playlist.appendChild(b);
+      });
+    }
+
+    select(videos[0], false);
+
     // Not actually eligible for this specific video (e.g. wrong class/subject)
     // — fall back to the honest placeholder instead of a broken player.
     player.addEventListener('error', function(){
