@@ -568,6 +568,19 @@ function finishTest(){
   });
   saveLS();
 
+  // Persist to the backend so this attempt survives re-login, syncs across
+  // devices, and is visible server-side (local save above is just instant UI).
+  if (window.EduAPI && EduAPI.recordMockAttempt) {
+    var subj = (T.key || '').charAt(0).toUpperCase() + (T.key || '').slice(1);
+    EduAPI.recordMockAttempt({
+      subject: subj || T.def.name,
+      testName: T.def.name,
+      score: rightCount,
+      total: T.journey.length,
+      mastery: mastery
+    }).catch(function(){ /* offline → local copy still shows */ });
+  }
+
   show('result');
   document.getElementById('resName').textContent = T.def.name;
   document.getElementById('resPct').textContent = mastery + '%';
@@ -633,7 +646,23 @@ function finishTest(){
 document.querySelectorAll('[data-test]').forEach(function(b){
   b.addEventListener('click', function(){ startTest(b.getAttribute('data-test')); });
 });
-renderAttempts();
+
+// Load history from the server (source of truth) so it persists across logins
+// and devices. Falls back to the local copy if the request fails (offline).
+function syncHistoryFromServer(){
+  if(!(window.EduAPI && EduAPI.getMockHistory)){ renderAttempts(); return; }
+  EduAPI.getMockHistory().then(function(res){
+    var list = (res && res.attempts) || [];
+    if(Array.isArray(list)){
+      store.attempts = list.map(function(a){
+        var m = (a.mastery != null) ? a.mastery : (a.total ? Math.round(a.score / a.total * 100) : 0);
+        return { dateISO: a.finishedAt, test: a.testName || a.subject, mastery: m };
+      });
+    }
+    renderAttempts();
+  }).catch(function(){ renderAttempts(); });
+}
+syncHistoryFromServer();
 
 // A shared-test link (dashboard.html's "Share a test" modal) adds ?chapter=
 // so every student who opens it lands on the actual test, not the generic

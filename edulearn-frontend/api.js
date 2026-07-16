@@ -339,6 +339,21 @@
     });
   }
 
+  // Persist a completed client-side (adaptive) test so it survives re-login,
+  // syncs across devices, and is visible server-side.
+  // fields: { subject, testName?, score, total, mastery? }
+  async function recordMockAttempt(fields) {
+    return request('/api/assessments/mock/record', {
+      method: 'POST',
+      body: fields
+    });
+  }
+
+  // The student's past attempts: { attempts: [{ subject, testName, score, total, mastery, finishedAt }] }
+  async function getMockHistory() {
+    return request('/api/assessments/mock/history');
+  }
+
   // Teacher/admin only: author one question into the bank (used by the test
   // builder — one call per question, all tagged with the same chapterSlug so
   // a test's questions form their own isolated pool).
@@ -410,6 +425,8 @@
     listLiveReports: listLiveReports,
     startMockTest: startMockTest,
     submitMockTest: submitMockTest,
+    recordMockAttempt: recordMockAttempt,
+    getMockHistory: getMockHistory,
     createQuestion: createQuestion,
     getChallenge: getChallenge,
     answerChallenge: answerChallenge,
