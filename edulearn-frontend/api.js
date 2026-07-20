@@ -14,7 +14,11 @@
   // Resolution order:
   //   1. an explicit localStorage['edulearn_api'] override (always wins)
   //   2. http://localhost:4000 when the PAGE ITSELF is served from localhost
-  //   3. the deployed EC2 origin
+  //   3. /backend-api (same-origin Vercel proxy) when the page is on HTTPS —
+  //      an https:// page calling http://65.2.183.7 is MIXED CONTENT and the
+  //      browser silently blocks every request, so the deployed site must go
+  //      through the vercel.json rewrite that proxies /backend-api/* to EC2
+  //   4. the deployed EC2 origin (plain-http contexts, e.g. file://)
   //
   // Step 2 exists because step 1 alone is a footgun: localStorage is scoped per
   // ORIGIN, so setting the override while on localhost:8080 does nothing on
@@ -37,6 +41,7 @@
 
   try {
     if (isLocalHost(location.hostname)) API_BASE = API_LOCAL;
+    else if (location.protocol === 'https:') API_BASE = '/backend-api';
   } catch (e) { /* no location (non-browser context) — keep the default */ }
 
   try {
@@ -99,8 +104,39 @@
     clearUserDataKeys();
   }
 
+  // Access tokens are short-lived (~15 min); the refresh token lives in an
+  // httpOnly cookie. When a call 401s we refresh ONCE and replay the call, so
+  // a student who logged in this morning can still open the Arena tonight.
+  // All concurrent 401s share one in-flight refresh instead of racing.
+  var refreshPromise = null;
+  function refreshAccessToken() {
+    if (!refreshPromise) {
+      refreshPromise = fetch(API_BASE + '/api/auth/refresh', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+      })
+        .then(function (res) { return res.ok ? res.json() : null; })
+        .then(function (data) {
+          var token = data && data.accessToken;
+          // NOT setSession — that wipes per-user localStorage; same user, new token.
+          if (token) localStorage.setItem(TOKEN_KEY, token);
+          return token || null;
+        })
+        .catch(function () { return null; })
+        .finally(function () { refreshPromise = null; });
+    }
+    return refreshPromise;
+  }
+
+  // A 401 from these means "bad credentials", not "stale access token" —
+  // refreshing and replaying would just 401 again (or loop on refresh itself).
+  function isAuthPath(path) {
+    return path.indexOf('/api/auth/') === 0;
+  }
+
   // Core fetch wrapper. Adds JSON headers + bearer token, parses errors nicely.
-  async function request(path, options) {
+  async function request(path, options, isRetry) {
     options = options || {};
     var headers = Object.assign(
       { 'Content-Type': 'application/json' },
@@ -124,6 +160,11 @@
         'Could not reach ' + API_BASE + '. It may be down, or the browser may ' +
         'have blocked the response (CORS). Check the Network tab for details.'
       );
+    }
+
+    if (res.status === 401 && !isRetry && token && !isAuthPath(path)) {
+      var fresh = await refreshAccessToken();
+      if (fresh) return request(path, options, true);
     }
 
     var data = null;
