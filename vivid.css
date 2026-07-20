@@ -348,20 +348,37 @@ th, td{ border-color:var(--u-border) !important; color:var(--u-text) !important;
   .nav, nav:not([class]){ background:#FFFFFF !important; }
 }
 
+/* Every property below is !important ON PURPOSE.
+   Six pages carry their OWN .nav rules (learn 17, live 11, challenge 11,
+   mocktest 10, pal 8, lesson 6). Several use higher-specificity selectors
+   like `.nav .nav__link`, which beat this sheet on specificity even though
+   it loads later — so the bar rendered at a different height, padding and
+   type size depending on which page you opened. Forcing them is what makes
+   the nav genuinely identical everywhere. */
 .nav__inner, .nav-inner{
-  max-width:1600px; margin:0 auto; padding:0 28px;
-  height:66px; display:flex; align-items:center; gap:26px;
+  max-width:1600px !important; margin:0 auto !important; padding:0 28px !important;
+  height:66px !important; display:flex !important; align-items:center !important;
+  gap:26px !important;
 }
-.nav__links, .nav-links{ display:flex; gap:4px; margin:0 auto; }
+.nav__links, .nav-links{
+  display:flex !important; gap:4px !important; margin:0 auto !important;
+  align-items:center !important;
+}
 
 /* BOLD nav letters */
-.nav__link, .nav-link, nav:not([class]) a{
+.nav__link, .nav-link, nav:not([class]) a.nav__link{
   position:relative;
-  padding:9px 15px; border-radius:11px;
+  padding:9px 15px !important;
+  border-radius:11px !important;
+  font-family:'Nunito',sans-serif !important;
   font-size:15px !important;
   font-weight:800 !important;
-  letter-spacing:-.01em;
+  letter-spacing:-.01em !important;
+  line-height:1 !important;
+  text-transform:none !important;
   color:#000000 !important;
+  background:transparent;
+  border:none !important;
   transition:background .22s ease, transform .22s ease;
 }
 .nav__link:hover, .nav-link:hover{
@@ -385,14 +402,26 @@ th, td{ border-color:var(--u-border) !important; color:var(--u-text) !important;
   display:none !important;
   content:none !important;
 }
-.brand, .logo{ display:flex; align-items:center; gap:10px; flex-shrink:0; }
+.brand, .logo{
+  display:flex !important; align-items:center !important;
+  gap:10px !important; flex-shrink:0 !important; text-decoration:none !important;
+}
+.brand__mark, .logo svg{ width:26px !important; height:26px !important; }
 .brand__word, .wordmark{
+  font-family:'Fraunces',serif !important;
   font-size:21px !important;
   font-weight:800 !important;
-  letter-spacing:-.02em;
+  letter-spacing:-.02em !important;
   color:#000000 !important;
 }
-.nav__right, .nav-right{ display:flex; align-items:center; gap:12px; flex-shrink:0; margin-left:auto; }
+.nav__right, .nav-right{
+  display:flex !important; align-items:center !important;
+  gap:12px !important; flex-shrink:0 !important; margin-left:auto !important;
+}
+/* The nav CTA is a small pill on every page, never a full-width block. */
+.nav__right .btn-primary, .nav-right .btn-primary{
+  padding:9px 18px !important; font-size:14px !important; white-space:nowrap !important;
+}
 
 @media (max-width:1080px){
   .nav__links, .nav-links{ display:none; }
@@ -540,6 +569,123 @@ h1, h2, h3, .card-title, .foot-tag, .cname{ font-weight:800 !important; }
   border-radius:999px !important;
   background:#FFFFFF !important;
 }
+
+/* ============================================================
+   LEARN — colourful + premium
+   Both .subj (subject buttons) and .chrow (chapter rows) expose the
+   subject's own hue as --sa, so every surface here can be coloured
+   by its subject rather than all being the same white box.
+   Text stays black on light tints; the hue does the work.
+   ============================================================ */
+
+/* ---- subject picker: real colour blocks, not white chips ---- */
+.subj{
+  position:relative;
+  display:flex !important; flex-direction:column; gap:6px;
+  padding:0 0 16px !important;
+  border:2px solid #000 !important;
+  border-radius:16px !important;
+  background:color-mix(in srgb, var(--sa) 15%, #fff) !important;
+  box-shadow:4px 4px 0 var(--sa) !important;
+  overflow:hidden;
+  cursor:pointer;
+  transition:transform .18s ease, box-shadow .18s ease;
+}
+.subj:hover{ transform:translate(-2px,-2px); box-shadow:6px 6px 0 var(--sa) !important; }
+/* a solid colour cap so the subject is identifiable at a glance */
+.subj::before{
+  content:''; display:block; height:44px; background:var(--sa);
+  border-bottom:2px solid #000; margin-bottom:12px;
+}
+.subj__icon{
+  position:absolute; top:9px; left:14px;
+  color:#fff !important; height:26px; display:flex; align-items:center; z-index:1;
+}
+.subj__name{ padding:0 14px; font-size:16px !important; font-weight:800 !important; color:#000 !important; }
+.subj__count{
+  padding:0 14px;
+  font-family:'Fragment Mono',monospace; font-size:11px !important; font-weight:700 !important;
+  letter-spacing:1.1px; text-transform:uppercase; color:#000 !important; opacity:.75;
+}
+/* the selected subject reads as pressed-in, not just outlined */
+.subj.is-active{
+  background:color-mix(in srgb, var(--sa) 30%, #fff) !important;
+  box-shadow:2px 2px 0 #000 !important;
+  transform:translate(2px,2px);
+}
+
+/* ---- chapter rows: subject-tinted, premium spacing ---- */
+.chrow{
+  position:relative;
+  border:2px solid #000 !important;
+  border-radius:14px !important;
+  background:linear-gradient(90deg,
+    color-mix(in srgb, var(--sa) 13%, #fff) 0%,
+    color-mix(in srgb, var(--sa) 4%,  #fff) 34%,
+    #fff 70%) !important;
+  box-shadow:4px 4px 0 rgba(14,15,20,.10) !important;
+  padding:18px 20px !important;
+  transition:transform .16s ease, box-shadow .16s ease;
+}
+.chrow:hover{
+  transform:translate(-3px,-3px);
+  box-shadow:7px 7px 0 var(--sa) !important;
+}
+/* the chapter number becomes a solid colour tile — the single strongest
+   colour cue in the list, and it makes scanning by number effortless */
+.chrow__num{
+  display:flex !important; align-items:center; justify-content:center;
+  width:52px; height:52px; flex:none;
+  background:var(--sa) !important;
+  border:2px solid #000; border-radius:13px;
+  box-shadow:2px 2px 0 #000;
+  font-family:'Fraunces',serif !important;
+  font-size:21px !important; font-weight:800 !important;
+  font-style:normal !important;
+  color:#fff !important; -webkit-text-fill-color:#fff !important;
+  opacity:1 !important;
+}
+.chrow__name{ font-size:17px !important; font-weight:800 !important; color:#000 !important; }
+.chrow__dur{
+  font-family:'Fragment Mono',monospace; font-size:11px !important; font-weight:700 !important;
+  letter-spacing:1px; text-transform:uppercase; color:#000 !important;
+  border:2px solid #000; border-radius:999px; padding:5px 11px;
+  background:#fff;
+}
+.chrow__subjtag{
+  border:2px solid #000 !important; border-radius:999px !important;
+  color:#000 !important; font-weight:800 !important; font-size:11px !important;
+  padding:4px 10px !important;
+}
+/* the little video/notes/test module chips */
+.chrow .mod, .mod{
+  border:2px solid #000 !important; border-radius:9px !important;
+  background:#fff !important; color:#000 !important;
+  width:30px; height:30px; display:inline-flex; align-items:center; justify-content:center;
+}
+.chrow:hover .mod{ background:color-mix(in srgb, var(--sa) 22%, #fff) !important; }
+.chrow__arrow{
+  border:2px solid #000; border-radius:50%;
+  width:34px; height:34px; display:inline-flex; align-items:center; justify-content:center;
+  background:var(--sa); color:#fff;
+}
+.badge-mastered{
+  border:2px solid #000 !important; border-radius:999px !important;
+  background:#0E9E6E !important; color:#fff !important; font-weight:800 !important;
+  padding:5px 12px !important;
+}
+/* progress track on a row */
+.chrow .prog, .chrow__pct{ color:#000 !important; font-weight:800 !important; }
+
+/* ---- the class selector pill ---- */
+.classpill, .cls-pick, .classbtn{
+  border:2px solid #000 !important; box-shadow:3px 3px 0 #000 !important;
+  font-weight:800 !important;
+}
+
+/* ---- list heading ---- */
+.listhead__title{ font-weight:800 !important; color:#000 !important; }
+.listhead__title .subj-accent{ font-style:italic; }
 
 /* ============================================================
    FOOTER — bold, large, black

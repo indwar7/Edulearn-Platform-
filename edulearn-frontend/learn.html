@@ -878,7 +878,7 @@ input{font-family:inherit;color:inherit}
        ============================================================ -->
   <section class="hero">
     <div class="hero__crumb mono rv" style="animation-delay:.05s">
-      <a href="index.html">Home</a><span class="sep">/</span><span style="color:var(--cream)">Learn</span>
+      <span style="color:var(--cream)">Learn</span>
     </div>
     <div class="hero__row">
       <h1 class="hero__title rv" style="animation-delay:.12s" data-i18n="hero_title">Choose your <em>battlefield.</em></h1>
@@ -1776,8 +1776,11 @@ function chapterRowHTML(cls, subj, ch, number, delay, withTag){
         : '<span class="chrow__arrow">' + ICONS.arrow + '</span>') +
     '</span>';
   return (
+    // --sa carries the SUBJECT accent so each row can be coloured by its own
+    // subject (the subject buttons already expose it the same way). --cc is
+    // the class colour and stays for the existing progress treatment.
     '<a class="chrow rv" href="' + lessonHref(cls, subj, ch[0], ch[1]) + '"' +
-      ' style="--cc:' + cc + ';animation-delay:' + delay + 'ms">' +
+      ' style="--cc:' + cc + ';--sa:' + subj.accent + ';animation-delay:' + delay + 'ms">' +
       '<span class="chrow__num">' + (number < 10 ? '0' : '') + number + '</span>' +
       '<span class="chrow__body">' +
         '<span class="chrow__name">' + tag + highlight(ch[1], query) + '</span>' +

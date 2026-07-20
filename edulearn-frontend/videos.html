@@ -329,7 +329,15 @@
         var q = '';
         if (!DEMO && user.role === 'student' && user.className) q = '?className=' + encodeURIComponent(user.className);
         var res = await fetch(API + '/api/videos' + q, { headers:{ 'Authorization':'Bearer '+EduAPI.getToken() }, credentials:'include' });
-        if (!res.ok) throw new Error('Server '+res.status);
+        // Carry the status on the error object. It used to be flattened into
+        // the string 'Server 401', so the catch below could not tell an expired
+        // session (401) apart from a genuinely dead server, and reported both
+        // as "Is the backend running?".
+        if (!res.ok) {
+          var httpErr = new Error('Server ' + res.status);
+          httpErr.status = res.status;
+          throw httpErr;
+        }
         var j = await res.json();
         ALL = j.videos || [];
         // Defense-in-depth: a real student never sees videos outside their own
@@ -353,7 +361,24 @@
         buildClassToggle(); buildFilters(); applyView(); render();
       } catch(e){
         document.getElementById('stage').innerHTML='';
-        document.getElementById('errBox').innerHTML = '<div class="err">Cannot load videos. Is the backend running? '+esc(e.message)+'</div>';
+        // "Is the backend running?" was wrong for the most common failure.
+        // A 401 means the server answered fine and REJECTED THE TOKEN — which
+        // happens whenever the session was issued by a different backend than
+        // the one being called (the two servers sign with different secrets and
+        // use different databases, so their tokens are not interchangeable).
+        // Telling the user the server is down sends them to debug the wrong box.
+        var box = document.getElementById('errBox');
+        var api = (window.EduAPI && EduAPI.API_BASE) || '';
+        if (e && e.status === 401){
+          box.innerHTML = '<div class="err">Your session is not valid for this server' +
+            (api ? ' (' + esc(api) + ')' : '') + '. Sign in again to refresh it. ' +
+            '<a href="login.html" style="text-decoration:underline;font-weight:700">Go to login</a></div>';
+        } else if (e && e.status){
+          box.innerHTML = '<div class="err">The server returned an error (' + e.status + '). ' + esc(e.message) + '</div>';
+        } else {
+          box.innerHTML = '<div class="err">Could not reach ' + esc(api || 'the server') +
+            '. It may be offline, or the browser may have blocked the response (CORS). ' + esc(e.message) + '</div>';
+        }
       }
     }
 
