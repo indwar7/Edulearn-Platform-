@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <!-- Apply saved theme before paint to avoid a light-mode flash. -->
-  <script>try{if(localStorage.getItem('edulearn-theme')==='dark')document.documentElement.classList.add('dark-mode');}catch(e){}</script>
+  <script>/* light-only product: strip any stale dark preference before paint */try{document.documentElement.classList.remove('dark-mode');localStorage.setItem('edulearn-theme','light');}catch(e){}</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Create a Test — EduLearn</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,480&family=Schibsted+Grotesk:wght@400;500;600;700&family=Fragment+Mono&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,480&family=Nunito:wght@400;500;600;700;800;900&family=Fragment+Mono&display=swap" rel="stylesheet">
   <style>
     :root{
-      --ink:#1A1F36;--bg:#F7F9FC;--card:#FFFFFF;--muted:#6B7280;--bg2:#F5F7FA;
-      --line:rgba(15,23,42,.10);--teal:#0FA983;--rose:#E2484D;
-      --aurora:linear-gradient(115deg,#3DE8C5 0%,#7C9BFF 48%,#FFB454 100%);
+      --ink:#1A1F36;--bg:#F7F9FC;--card:#FFFFFF;--muted:#64748B;--bg2:#F5F7FA;
+      --line:rgba(15,23,42,.10);--teal:#10B981;--rose:#F43F5E;
+      --aurora:linear-gradient(115deg,#10B981 0%,#6366F1 48%,#F59E0B 100%);
       --ease:cubic-bezier(.22,1,.36,1);--shadow:0 18px 44px rgba(15,23,42,.10);
     }
     /* Dark mode: remap the page's own variables so the whole UI flips. */
@@ -22,7 +22,7 @@
       --shadow:0 18px 44px rgba(0,0,0,.45);
     }
     *{box-sizing:border-box;}
-    body{margin:0;font-family:'Schibsted Grotesk',system-ui,sans-serif;background:var(--bg);color:var(--ink);}
+    body{margin:0;font-family:'Nunito',system-ui,sans-serif;background:var(--bg);color:var(--ink);}
     .wrap{max-width:720px;margin:0 auto;padding:40px 24px 80px;}
     h1{font-family:'Fraunces',serif;font-weight:480;font-size:32px;margin:0 0 6px;}
     h1 em{font-style:italic;background:var(--aurora);-webkit-background-clip:text;background-clip:text;color:transparent;}
@@ -59,8 +59,30 @@
     .top-link{display:inline-block;margin-bottom:18px;color:var(--muted);font-size:13px;text-decoration:none;}
     .top-link:hover{color:var(--ink);}
   </style>
+<link rel="stylesheet" href="../vivid.css">
 </head>
 <body>
+<nav class="nav">
+  <div class="nav__inner">
+    <a class="brand" href="index.html" aria-label="EduLearn home">
+      <svg class="brand__mark" width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 1.5 L14.6 9.4 L22.5 12 L14.6 14.6 L12 22.5 L9.4 14.6 L1.5 12 L9.4 9.4 Z" fill="url(#auroraGrad)"/>
+      </svg>
+      <span class="brand__word">EduLearn</span>
+    </a>
+    <div class="nav__links">
+      <a class="nav__link" href="learn.html" data-i18n="nav_learn">Learn</a>
+      <a class="nav__link" href="live.html" data-i18n="nav_live">Live</a>
+      <a class="nav__link" href="challenge.html" data-i18n="nav_arena">Arena</a>
+      <a class="nav__link is-current" href="mocktest.html" data-i18n="nav_tests">Tests</a>
+      <a class="nav__link" href="pal.html" data-i18n="nav_pal">PAL AI</a>
+      <a class="nav__link" href="dashboard.html" data-i18n="nav_dash">Dashboard</a>
+    </div>
+    <div class="nav__right">
+      <a class="btn-primary" href="login.html" data-i18n="nav_cta">Start free</a>
+    </div>
+  </div>
+</nav>
   <div class="wrap">
     <a class="top-link" href="dashboard.html">&larr; Back to dashboard</a>
     <h1>Create a <em>Test</em></h1>
@@ -287,5 +309,14 @@
   <script src="account-menu.js"></script>
   <script src="../theme.js"></script>
   <script src="../features-panel.js"></script>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="auroraGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00A88F"/>
+      <stop offset="48%" stop-color="#3F5BE0"/>
+      <stop offset="100%" stop-color="#C99A2E"/>
+    </linearGradient>
+  </defs>
+</svg>
 </body>
 </html>

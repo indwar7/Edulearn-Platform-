@@ -10,13 +10,13 @@
 <meta name="description" content="One question drops every hour for every student. 45 seconds to answer — too fast to cheat. Points for speed, streaks for showing up.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&family=Fragment+Mono:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Nunito:wght@400;500;600;700;800;900&family=Fragment+Mono:ital@0;1&display=swap" rel="stylesheet">
 <style>
 :root{
   --ink:#FFFFFF; --card:#FFFFFF; --card2:#F5F7FA;
-  --line:rgba(0,0,0,.08); --cream:#1A1F36; --muted:#6B7280;
-  --teal:#3DE8C5; --peri:#7C9BFF; --amber:#FFB454; --rose:#FF7AA2;
-  --aurora:linear-gradient(115deg,#3DE8C5 0%,#7C9BFF 48%,#FFB454 100%);
+  --line:rgba(0,0,0,.08); --cream:#1E293B; --muted:#64748B;
+  --teal:#10B981; --peri:#6366F1; --amber:#F59E0B; --rose:#F43F5E;
+  --aurora:linear-gradient(115deg,#10B981 0%,#6366F1 48%,#F59E0B 100%);
   --ease:cubic-bezier(.22,1,.36,1);
   --on-accent:#0B1224; --line-strong:rgba(15,23,42,.18);
   --navbg:rgba(255,255,255,.95); --shadow-soft:0 16px 44px rgba(15,23,42,.10);
@@ -28,7 +28,7 @@ html.dark-mode{
   --shadow-soft:0 16px 44px rgba(0,0,0,.45);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--ink);color:var(--cream);font-family:'Schibsted Grotesk',sans-serif;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh}
+body{background:var(--ink);color:var(--cream);font-family:'Nunito',sans-serif;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh}
 a{color:inherit;text-decoration:none}
 button{font-family:inherit;color:inherit;background:none;border:none;cursor:pointer}
 .mono{font-family:'Fragment Mono',monospace;text-transform:uppercase;letter-spacing:.12em;font-size:11px;color:var(--muted)}
@@ -151,6 +151,7 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
 }
 </style>
 <link rel="stylesheet" href="../theme.css">
+<link rel="stylesheet" href="../vivid.css">
 </head>
 <body>
 
@@ -159,19 +160,21 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
 <nav class="nav">
   <div class="nav__inner">
     <a class="brand" href="index.html" aria-label="EduLearn home">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 1.5 L14.6 9.4 L22.5 12 L14.6 14.6 L12 22.5 L9.4 14.6 L1.5 12 L9.4 9.4 Z" fill="url(#auroraGrad)"/></svg>
+      <svg class="brand__mark" width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 1.5 L14.6 9.4 L22.5 12 L14.6 14.6 L12 22.5 L9.4 14.6 L1.5 12 L9.4 9.4 Z" fill="url(#auroraGrad)"/>
+      </svg>
       <span class="brand__word">EduLearn</span>
     </a>
     <div class="nav__links">
-      <a class="nav__link" href="index.html">Home</a>
-      <a class="nav__link" href="learn.html">Learn</a>
-      <a class="nav__link" href="live.html">Live</a>
-      <a class="nav__link is-current" href="challenge.html">Arena</a>
-      <a class="nav__link" href="mocktest.html">Tests</a>
-      <a class="nav__link" href="dashboard.html">Dashboard</a>
+      <a class="nav__link" href="learn.html" data-i18n="nav_learn">Learn</a>
+      <a class="nav__link" href="live.html" data-i18n="nav_live">Live</a>
+      <a class="nav__link is-current" href="challenge.html" data-i18n="nav_arena">Arena</a>
+      <a class="nav__link" href="mocktest.html" data-i18n="nav_tests">Tests</a>
+      <a class="nav__link" href="pal.html" data-i18n="nav_pal">PAL AI</a>
+      <a class="nav__link" href="dashboard.html" data-i18n="nav_dash">Dashboard</a>
     </div>
     <div class="nav__right">
-      <a class="btn-primary" href="login.html">Start free</a>
+      <a class="btn-primary" href="login.html" data-i18n="nav_cta">Start free</a>
     </div>
   </div>
 </nav>

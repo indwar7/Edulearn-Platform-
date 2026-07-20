@@ -5,7 +5,44 @@
 (function (global) {
   // Backend base URL — points directly at the backend EC2 origin.
   // For local dev, override it: localStorage.setItem('edulearn_api','http://localhost:4000')
-  var API_BASE = 'http://65.2.183.7';
+  //
+  // The override is READ here. It used to be documented (and preserved across
+  // logout by clearSession) but never actually applied, so every local dev
+  // session silently talked to production while videos/upload/admin/live-video
+  // — which read the key themselves — talked to localhost. Same key, two
+  // different backends in one tab.
+  // Resolution order:
+  //   1. an explicit localStorage['edulearn_api'] override (always wins)
+  //   2. http://localhost:4000 when the PAGE ITSELF is served from localhost
+  //   3. the deployed EC2 origin
+  //
+  // Step 2 exists because step 1 alone is a footgun: localStorage is scoped per
+  // ORIGIN, so setting the override while on localhost:8080 does nothing on
+  // localhost:8081, and nothing on 127.0.0.1 either — same machine, three
+  // separate stores. The symptom is a confusing "Cannot reach the server. Is
+  // the backend running on http://65.2.183.7?", which names the PROD host and
+  // reads like the server is down when really the browser was never pointed at
+  // the local one. (Production also returns no Access-Control-Allow-* headers
+  // on a preflight from a localhost origin, so the browser blocks the call and
+  // fetch rejects — indistinguishable from "offline" at this layer.)
+  //
+  // Anything served from a real domain is unaffected and still hits EC2.
+  var API_DEFAULT = 'http://65.2.183.7';
+  var API_LOCAL = 'http://localhost:4000';
+  var API_BASE = API_DEFAULT;
+
+  function isLocalHost(h) {
+    return h === 'localhost' || h === '127.0.0.1' || h === '[::1]' || h === '::1';
+  }
+
+  try {
+    if (isLocalHost(location.hostname)) API_BASE = API_LOCAL;
+  } catch (e) { /* no location (non-browser context) — keep the default */ }
+
+  try {
+    var apiOverride = localStorage.getItem('edulearn_api');
+    if (apiOverride) API_BASE = apiOverride.replace(/\/+$/, '');
+  } catch (e) { /* storage unavailable — keep whatever was resolved above */ }
 
   var TOKEN_KEY = 'edulearn_token';
   var USER_KEY = 'edulearn_user';
@@ -81,8 +118,11 @@
         body: options.body ? JSON.stringify(options.body) : undefined,
       });
     } catch (networkErr) {
+      // fetch() rejects identically whether the server is down OR the browser
+      // blocked the response (CORS/mixed-content), so do not assert it is down.
       throw new Error(
-        'Cannot reach the server. Is the backend running on ' + API_BASE + '?'
+        'Could not reach ' + API_BASE + '. It may be down, or the browser may ' +
+        'have blocked the response (CORS). Check the Network tab for details.'
       );
     }
 
@@ -325,6 +365,16 @@
     });
   }
 
+  // Grades a single question mid-test so the student can read the worked
+  // solution before moving on. Returns { chosen, correct, correctIndex,
+  // explanation }. The answer is locked server-side once revealed.
+  async function answerMockQuestion(attemptId, index, chosenIndex) {
+    return request('/api/assessments/mock/' + attemptId + '/answer', {
+      method: 'POST',
+      body: { index: index, chosenIndex: chosenIndex }
+    });
+  }
+
   // Server-grades the attempt and returns { score, total, review[] }.
   async function submitMockTest(attemptId, answers) {
     return request('/api/assessments/mock/' + attemptId + '/submit', {
@@ -418,6 +468,7 @@
     submitLiveReport: submitLiveReport,
     listLiveReports: listLiveReports,
     startMockTest: startMockTest,
+    answerMockQuestion: answerMockQuestion,
     submitMockTest: submitMockTest,
     recordMockAttempt: recordMockAttempt,
     getMockHistory: getMockHistory,

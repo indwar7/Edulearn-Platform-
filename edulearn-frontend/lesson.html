@@ -10,17 +10,17 @@
 <meta name="description" content="EduLearn lesson player. AI animated video lectures, practice, notes and tests.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&family=Fragment+Mono:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Nunito:wght@400;500;600;700;800;900&family=Fragment+Mono:ital@0;1&display=swap" rel="stylesheet">
 <style>
 :root{
   --ink:#FFFFFF;
   --card:#FFFFFF;
   --card2:#F5F7FA;
   --line:rgba(0,0,0,.08);
-  --cream:#1A1F36;
-  --muted:#6B7280;
-  --teal:#3DE8C5;
-  --aurora:linear-gradient(115deg,#3DE8C5 0%,#7C9BFF 48%,#FFB454 100%);
+  --cream:#1E293B;
+  --muted:#64748B;
+  --teal:#10B981;
+  --aurora:linear-gradient(115deg,#10B981 0%,#6366F1 48%,#F59E0B 100%);
   --ease:cubic-bezier(.22,1,.36,1);
   --on-accent:#0B1224;
   --navbg:rgba(255,255,255,.95);
@@ -38,7 +38,7 @@ html.dark-mode{
 body{
   background:var(--ink);
   color:var(--cream);
-  font-family:'Schibsted Grotesk',sans-serif;
+  font-family:'Nunito',sans-serif;
   font-size:16px;line-height:1.55;
   -webkit-font-smoothing:antialiased;
   min-height:100vh;
@@ -227,7 +227,7 @@ main{
 .nrecap__h{font-family:'Fragment Mono',monospace;text-transform:uppercase;letter-spacing:.12em;font-size:11px;color:var(--teal);margin-bottom:12px}
 .nrecap ul{list-style:none;display:flex;flex-direction:column;gap:8px}
 .nrecap li{position:relative;padding-left:26px;font-size:14.5px;line-height:1.55;color:var(--cream)}
-.nrecap li::before{content:"✓";position:absolute;left:2px;top:0;color:#3DE8C5;font-weight:700}
+.nrecap li>svg{position:absolute;left:2px;top:3px;color:#3DE8C5}
 .notes__foot{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
 .notes__empty{text-align:center;color:var(--muted);padding:10px 0 4px}
 @media (max-width:640px){
@@ -236,6 +236,7 @@ main{
 }
 </style>
 <link rel="stylesheet" href="../theme.css">
+<link rel="stylesheet" href="../vivid.css">
 </head>
 <body>
 
@@ -252,16 +253,27 @@ main{
 <nav class="nav">
   <div class="nav__inner">
     <a class="brand" href="index.html" aria-label="EduLearn home">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <svg class="brand__mark" width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <path d="M12 1.5 L14.6 9.4 L22.5 12 L14.6 14.6 L12 22.5 L9.4 14.6 L1.5 12 L9.4 9.4 Z" fill="url(#auroraGrad)"/>
       </svg>
       <span class="brand__word">EduLearn</span>
     </a>
+    <div class="nav__links">      <a class="nav__link is-current" href="learn.html" data-i18n="nav_learn">Learn</a>
+      <a class="nav__link" href="live.html" data-i18n="nav_live">Live</a>
+      <a class="nav__link" href="challenge.html" data-i18n="nav_arena">Arena</a>
+      <a class="nav__link" href="mocktest.html" data-i18n="nav_tests">Tests</a>
+      <a class="nav__link" href="pal.html" data-i18n="nav_pal">PAL AI</a>
+      <a class="nav__link" href="dashboard.html" data-i18n="nav_dash">Dashboard</a>
+    </div>
     <div class="nav__right">
-      <a class="btn-back" id="backLink" href="learn.html">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12 H4 M11 5 l-7 7 7 7"/></svg>
-        <span>Back to Learn</span>
-      </a>
+      <!-- #backLink must exist. The lesson bootstrap reads it by id and points
+           it at this chapter's subject listing. When the canonical nav replaced
+           the old .nav__right this anchor was dropped, so getElementById
+           returned null and `back.href = ...` threw — aborting the bootstrap
+           before LESSON.cls / .subject / .slug were assigned, which silently
+           disabled the lesson video lookup that is gated on them. -->
+      <a class="btn-back" id="backLink" href="learn.html">← Back</a>
+      <a class="btn-primary" href="login.html" data-i18n="nav_cta">Start free</a>
     </div>
   </div>
 </nav>
@@ -277,7 +289,7 @@ main{
     <div class="hub__grid">
       <button class="optcard optcard--notes" id="optNotes" type="button">
         <span class="optcard__go" aria-hidden="true">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </span>
         <span class="optcard__icon" aria-hidden="true">
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H16l4 4v12.5A1.5 1.5 0 0 1 18.5 21h-13A1.5 1.5 0 0 1 4 19.5z"/><path d="M15 3v4.5H20M8 12h8M8 16h6"/></svg>
@@ -291,7 +303,7 @@ main{
 
       <button class="optcard optcard--video" id="optVideo" type="button">
         <span class="optcard__go" aria-hidden="true">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </span>
         <span class="optcard__icon" aria-hidden="true">
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="14" height="14" rx="3"/><path d="M21.5 8.5 16.5 12l5 3.5z"/></svg>
@@ -424,7 +436,11 @@ if(track && TRACKS[track]){
 hubTitle.textContent = title.textContent;
 hubCrumb.textContent = crumb.textContent;
 
-if(cls && subject){
+// Null-guarded: this is decorative navigation, but an unguarded assignment
+// here throws and aborts the rest of this bootstrap — including the LESSON.*
+// assignments below that the video lookup depends on. A missing back button
+// must never be able to take the lesson video down with it.
+if(back && cls && subject){
   back.href = 'learn.html?class=' + encodeURIComponent(cls) + '&subject=' + encodeURIComponent(subject);
 }
 
@@ -739,7 +755,7 @@ function renderNotes(){
 
   if(note.recap && note.recap.length){
     html += '<div class="nrecap"><div class="nrecap__h">Quick recap</div><ul>';
-    note.recap.forEach(function(r){ html += '<li>' + esc(r) + '</li>'; });
+    note.recap.forEach(function(r){ html += '<li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>' + esc(r) + '</li>'; });
     html += '</ul></div>';
   }
 

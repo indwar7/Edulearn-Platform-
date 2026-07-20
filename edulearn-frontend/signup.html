@@ -4,13 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sign Up — EduLearn · Start Your Learning Journey</title>
+  <script>
+    (function(){try{var t=localStorage.getItem('edulearn_token');var u=localStorage.getItem('edulearn_user');if(t&&u&&JSON.parse(u)){location.replace('dashboard.html');return;}}catch(e){}})();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     :root{
-      --teal:#3DE8C5;--peri:#7C9BFF;--amber:#FFB454;--rose:#FF7AA2;
-      --aurora:linear-gradient(115deg,#3DE8C5 0%,#7C9BFF 48%,#FFB454 100%);
+      --teal:#34D399;--peri:#818CF8;--amber:#FBBF24;--rose:#FB7185;
+      --aurora:linear-gradient(115deg,#34D399 0%,#818CF8 48%,#FBBF24 100%);
       --ease:cubic-bezier(.22,1,.36,1);
       --ink:#060912;--ink2:#0B1020;
       --glass:rgba(255,255,255,.06);
@@ -25,7 +28,7 @@
     html{scroll-behavior:smooth}
     body{
       background:var(--ink);color:var(--text);
-      font-family:'Schibsted Grotesk',sans-serif;font-size:16px;line-height:1.55;
+      font-family:'Nunito',sans-serif;font-size:16px;line-height:1.55;
       min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;
     }
 
@@ -153,7 +156,7 @@
     .signup-link a:hover{opacity:.8}
 
     .role-tabs{display:flex;gap:4px;background:rgba(255,255,255,.05);padding:5px;border-radius:14px;margin-bottom:22px;border:1px solid var(--line)}
-    .role-tab{flex:1;border:none;background:transparent;padding:11px 8px;border-radius:10px;font-family:'Schibsted Grotesk',sans-serif;font-size:13px;letter-spacing:.02em;font-weight:700;color:var(--muted);cursor:pointer;transition:all .24s cubic-bezier(.22,1,.36,1)}
+    .role-tab{flex:1;border:none;background:transparent;padding:11px 8px;border-radius:10px;font-family:'Nunito',sans-serif;font-size:13px;letter-spacing:.02em;font-weight:700;color:var(--muted);cursor:pointer;transition:all .24s cubic-bezier(.22,1,.36,1)}
     .role-tab:hover:not(.on){color:var(--text)}
     .role-tab.on{background:linear-gradient(180deg,rgba(61,232,197,.18),rgba(61,232,197,.08));color:var(--teal);box-shadow:0 4px 16px rgba(61,232,197,.2),0 0 0 1px rgba(61,232,197,.38) inset}
 
@@ -221,7 +224,8 @@
     html.light-mode select option{background:#fff;color:#0F1425}
     html.light-mode .checkbox-group,html.light-mode .signin-link{color:#5C6478}
   </style>
-  <script>try{if(localStorage.getItem('edulearn-theme')==='light')document.documentElement.classList.add('light-mode');}catch(e){}</script>
+  <script>try{document.documentElement.classList.add('light-mode');localStorage.setItem('edulearn-theme','light');}catch(e){document.documentElement.classList.add('light-mode');}</script>
+<link rel="stylesheet" href="../vivid.css">
 </head>
 <body>
 
@@ -236,9 +240,9 @@
         <h2 class="brand-head">Your <em>learning</em><br>starts here.</h2>
         <p class="brand-sub">Join 50,000+ students, teachers and parents across Bharat learning the smart way.</p>
         <div class="brand-feats">
-          <div class="brand-feat"><span class="fi"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></span> Free access to 9,000+ lessons</div>
-          <div class="brand-feat"><span class="fi"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 14 4-4 3 3 5-6"/></svg></span> Track progress across every subject</div>
-          <div class="brand-feat"><span class="fi"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 0-4 12.7V17a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-2.3A7 7 0 0 0 12 2Z"/><path d="M9 22h6"/></svg></span> AI tutor for instant doubt-solving</div>
+          <div class="brand-feat"><span class="fi"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></span> Free access to 9,000+ lessons</div>
+          <div class="brand-feat"><span class="fi"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 14 4-4 3 3 5-6"/></svg></span> Track progress across every subject</div>
+          <div class="brand-feat"><span class="fi"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 0-4 12.7V17a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-2.3A7 7 0 0 0 12 2Z"/><path d="M9 22h6"/></svg></span> AI tutor for instant doubt-solving</div>
         </div>
       </div>
       <div class="brand-foot">
@@ -307,8 +311,8 @@
           <div class="pw-field">
             <input type="password" id="password" placeholder="••••••••" required minlength="6">
             <button type="button" class="pw-toggle" id="pwToggle" aria-label="Show password" aria-pressed="false">
-              <svg class="eye" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 12s4-7.5 10.5-7.5S22.5 12 22.5 12s-4 7.5-10.5 7.5S1.5 12 1.5 12Z"/><circle cx="12" cy="12" r="3"/></svg>
-              <svg class="eye-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18"/><path d="M10.6 5.1A10.8 10.8 0 0 1 12 5c6.5 0 10.5 7 10.5 7a15.7 15.7 0 0 1-3.4 4.2M6.7 6.7C3.9 8.5 1.5 12 1.5 12s4 7 10.5 7c1.5 0 2.9-.3 4.1-.9"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>
+              <svg class="eye" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 12s4-7.5 10.5-7.5S22.5 12 22.5 12s-4 7.5-10.5 7.5S1.5 12 1.5 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="eye-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18"/><path d="M10.6 5.1A10.8 10.8 0 0 1 12 5c6.5 0 10.5 7 10.5 7a15.7 15.7 0 0 1-3.4 4.2M6.7 6.7C3.9 8.5 1.5 12 1.5 12s4 7 10.5 7c1.5 0 2.9-.3 4.1-.9"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>
             </button>
           </div>
         </div>
@@ -441,19 +445,19 @@
 
       <div class="features">
         <div class="feature">
-          <span class="feature-icon">✓</span>
+          <span class="feature-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></span>
           <span>Free access to 9,000+ lessons</span>
         </div>
         <div class="feature">
-          <span class="feature-icon">✓</span>
+          <span class="feature-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></span>
           <span>Track your progress</span>
         </div>
         <div class="feature">
-          <span class="feature-icon">✓</span>
+          <span class="feature-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></span>
           <span>All classes & boards</span>
         </div>
         <div class="feature">
-          <span class="feature-icon">✓</span>
+          <span class="feature-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></span>
           <span>Learn at your own pace</span>
         </div>
       </div>
@@ -502,7 +506,7 @@
         </div>
 
         <div style="text-align:center;font-size:14px;display:flex;justify-content:center;gap:12px">
-          <a href="#" onclick="showSignupView(event)" style="color:#6B7280;text-decoration:none;font-weight:600">← Back</a>
+          <a href="#" onclick="showSignupView(event)" style="color:#6B7280;text-decoration:none;font-weight:600"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg> Back</a>
         </div>
       </form>
     </div>
@@ -770,7 +774,7 @@
     }
   </script>
   <script>
-    (function () { try { if (localStorage.getItem('edulearn-theme') === 'light') document.documentElement.classList.add('light-mode'); } catch (e) {} })();
+    (function () { try{document.documentElement.classList.add('light-mode');localStorage.setItem('edulearn-theme','light');}catch(e){document.documentElement.classList.add('light-mode');} })();
   </script>
 <script src="../features-panel.js"></script>
 </body>

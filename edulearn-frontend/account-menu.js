@@ -19,12 +19,12 @@
   var css = '' +
     ':root{--am-bg:#FFFFFF;--am-bg2:#F5F7FA;--am-ink:#1A1F36;--am-muted:#6B7280;--am-line:rgba(15,23,42,.10);--am-aurora:linear-gradient(115deg,#3DE8C5 0%,#7C9BFF 48%,#FFB454 100%);}' +
     'html.dark-mode{--am-bg:#0F172A;--am-bg2:#1E293B;--am-ink:#F5F7FA;--am-muted:#94A3B8;--am-line:rgba(255,255,255,.12);}' +
-    ".acct-fab{position:fixed;top:18px;right:18px;z-index:9000;display:flex;gap:8px;font-family:'Schibsted Grotesk',system-ui,sans-serif;}" +
+    ".acct-fab{position:fixed;top:18px;right:18px;z-index:9000;display:flex;gap:8px;font-family:'Nunito',system-ui,sans-serif;}" +
     '.acct-btn{width:44px;height:44px;border-radius:13px;border:1px solid var(--am-line);background:var(--am-bg);backdrop-filter:blur(10px);color:var(--am-ink);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 6px 20px rgba(15,23,42,.10);transition:transform .22s cubic-bezier(.22,1,.36,1),box-shadow .22s ease;}' +
     '.acct-btn:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 10px 28px rgba(61,232,197,.28);}' +
     '.acct-overlay{position:fixed;inset:0;background:rgba(15,23,42,.5);backdrop-filter:blur(3px);z-index:9100;opacity:0;pointer-events:none;transition:opacity .25s ease;}' +
     '.acct-overlay.open{opacity:1;pointer-events:auto;}' +
-    ".acct-panel{position:fixed;top:0;right:0;height:100%;width:400px;max-width:92vw;background:var(--am-bg);color:var(--am-ink);z-index:9200;transform:translateX(102%);transition:transform .32s cubic-bezier(.22,1,.36,1);box-shadow:-16px 0 50px rgba(15,23,42,.22);overflow-y:auto;font-family:'Schibsted Grotesk',system-ui,sans-serif;}" +
+    ".acct-panel{position:fixed;top:0;right:0;height:100%;width:400px;max-width:92vw;background:var(--am-bg);color:var(--am-ink);z-index:9200;transform:translateX(102%);transition:transform .32s cubic-bezier(.22,1,.36,1);box-shadow:-16px 0 50px rgba(15,23,42,.22);overflow-y:auto;font-family:'Nunito',system-ui,sans-serif;}" +
     '.acct-panel.open{transform:translateX(0);}' +
     '.acct-panel .am-hd{padding:26px 24px 18px;background:var(--am-bg2);border-bottom:1px solid var(--am-line);position:relative;}' +
     '.acct-panel .am-hd::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--am-aurora);}' +
@@ -82,12 +82,12 @@
   if (currentTheme !== 'light') currentTheme = 'dark';
   var fab = document.createElement('div');
   fab.className = 'acct-fab';
-  var sunSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M18.7 5.3 17 7M7 17l-1.7 1.7"/></svg>';
-  var moonSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>';
+  var sunSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M18.7 5.3 17 7M7 17l-1.7 1.7"/></svg>';
+  var moonSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>';
   fab.innerHTML =
     '<button class="acct-btn" id="acctTheme" title="Toggle light/dark" aria-label="Toggle light/dark"></button>' +
-    '<button class="acct-btn" id="acctGear" title="Settings" aria-label="Settings">⚙️</button>' +
-    '<button class="acct-btn" id="acctQuickLogout" title="Logout" aria-label="Logout">🚪</button>';
+    '<button class="acct-btn" id="acctGear" title="Settings" aria-label="Settings"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"3\"/><path d=\"M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z\"/></svg></button>' +
+    '<button class="acct-btn" id="acctQuickLogout" title="Logout" aria-label="Logout"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4\"/><path d=\"m16 17 5-5-5-5\"/><path d=\"M21 12H9\"/></svg></button>';
   document.body.appendChild(fab);
 
   // Quick light/dark toggle — self-contained so it works regardless of whether

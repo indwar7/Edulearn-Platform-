@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <!-- Apply saved theme before paint to avoid a light-mode flash. -->
-  <script>try{if(localStorage.getItem('edulearn-theme')==='dark')document.documentElement.classList.add('dark-mode');}catch(e){}</script>
+  <script>/* light-only product: strip any stale dark preference before paint */try{document.documentElement.classList.remove('dark-mode');localStorage.setItem('edulearn-theme','light');}catch(e){}</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Take Test — EduLearn</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,480&family=Schibsted+Grotesk:wght@400;500;600;700&family=Fragment+Mono&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,480&family=Nunito:wght@400;500;600;700;800;900&family=Fragment+Mono&display=swap" rel="stylesheet">
   <style>
     :root{
-      --ink:#1A1F36;--bg:#F7F9FC;--card:#FFFFFF;--muted:#6B7280;--bg2:#F5F7FA;
-      --line:rgba(15,23,42,.10);--teal:#0FA983;--rose:#E2484D;--amber:#C77B14;
-      --aurora:linear-gradient(115deg,#3DE8C5 0%,#7C9BFF 48%,#FFB454 100%);
+      --ink:#1A1F36;--bg:#F7F9FC;--card:#FFFFFF;--muted:#64748B;--bg2:#F5F7FA;
+      --line:rgba(15,23,42,.10);--teal:#10B981;--rose:#F43F5E;--amber:#F59E0B;
+      --aurora:linear-gradient(115deg,#10B981 0%,#6366F1 48%,#F59E0B 100%);
       --ease:cubic-bezier(.22,1,.36,1);--shadow:0 18px 44px rgba(15,23,42,.10);
     }
     /* Dark mode: remap the page's own variables so the whole UI flips. */
@@ -22,7 +22,10 @@
       --shadow:0 18px 44px rgba(0,0,0,.45);
     }
     *{box-sizing:border-box;}
-    body{margin:0;font-family:'Schibsted Grotesk',system-ui,sans-serif;background:var(--bg);color:var(--ink);}
+    /* An author-level `display` (e.g. .btn) outranks the UA's [hidden] rule,
+       so the hidden attribute silently stops working. Restore it. */
+    [hidden]{display:none!important;}
+    body{margin:0;font-family:'Nunito',system-ui,sans-serif;background:var(--bg);color:var(--ink);}
     .wrap{max-width:640px;margin:0 auto;padding:40px 24px 80px;}
     .card{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:30px;}
     .center{text-align:center;padding:60px 20px;color:var(--muted);}
@@ -39,9 +42,23 @@
     .opt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:1px solid var(--line);background:var(--bg2);border-radius:14px;padding:14px 16px;font-size:15px;font-family:inherit;color:inherit;cursor:pointer;margin-bottom:10px;transition:border-color .2s,transform .15s;}
     .opt:hover:not(:disabled){border-color:#3DE8C5;transform:translateY(-1px);}
     .opt:disabled{cursor:default;}
-    .opt.is-picked{border-color:var(--teal);background:rgba(15,169,131,.1);}
+    /* picked but not yet submitted — its own colour, distinct from right/wrong */
+    .opt.is-picked{border-color:#6366F1;background:rgba(99,102,241,.10);}
+    .opt.is-picked .ltr{background:#6366F1;color:#fff;border-color:transparent;}
+    .opt.is-right{border-color:var(--teal);background:rgba(16,185,129,.12);}
+    .opt.is-right .ltr{background:var(--teal);color:#0B1224;border-color:transparent;}
+    .opt.is-wrong{border-color:var(--rose);background:rgba(244,63,94,.12);}
+    .opt.is-wrong .ltr{background:var(--rose);color:#fff;border-color:transparent;}
     .opt .ltr{width:26px;height:26px;border-radius:8px;background:var(--card);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:'Fragment Mono',monospace;font-size:11px;flex:none;}
     .locked-note{text-align:center;color:var(--muted);font-size:13px;margin-top:6px;}
+    /* worked solution — revealed only once the student submits */
+    .solution{margin-top:18px;border:1px solid var(--line);border-left:3px solid #6366F1;background:var(--bg2);border-radius:14px;padding:16px 18px;}
+    .solution .lbl{font-family:'Fragment Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:8px;}
+    .solution .verdict{font-weight:700;font-size:14.5px;margin-bottom:8px;}
+    .solution .body{font-size:14.5px;line-height:1.6;}
+    .qactions{display:flex;align-items:center;gap:12px;margin-top:18px;flex-wrap:wrap;}
+    .qactions .hint{font-size:13px;color:var(--muted);}
+    .btn[disabled]{opacity:.4;cursor:not-allowed;}
 
     .score-num{font-family:'Fraunces',serif;font-weight:600;font-size:56px;text-align:center;background:var(--aurora);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1;}
     .score-sub{text-align:center;color:var(--muted);font-size:14px;margin-top:6px;}
@@ -53,8 +70,31 @@
     .review-row .ans.wrong{color:var(--rose);}
     .btn{border:none;border-radius:12px;background:var(--aurora);color:#0B1224;font-weight:700;font-size:15px;padding:13px 20px;cursor:pointer;text-decoration:none;display:inline-block;}
   </style>
+<link rel="stylesheet" href="../vivid.css">
 </head>
 <body>
+<nav class="nav">
+  <div class="nav__inner">
+    <a class="brand" href="index.html" aria-label="EduLearn home">
+      <svg class="brand__mark" width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 1.5 L14.6 9.4 L22.5 12 L14.6 14.6 L12 22.5 L9.4 14.6 L1.5 12 L9.4 9.4 Z" fill="url(#auroraGrad)"/>
+      </svg>
+      <span class="brand__word">EduLearn</span>
+    </a>
+    <div class="nav__links">
+      <a class="nav__link" href="learn.html" data-i18n="nav_learn">Learn</a>
+      <a class="nav__link" href="live.html" data-i18n="nav_live">Live</a>
+      <a class="nav__link" href="challenge.html" data-i18n="nav_arena">Arena</a>
+      <a class="nav__link is-current" href="mocktest.html" data-i18n="nav_tests">Tests</a>
+      <a class="nav__link" href="pal.html" data-i18n="nav_pal">PAL AI</a>
+      <a class="nav__link" href="dashboard.html" data-i18n="nav_dash">Dashboard</a>
+    </div>
+    <div class="nav__right">
+      <a class="btn-primary" href="login.html" data-i18n="nav_cta">Start free</a>
+    </div>
+  </div>
+</nav>
+
   <div class="wrap">
     <div id="host" class="card">
       <div class="center">Loading your test…</div>
@@ -109,6 +149,8 @@
         questions: res.questions,
         i: 0,
         answers: new Array(res.questions.length).fill(-1),
+        picked: null,    // highlighted but not yet submitted
+        answered: false, // this question has been graded and its solution shown
         timerId: null,
         remaining: secondsPerQ
       };
@@ -119,7 +161,7 @@
       var q = STATE.questions[STATE.i];
       var pct = (STATE.i / STATE.total) * 100;
       var optsHtml = q.options.map(function(o, i){
-        return '<button class="opt" type="button" data-i="' + i + '">' +
+        return '<button class="opt" type="button" data-i="' + i + '" role="radio" aria-checked="false">' +
           '<span class="ltr">' + String.fromCharCode(65 + i) + '</span><span>' + esc(o) + '</span></button>';
       }).join('');
 
@@ -130,15 +172,42 @@
         '</div>' +
         '<div class="progress-track"><div class="progress-fill" style="width:' + pct + '%"></div></div>' +
         '<div class="qtext">' + esc(q.text) + '</div>' +
-        '<div id="optGrid">' + optsHtml + '</div>' +
+        '<div id="optGrid" role="radiogroup" aria-label="Answer options">' + optsHtml + '</div>' +
+        // role=status so the verdict and worked solution are read out on reveal
+        '<div id="solutionSlot" role="status"></div>' +
+        '<div class="qactions">' +
+          '<button class="btn" type="button" id="submitBtn" disabled>Submit answer</button>' +
+          '<button class="btn" type="button" id="nextBtn" hidden>' +
+            (STATE.i + 1 < STATE.total ? 'Next question' : 'See my results') + '</button>' +
+          '<span class="hint" id="qHint">Pick an option, then submit.</span>' +
+        '</div>' +
         '<div class="locked-note" id="lockedNote"></div>';
 
+      // Selecting an option only highlights it — nothing is graded until Submit.
       document.querySelectorAll('#optGrid .opt').forEach(function(btn){
         btn.addEventListener('click', function(){
-          lockAnswer(parseInt(btn.getAttribute('data-i'), 10));
+          if (STATE.answered) return;
+          STATE.picked = parseInt(btn.getAttribute('data-i'), 10);
+          document.querySelectorAll('#optGrid .opt').forEach(function(b){
+            b.classList.toggle('is-picked', b === btn);
+            b.setAttribute('aria-checked', String(b === btn)); // announce the selection
+          });
+          document.getElementById('submitBtn').disabled = false;
+          document.getElementById('qHint').textContent = 'Submit when you are ready.';
         });
       });
 
+      // keyboard users land on the question's first option, not back at the nav
+      var firstOpt = document.querySelector('#optGrid .opt');
+      if (firstOpt) firstOpt.focus();
+
+      document.getElementById('submitBtn').addEventListener('click', function(){
+        if (STATE.picked !== null && STATE.picked !== undefined) lockAnswer(STATE.picked, false);
+      });
+      document.getElementById('nextBtn').addEventListener('click', advance);
+
+      STATE.picked = null;
+      STATE.answered = false;
       STATE.remaining = secondsPerQ;
       updateTimerDisplay();
       clearInterval(STATE.timerId);
@@ -146,7 +215,8 @@
         STATE.remaining--;
         updateTimerDisplay();
         if (STATE.remaining <= 0){
-          lockAnswer(-1); // time's up, no answer picked
+          // out of time: submit whatever is selected (-1 if nothing was picked)
+          lockAnswer(STATE.picked === null || STATE.picked === undefined ? -1 : STATE.picked, true);
         }
       }, 1000);
     }
@@ -158,31 +228,87 @@
       el.classList.toggle('low', STATE.remaining <= 5);
     }
 
-    var locking = false;
-    function lockAnswer(chosenIdx){
-      if (locking) return; // ignore a click that lands right as the timer also fires
-      locking = true;
-      clearInterval(STATE.timerId);
+    async function lockAnswer(chosenIdx, timedOut){
+      if (STATE.answered) return; // ignore a click that lands as the timer also fires
+      STATE.answered = true;
+      clearInterval(STATE.timerId); // stop the clock — reading time isn't timed
       STATE.answers[STATE.i] = chosenIdx;
 
       var buttons = document.querySelectorAll('#optGrid .opt');
       buttons.forEach(function(b){ b.disabled = true; });
-      if (chosenIdx >= 0 && buttons[chosenIdx]) buttons[chosenIdx].classList.add('is-picked');
-      var note = document.getElementById('lockedNote');
-      if (note) note.textContent = chosenIdx >= 0 ? 'Answer locked in.' : "Time's up — moving on.";
 
-      setTimeout(function(){
-        locking = false;
-        STATE.i++;
-        if (STATE.i < STATE.total) {
-          renderQuestion();
-        } else {
-          finishTest();
-        }
-      }, 700);
+      var submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Checking…';
+
+      // The server holds the correct answer and the explanation — it only hands
+      // them over once this question has been committed to.
+      var res = null;
+      try {
+        res = await EduAPI.answerMockQuestion(STATE.attemptId, STATE.i, chosenIdx);
+      } catch (err) {
+        // Offline or server hiccup: don't strand the student mid-test. Their
+        // answer is still in STATE.answers and gets graded at final submit.
+        submitBtn.hidden = true;
+        document.getElementById('qHint').textContent = '';
+        var slot = document.getElementById('solutionSlot');
+        slot.innerHTML = '<div class="solution"><span class="lbl">Solution</span>' +
+          '<div class="body">Could not load the solution just now — your answer is saved ' +
+          'and you will see the full explanation on the results page.</div></div>';
+        showNext(timedOut);
+        return;
+      }
+
+      buttons.forEach(function(b){
+        b.classList.remove('is-picked');
+        var i = parseInt(b.getAttribute('data-i'), 10);
+        if (i === res.correctIndex) b.classList.add('is-right');
+        else if (i === chosenIdx) b.classList.add('is-wrong');
+      });
+
+      var q = STATE.questions[STATE.i];
+      var rightLtr = String.fromCharCode(65 + res.correctIndex);
+      var rightTxt = '<b>' + rightLtr + '. ' + esc(q.options[res.correctIndex] || '') + '</b>';
+      var verdict = res.correct
+        ? '<span style="color:var(--teal)">Correct — the answer is ' + rightTxt + '</span>'
+        : '<span style="color:var(--rose)">' +
+            (chosenIdx < 0
+              ? 'Time’s up — the answer is '
+              : 'Not quite. You chose ' + String.fromCharCode(65 + chosenIdx) + ' — the answer is ') +
+            rightTxt + '</span>';
+
+      document.getElementById('solutionSlot').innerHTML =
+        '<div class="solution">' +
+          '<span class="lbl">Solution</span>' +
+          '<div class="verdict">' + verdict + '</div>' +
+          (res.explanation
+            ? '<div class="body">' + esc(res.explanation) + '</div>'
+            : '<div class="body" style="color:var(--muted)">No written solution has been added for this question yet.</div>') +
+        '</div>';
+
+      submitBtn.hidden = true;
+      document.getElementById('qHint').textContent = 'Read the solution, then continue.';
+      showNext(timedOut);
+    }
+
+    // Reveal the Next button — the student advances when they're done reading.
+    function showNext(timedOut){
+      var nextBtn = document.getElementById('nextBtn');
+      nextBtn.hidden = false;
+      nextBtn.focus(); // move focus with the control that replaced Submit
+      var note = document.getElementById('lockedNote');
+      if (note) note.textContent = timedOut ? "Time's up — this one was auto-submitted." : '';
+    }
+
+    function advance(){
+      if (!STATE.answered) return; // never skip past an ungraded question
+      STATE.i++;
+      if (STATE.i < STATE.total) renderQuestion();
+      else finishTest();
     }
 
     async function finishTest(){
+      clearInterval(STATE.timerId); // point of no return — stop the clock for good
       center('Grading your test…');
       var res;
       try {
@@ -203,8 +329,13 @@
         return '<div class="review-row">' +
           '<div class="qt">' + (i + 1) + '. ' + esc(q.text) + '</div>' +
           '<div class="ans ' + (r.correct ? 'correct' : 'wrong') + '">' +
-            (r.correct ? '✓ Correct — ' + esc(yourAns) : '✗ Your answer: ' + esc(yourAns) + ' &middot; Correct: ' + esc(rightAns)) +
-          '</div></div>';
+            (r.correct
+              ? '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px"><path d="M20 6 9 17l-5-5"/></svg> Correct — ' + esc(yourAns)
+              : '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg> Your answer: ' + esc(yourAns) + ' &middot; Correct: ' + esc(rightAns)) +
+          '</div>' +
+          // repeat the worked solution here so the whole paper can be revised at once
+          (r.explanation ? '<div class="ans" style="margin-top:6px">' + esc(r.explanation) + '</div>' : '') +
+          '</div>';
       }).join('');
 
       host.innerHTML =
@@ -216,5 +347,14 @@
   </script>
   <script src="account-menu.js"></script>
   <script src="../theme.js"></script>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="auroraGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00A88F"/>
+      <stop offset="48%" stop-color="#3F5BE0"/>
+      <stop offset="100%" stop-color="#C99A2E"/>
+    </linearGradient>
+  </defs>
+</svg>
 </body>
 </html>

@@ -17,13 +17,25 @@ class ThemeManager {
     }
   }
 
+  // EduLearn is LIGHT ONLY. Dark mode is retired.
+  //
+  // The per-page html.dark-mode{} blocks (249 rules across 13 files) are left
+  // in place but can never match, because this class is never added and any
+  // stored 'dark' preference is cleared on load. That keeps the change small
+  // and fully reversible — restoring dark mode means restoring this one method,
+  // not re-authoring hundreds of rules.
+  //
+  // login.html and signup.html are the inverse: they are dark BY DEFAULT and
+  // opt in to light via html.light-mode, so they get that class forced on.
   applyStoredThemeSync() {
-    const savedTheme = localStorage.getItem(this.storageKey) || 'light';
-    if (savedTheme === 'dark') {
-      document.documentElement.classList.add(this.darkModeClass);
-    } else {
-      document.documentElement.classList.remove(this.darkModeClass);
-    }
+    const el = document.documentElement;
+    el.classList.remove(this.darkModeClass);
+    el.classList.add('light-mode');
+    try {
+      if (localStorage.getItem(this.storageKey) !== 'light') {
+        localStorage.setItem(this.storageKey, 'light');
+      }
+    } catch (e) { /* storage unavailable — light is already applied above */ }
   }
 
   setupThemeToggleButtons() {
@@ -38,25 +50,11 @@ class ThemeManager {
     });
   }
 
-  toggleTheme(button) {
-    const isDarkMode = document.documentElement.classList.contains(this.darkModeClass);
-    
-    if (isDarkMode) {
-      document.documentElement.classList.remove(this.darkModeClass);
-      localStorage.setItem(this.storageKey, 'light');
-    } else {
-      document.documentElement.classList.add(this.darkModeClass);
-      localStorage.setItem(this.storageKey, 'dark');
-    }
-
-    // Update all toggle buttons on the page
-    const allButtons = document.querySelectorAll('[data-theme-toggle]');
-    allButtons.forEach(btn => this.updateButtonIcon(btn));
-    
-    // Dispatch custom event for other components
-    window.dispatchEvent(new CustomEvent('theme-changed', {
-      detail: { isDarkMode: !isDarkMode }
-    }));
+  // No-op: the product is light only, so toggling is disabled. The toggle
+  // buttons are also hidden in vivid.css; this guards the case where one is
+  // still reachable (an old cached page, a toggle added later).
+  toggleTheme() {
+    this.applyStoredThemeSync();
   }
 
   updateButtonIcon(button) {

@@ -114,9 +114,9 @@
       document.querySelectorAll('a.btn-primary[href="login.html"]').forEach(function (el) {
         el.style.display = 'none';
       });
-      // Brand/logo defaults to index.html (the logged-out landing). Clicking it
-      // while logged in should go to the dashboard, not require re-login.
-      document.querySelectorAll('a.brand[href="index.html"]').forEach(function (el) {
+      // Brand/logo and "Home" links default to index.html (the logged-out
+      // landing). Clicking them while logged in should go to the dashboard.
+      document.querySelectorAll('a.brand[href="index.html"], a[href="index.html"]').forEach(function (el) {
         el.setAttribute('href', HOME);
       });
       // Hide nav links to pages this role may not open, so the menu only ever

@@ -10,7 +10,7 @@
 <meta name="description" content="EduLearn course browser. CBSE / NCERT + 20 state boards. Classes 6–9, five subjects, 9,000+ lessons. Made for Bharat.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&family=Fragment+Mono:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Nunito:wght@400;500;600;700;800;900&family=Fragment+Mono:ital@0;1&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
    EDULEARN · LEARN — design tokens
@@ -21,18 +21,18 @@
   --card:#FFFFFF;
   --card2:#F5F7FA;
   --line:rgba(0,0,0,.08);
-  --cream:#1A1F36;
-  --muted:#6B7280;
-  --teal:#3DE8C5;
-  --peri:#7C9BFF;
-  --amber:#FFB454;
-  --rose:#FF7AA2;
-  --aurora:linear-gradient(115deg,#3DE8C5 0%,#7C9BFF 48%,#FFB454 100%);
+  --cream:#1E293B;
+  --muted:#64748B;
+  --teal:#10B981;
+  --peri:#6366F1;
+  --amber:#F59E0B;
+  --rose:#F43F5E;
+  --aurora:linear-gradient(115deg,#10B981 0%,#6366F1 48%,#F59E0B 100%);
   --ease:cubic-bezier(.22,1,.36,1);
-  --c6:#3DE8C5;
-  --c7:#FFB454;
-  --c8:#7C9BFF;
-  --c9:#FF7AA2;
+  --c6:#10B981;
+  --c7:#F59E0B;
+  --c8:#6366F1;
+  --c9:#F43F5E;
   /* theme-aware helpers */
   --on-accent:#0B1224;            /* text placed on bright accent fills */
   --line-strong:rgba(15,23,42,.18);
@@ -64,7 +64,7 @@ html{scroll-behavior:smooth}
 body{
   background:var(--ink);
   color:var(--cream);
-  font-family:'Schibsted Grotesk',sans-serif;
+  font-family:'Nunito',sans-serif;
   font-size:16px;
   line-height:1.55;
   -webkit-font-smoothing:antialiased;
@@ -809,6 +809,7 @@ input{font-family:inherit;color:inherit}
 .nav .nav__theme:active{transform:scale(.95)}
 </style>
   <link rel="stylesheet" href="../theme.css">
+<link rel="stylesheet" href="../vivid.css">
 </head>
 <body>
 
@@ -848,9 +849,7 @@ input{font-family:inherit;color:inherit}
       </svg>
       <span class="brand__word">EduLearn</span>
     </a>
-    <div class="nav__links">
-      <a class="nav__link" href="index.html" data-i18n="nav_home">Home</a>
-      <a class="nav__link is-current" href="learn.html" data-i18n="nav_learn">Learn</a>
+    <div class="nav__links">      <a class="nav__link is-current" href="learn.html" data-i18n="nav_learn">Learn</a>
       <a class="nav__link" href="live.html" data-i18n="nav_live">Live</a>
       <a class="nav__link" href="challenge.html" data-i18n="nav_arena">Arena</a>
       <a class="nav__link" href="mocktest.html" data-i18n="nav_tests">Tests</a>
@@ -1224,7 +1223,7 @@ var ICONS = {
          '</svg>',
   hindi: '<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">' +
          '<path d="M3 4.5 h18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' +
-         '<text x="12" y="19" text-anchor="middle" font-size="15" font-weight="600" fill="currentColor" font-family="\'Schibsted Grotesk\',sans-serif">अ</text>' +
+         '<text x="12" y="19" text-anchor="middle" font-size="15" font-weight="600" fill="currentColor" font-family="\'Nunito\',sans-serif">अ</text>' +
          '</svg>',
   /* modality icons — tiny */
   video: '<svg width="13" height="13" viewBox="0 0 24 24" ' + STROKE + '>' +
