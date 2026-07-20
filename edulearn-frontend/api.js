@@ -40,13 +40,41 @@
   }
 
   try {
-    if (isLocalHost(location.hostname)) API_BASE = API_LOCAL;
-    else if (location.protocol === 'https:') API_BASE = '/backend-api';
+    // NOTE: a localhost page used to be auto-pointed at API_LOCAL here. That is
+    // deliberately GONE. The real content (49 uploaded videos, the live
+    // curriculum) lives on the deployed backend, while a fresh local database
+    // is empty — so auto-switching meant opening the app locally silently
+    // showed "no videos" and looked like data loss. Defaulting to the deployed
+    // backend means a local page shows real content with no setup.
+    //
+    // To work against a LOCAL backend, opt in explicitly:
+    //   localStorage.setItem('edulearn_api', 'http://localhost:4000')
+    //
+    // Serve the local frontend from http://localhost:8000 — the deployed
+    // backend's CORS allowlist contains that origin and no other localhost
+    // port, so any other port is blocked by the browser.
+    if (location.protocol === 'https:' && !isLocalHost(location.hostname)) {
+      // An https:// page calling http://65.2.183.7 is MIXED CONTENT and the
+      // browser blocks it silently, so the deployed site must go through the
+      // vercel.json rewrite that proxies /backend-api/* to EC2.
+      API_BASE = '/backend-api';
+    }
   } catch (e) { /* no location (non-browser context) — keep the default */ }
 
   try {
     var apiOverride = localStorage.getItem('edulearn_api');
-    if (apiOverride) API_BASE = apiOverride.replace(/\/+$/, '');
+    if (apiOverride) {
+      apiOverride = apiOverride.replace(/\/+$/, '');
+      // A plain-http override on an https page is mixed content — the browser
+      // blocks every request before it leaves, so honouring it can only break
+      // the site (classic case: a stale 'http://65.2.183.7' saved in
+      // localStorage long ago, silently poisoning the deployed site forever,
+      // since logout deliberately preserves this key). Ignore it and keep the
+      // working same-origin proxy instead.
+      var httpOnHttps =
+        location.protocol === 'https:' && apiOverride.indexOf('http://') === 0;
+      if (!httpOnHttps) API_BASE = apiOverride;
+    }
   } catch (e) { /* storage unavailable — keep whatever was resolved above */ }
 
   var TOKEN_KEY = 'edulearn_token';
