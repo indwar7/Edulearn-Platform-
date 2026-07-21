@@ -1507,7 +1507,17 @@ var LiveRT = (function(){
     }
     // Fresh connection per class.
     if (sock){ try { sock.disconnect(); } catch(e){} sock = null; }
-    sock = io(EduAPI.API_BASE, { auth: { token: EduAPI.getToken() }, transports: ['websocket','polling'] });
+    // When API_BASE is an absolute origin (localhost dev), connect straight to
+    // it. On the deployed https site API_BASE is the relative '/backend-api' —
+    // passing that to io() would be read as a NAMESPACE on the Vercel origin,
+    // not a URL. Connect same-origin instead: vercel.json proxies /socket.io/*
+    // to the backend. Vercel rewrites can't carry a WebSocket upgrade, so use
+    // long-polling there (the backend is pinned to one instance, so polling is
+    // safe); direct connections keep websocket-first.
+    var direct = EduAPI.API_BASE.indexOf('http') === 0;
+    sock = direct
+      ? io(EduAPI.API_BASE, { auth: { token: EduAPI.getToken() }, transports: ['websocket','polling'] })
+      : io({ auth: { token: EduAPI.getToken() }, transports: ['polling'] });
 
     sock.on('connect', function(){ sock.emit('join-session', { sessionId: sessionId }); });
     sock.on('connect_error', function(){ pushSys('Live chat unavailable (connection error).'); });

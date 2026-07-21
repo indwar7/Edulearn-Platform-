@@ -8,7 +8,12 @@
    Exposes window.EduLive.{connect, disconnect}.
    ============================================================ */
 (function (global) {
-  var API = (localStorage.getItem('edulearn_api') || '/backend-api');
+  // Prefer api.js's resolved base — it already handles the https→proxy switch
+  // and ignores stale plain-http overrides that the raw localStorage read here
+  // used to honour (breaking live video on the deployed site the same way the
+  // Arena broke).
+  var API = (global.EduAPI && global.EduAPI.API_BASE) ||
+    localStorage.getItem('edulearn_api') || '/backend-api';
   var room = null;
 
   function setStatus(msg) {
