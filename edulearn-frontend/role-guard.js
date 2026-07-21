@@ -24,7 +24,7 @@
 
   var TOKEN_KEY = 'edulearn_token';
   var USER_KEY = 'edulearn_user';
-  var LOGIN = 'login.html';
+  var LANDING = 'index.html'; // public landing — where logged-out visitors go
   var HOME = 'dashboard.html'; // every logged-in role's landing page
 
   // ---- session (read straight from localStorage, defensively) ----
@@ -92,8 +92,12 @@
   // ---------- 1. HARD GUARD (must run before body paints) ----------
   if (!isPublic) {
     if (!loggedIn) {
-      // Not signed in -> bounce to login. replace() so Back doesn't loop here.
-      location.replace(LOGIN);
+      // Not signed in -> show the LANDING page, not the bare login form. A
+      // shared deep link (e.g. challenge.html) used to dump first-time
+      // visitors straight onto login/signup with zero context about what
+      // EduLearn even is; the landing page introduces the product and its
+      // header carries the Login button. replace() so Back doesn't loop here.
+      location.replace(LANDING);
       return;
     }
     if (!roleAllows(role, page)) {
