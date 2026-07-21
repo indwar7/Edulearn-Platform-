@@ -736,6 +736,11 @@ footer .foot-cols li,
    swamp the column text sitting on top of it */
 .foot-word{ color:rgba(14,15,20,.05) !important; }
 
+
+/* ---------- signed-in user chip (shared) ---------- */
+.userchip__txt{ font-size:15px !important; font-weight:700 !important; color:#000 !important; }
+.userchip__out{ font-size:14px !important; font-weight:800 !important; }
+
 @media print{
   body{background-image:none;}
   .nav::after, nav:not([class])::after{display:none;}
