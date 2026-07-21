@@ -654,6 +654,48 @@ html.dark-mode .nav-theme-toggle{background:rgba(255,255,255,.05);border-color:r
    of the platform. Only widgets that exist nowhere else live here.
    ============================================================ */
 
+/* The streak / today chips sat at 10-13px mono beside a 15px user chip.
+   Matched up so the whole strip reads at one size. */
+.streak{ padding:9px 16px !important; border:2px solid #000 !important; border-radius:999px; }
+.streak b{ font-family:'Nunito',sans-serif !important; font-size:16px !important; font-weight:800 !important; }
+.streak span{ font-family:'Nunito',sans-serif !important; font-size:13.5px !important; font-weight:700 !important;
+  letter-spacing:.02em !important; text-transform:none !important; color:#000 !important; }
+.today-chip{ font-size:14px !important; padding:9px 16px !important; }
+.greet-date{ font-size:13.5px !important; font-weight:700 !important; letter-spacing:.06em !important; }
+
+/* ---------- signed-in user chip ----------
+   Hidden by default and revealed by bootAuth(), which sets an INLINE
+   display:flex once the user resolves. Inline beats the stylesheet, so the
+   reveal works; and because the JS only ever sets 'flex' (never 'none'), the
+   hidden default has to live here or the chip would render for logged-out
+   visitors before auth runs. */
+.userchip{
+  display:none;
+  align-items:center; gap:12px; margin-top:10px;
+  padding:8px 8px 8px 18px;
+  background:#fff; border:2px solid #000; border-radius:999px;
+  box-shadow:3px 3px 0 rgba(14,15,20,.12);
+}
+.userchip__txt{
+  font-family:'Nunito',sans-serif;
+  font-size:15px; font-weight:700; letter-spacing:0;
+  color:#000; white-space:nowrap;
+}
+.userchip__out{
+  border:2px solid #000; border-radius:999px;
+  background:linear-gradient(135deg,#B8860B,#C99A2E);
+  color:#1A1404; -webkit-text-fill-color:#1A1404;
+  padding:9px 20px; font-size:14px; font-weight:800;
+  cursor:pointer; box-shadow:2px 2px 0 #000;
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+.userchip__out:hover{ transform:translate(-1px,-1px); box-shadow:4px 4px 0 #000; }
+.userchip__out:active{ transform:translate(2px,2px); box-shadow:0 0 0 #000; }
+@media (max-width:640px){
+  .userchip{ flex-wrap:wrap; border-radius:18px; padding:12px 14px; }
+  .userchip__txt{ white-space:normal; font-size:14px; }
+}
+
 /* ---------- "studied today" chip (replaces the fake sync chip) ---------- */
 .today-chip{
   display:inline-flex;align-items:center;gap:8px;
@@ -760,53 +802,6 @@ html.dark-mode .nav-theme-toggle{background:rgba(255,255,255,.05);border-color:r
   background:var(--c7); color:#000 !important; box-shadow:3px 3px 0 #000;
 }
 
-/* ============================================================
-   LAYOUT — a real composition instead of stacked full-width rows
-   The page was three consecutive span-12 rows of near-identical
-   cards (6 tiles, then 5, then 4) running ~2400px with almost no
-   hierarchy. Sections are now grouped into .dsec wrappers so the
-   grid can put subjects and tools side by side.
-   ============================================================ */
-.dsec{ display:flex; flex-direction:column; gap:12px; min-width:0; }
-.dsec .feat-label{ margin:0; }
-/* the wrappers own their own internal grid now */
-.dsec .weekgrid, .dsec .subjmap, .dsec .feat-menu{ grid-column:auto; }
-
-/* ---- YOUR WEEK: slim strip ---- */
-.dsec--strip .weekgrid{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
-.dsec--strip .wtile{ padding:12px 14px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
-.dsec--strip .wtile::before{ height:6px; }
-.dsec--strip .wtile__ic{ width:32px; height:32px; margin:6px 0 0; border-radius:9px; }
-.dsec--strip .wtile__big{ font-size:26px; margin-top:4px; }
-.dsec--strip .wtile__unit{ margin:0; align-self:flex-end; padding-bottom:5px; }
-.dsec--strip .wtile__cap{ flex:1 0 100%; margin-top:2px; font-size:12.5px; line-height:1.35; }
-@media (max-width:900px){ .dsec--strip .weekgrid{ grid-template-columns:repeat(2,1fr); } }
-
-/* ---- MY SUBJECTS: 3-up inside the wide column ---- */
-.dsec .subjmap{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
-@media (max-width:1100px){ .dsec .subjmap{ grid-template-columns:repeat(2,1fr); } }
-@media (max-width:620px){ .dsec .subjmap{ grid-template-columns:1fr; } }
-.subjcard__dot{ height:40px; }
-
-/* ---- MY LEARNING: a compact list, not a third row of big tiles ---- */
-.dsec .feat-menu{ display:flex; flex-direction:column; gap:10px; }
-.dsec .feat-card{
-  flex-direction:row !important; align-items:center; gap:12px;
-  padding:12px 14px !important; border-radius:14px !important;
-}
-.dsec .feat-card .fc-ico{ width:38px; height:38px; flex:none; margin:0 !important; }
-.dsec .feat-card .fc-title{ font-size:14.5px !important; }
-.dsec .feat-card .fc-sub{ display:none; }   /* the label carries it at this size */
-@media (max-width:920px){
-  .dsec .feat-menu{ display:grid; grid-template-columns:repeat(2,1fr); }
-  .dsec .feat-card .fc-sub{ display:none; }
-}
-
-/* ---- stop tall cards holding almost nothing ---- */
-#view-student .card{ align-self:start; }
-.donut-grid{ padding-top:2px; }
-.shelf{ gap:14px; }
-
 /* weekly bar chart — one hue per weekday (see buildBars()) */
 .barchart .bar-h0{fill:var(--c1);}
 .barchart .bar-h1{fill:var(--c2);}
@@ -900,6 +895,10 @@ html.dark-mode .nav-theme-toggle{background:rgba(255,255,255,.05);border-color:r
 }
 .hcell.in{opacity:1;}
 .hcell--pad{background:transparent;outline:none;cursor:default;}
+/* days of the current month that haven't happened yet — visible so the month
+   keeps its full shape, but clearly not "rest days" */
+.hcell--future{background:transparent;outline:1px dashed rgba(27,31,35,.18);cursor:default;}
+.hcell--future:hover{outline:1px dashed rgba(27,31,35,.18);}
 /* four-step green ramp, GitHub's own scale */
 .hcell.l1{background:#9BE9A8;}
 .hcell.l2{background:#40C463;}
@@ -1025,9 +1024,14 @@ html.dark-mode .nav-theme-toggle{background:rgba(255,255,255,.05);border-color:r
       </div>
       <span class="role-note" data-i18n="role.note">One platform · three views</span>
       <!-- Shown once logged in: who you are + logout -->
-      <div id="userChip" style="display:none;align-items:center;gap:10px;margin-top:10px;padding:7px 8px 7px 14px;background:var(--card2);border:1px solid var(--line);border-radius:999px;">
-        <span id="userChipText" style="font-size:11px;color:var(--muted);font-family:'Fragment Mono',monospace;letter-spacing:.06em;"></span>
-        <button id="logoutBtn" style="border:none;background:var(--aurora);color:var(--on-accent);padding:6px 14px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.04em;cursor:pointer;transition:transform .2s var(--ease);" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">Logout</button>
+      <!-- Styling moved out of inline attributes into .userchip below so it
+           follows the same black-border / bold-black-text system as the rest of
+           the page. It was 11px monospace in --muted grey, the least readable
+           combination on the dashboard. NOTE: display is toggled from JS, so
+           the rule below must not hardcode a display value. -->
+      <div id="userChip" class="userchip">
+        <span id="userChipText" class="userchip__txt"></span>
+        <button id="logoutBtn" class="userchip__out" type="button">Log out</button>
       </div>
     </div>
   </header>
@@ -1056,50 +1060,39 @@ html.dark-mode .nav-theme-toggle{background:rgba(255,255,255,.05);border-color:r
                renders as a wall of giant zeros, which is the most
                discouraging thing a student can open the app to.
           ============================================================ -->
-          <div class="dsec dsec--strip span12 stag" style="--i:0">
-            <div class="feat-label stag" style="--i:0">Your week</div>
-            <div class="weekgrid stag" style="--i:0" id="weekGrid"></div>
-          </div>
+          <div class="feat-label stag" style="--i:0">My Learning</div>
+          <nav class="feat-menu stag" style="--i:0" aria-label="Student features">
+            <a class="feat-card" href="learn.html">
+              <span class="fc-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span><span class="fc-title">Learn</span>
+              <span class="fc-sub">Browse chapters & video lessons</span>
+            </a>
+            <a class="feat-card" href="videos.html">
+              <span class="fc-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M7 4l2 5M13 4l2 5"/></svg></span><span class="fc-title">Video Lectures</span>
+              <span class="fc-sub">Watch lectures for your class</span>
+            </a>
+            <a class="feat-card" href="mocktest.html">
+              <span class="fc-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span><span class="fc-title">Mock Tests</span>
+              <span class="fc-sub">Practice & track your scores</span>
+            </a>
+            <a class="feat-card" href="pal.html">
+              <span class="fc-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="8" width="16" height="12" rx="3"/><path d="M12 8V4M9 14h.01M15 14h.01"/><circle cx="12" cy="3" r="1"/></svg></span><span class="fc-title">PAL AI Tutor</span>
+              <span class="fc-sub">Ask doubts, get step-by-step help</span>
+            </a>
+            <a class="feat-card" href="challenge.html">
+              <span class="fc-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 14.5 20 20l-1 1-6-5.5"/><path d="M9.5 14.5 4 20l1 1 6-5.5"/><path d="M18 3h3v3l-8.5 8.5-3-3z"/><path d="M6 3H3v3l8.5 8.5"/></svg></span><span class="fc-title">Arena</span>
+              <span class="fc-sub">Challenges & leaderboards</span>
+            </a>
+            <a class="feat-card" href="live.html" id="liveClassCard">
+              <span class="fc-ico" id="liveClassIco"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m23 7-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></span><span class="fc-title" id="liveClassTitle">Join Live Class</span>
+              <span class="fc-sub" id="liveClassSub">Attend your scheduled classes</span>
+            </a>
+          </nav>
 
-          <!-- ============================================================
-               MAIN ROW — subjects are what a student actually navigates
-               by, so they get the wide column. The tool menu is a compact
-               list beside them instead of a third full-width card row.
-          ============================================================ -->
-          <div class="dsec span8 stag" style="--i:0">
-            <div class="feat-label stag" style="--i:0">My subjects</div>
-            <div class="subjmap stag" style="--i:0" id="subjMap"></div>
-          </div>
+          <div class="feat-label stag" style="--i:0">My subjects</div>
+          <div class="subjmap stag" style="--i:0" id="subjMap"></div>
 
-          <div class="dsec span4 stag" style="--i:0">
-            <div class="feat-label stag" style="--i:0">My Learning</div>
-            <nav class="feat-menu stag" style="--i:0" aria-label="Student features">
-              <a class="feat-card" href="learn.html">
-                <span class="fc-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span><span class="fc-title">Learn</span>
-                <span class="fc-sub">Browse chapters & video lessons</span>
-              </a>
-              <a class="feat-card" href="videos.html">
-                <span class="fc-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M7 4l2 5M13 4l2 5"/></svg></span><span class="fc-title">Video Lectures</span>
-                <span class="fc-sub">Watch lectures for your class</span>
-              </a>
-              <a class="feat-card" href="mocktest.html">
-                <span class="fc-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span><span class="fc-title">Mock Tests</span>
-                <span class="fc-sub">Practice & track your scores</span>
-              </a>
-              <a class="feat-card" href="pal.html">
-                <span class="fc-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="8" width="16" height="12" rx="3"/><path d="M12 8V4M9 14h.01M15 14h.01"/><circle cx="12" cy="3" r="1"/></svg></span><span class="fc-title">PAL AI Tutor</span>
-                <span class="fc-sub">Ask doubts, get step-by-step help</span>
-              </a>
-              <a class="feat-card" href="challenge.html">
-                <span class="fc-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 14.5 20 20l-1 1-6-5.5"/><path d="M9.5 14.5 4 20l1 1 6-5.5"/><path d="M18 3h3v3l-8.5 8.5-3-3z"/><path d="M6 3H3v3l8.5 8.5"/></svg></span><span class="fc-title">Arena</span>
-                <span class="fc-sub">Challenges & leaderboards</span>
-              </a>
-              <a class="feat-card" href="live.html" id="liveClassCard">
-                <span class="fc-ico" id="liveClassIco"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m23 7-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></span><span class="fc-title" id="liveClassTitle">Join Live Class</span>
-                <span class="fc-sub" id="liveClassSub">Attend your scheduled classes</span>
-              </a>
-            </nav>
-          </div>
+          <div class="feat-label stag" style="--i:0">Your week</div>
+          <div class="weekgrid stag" style="--i:0" id="weekGrid"></div>
 
           <!-- The PAL LEVEL chip was removed.
                It read STATE.pal.level, and nothing in the app ever writes
@@ -1139,7 +1132,7 @@ html.dark-mode .nav-theme-toggle{background:rgba(255,255,255,.05);border-color:r
           </div>
 
           <!-- (c) badge shelf -->
-          <div class="card span5 stag" style="--i:3">
+          <div class="card span12 stag" style="--i:3">
             <div class="card-head">
               <h3 class="card-title" data-i18n="s.badges">Badge shelf</h3>
               <span class="eyebrow" id="badgeCount">3 OF 6 EARNED</span>
@@ -1149,7 +1142,7 @@ html.dark-mode .nav-theme-toggle{background:rgba(255,255,255,.05);border-color:r
           </div>
 
           <!-- (d) AI recommends -->
-          <div class="card span7 stag" style="--i:4">
+          <div class="card span8 stag" style="--i:4">
             <div class="reco-head">
               <svg class="tokky" viewBox="0 0 80 92" aria-label="Tokky, your learning buddy">
                 <defs>
@@ -1191,11 +1184,12 @@ html.dark-mode .nav-theme-toggle{background:rgba(255,255,255,.05);border-color:r
             <div class="card-head" style="margin-bottom:12px;">
               <h3 class="card-title" style="font-size:18px;" data-i18n="rail.rhythm">Learning rhythm</h3>
             </div>
-            <p class="eyebrow" style="margin-bottom:4px;">LAST 8 WEEKS</p>
+            <!-- filled by buildHeatmap() with the current month + year -->
+            <p class="eyebrow" style="margin-bottom:4px;" id="hmMonth">THIS MONTH</p>
             <div class="heatmap" id="heatmap" aria-label="Calendar heatmap of daily learning"></div>
             <div class="hm-foot">
-              <!-- filled by buildHeatmap(); the heatmap always spans the last 8
-                   weeks, so this caption cannot be static markup -->
+              <!-- filled by buildHeatmap(); the heatmap spans the current
+                   calendar month, so this caption cannot be static markup -->
               <span class="mono" style="color:var(--muted)" id="hmRange"></span>
               <div class="hm-scale" aria-hidden="true">
                 <span class="mono" style="font-size:9px;color:var(--muted)">LESS</span>
@@ -2331,10 +2325,11 @@ function animateArea(){
 }
 
 /* ------------------------------------------------------------
-   RAIL — calendar heatmap (8 weeks) — driven by REAL activity.
+   RAIL — calendar heatmap (current month) — driven by REAL activity.
    HEAT_BY_DAY maps a "YYYY-MM-DD" key → minutes studied that day
-   (populated from backend insights.weekly). Days with no data show
-   as rest days, not fabricated activity.
+   (populated from backend insights.daily, with insights.weekly as the
+   older-server fallback). Days with no data show as rest days, not
+   fabricated activity.
 ------------------------------------------------------------ */
 var HEAT_BY_DAY = {};            // "2026-06-30" -> minutes (real)
 
@@ -2363,56 +2358,37 @@ function heatLevel(mins){
 }
 var HM_COLORS = ['rgba(61,232,197,.07)','rgba(61,232,197,.22)','rgba(61,232,197,.45)','rgba(61,232,197,.7)','#3DE8C5'];
 
-// GitHub-style contribution calendar.
+// GitHub-style contribution calendar, scoped to the CURRENT CALENDAR MONTH.
 //
-// The previous version laid 56 cells out with grid-auto-flow:column, which
-// filled columns in order but never aligned them to weekdays — so a row was
-// not "all the Mondays", it was just every 7th day. That is what made it read
-// as an arbitrary blob rather than a calendar. This version is weekday-aligned:
-// row = day of week (Sun..Sat), column = calendar week, with the leading days
-// of the first week padded out so the grid starts on the correct row, exactly
-// like GitHub's.
+// It used to span a rolling last-8-weeks window, which never lined up with
+// how a student thinks about their month ("how much did I study in July?")
+// and pushed today's cell to a different column every day. Now: row = day of
+// week (Sun..Sat), column = week of the month, leading days padded so the 1st
+// lands on its correct weekday row. Today is outlined; days of the month that
+// haven't happened yet render as dashed placeholders so the month keeps its
+// full shape without reading as rest days.
 function buildHeatmap(){
   var hm = $('#heatmap');
   var tip = $('#hmTip');
   if (!hm) return;
 
-  var total = 56;
+  var now = new Date();
+  var year = now.getFullYear(), month = now.getMonth();
+  var daysInMonth = new Date(year, month + 1, 0).getDate();
   var days = [];
-  for (var i = total - 1; i >= 0; i--) days.push(dayOffset(i));
+  for (var i = 1; i <= daysInMonth; i++) days.push(new Date(year, month, i));
   var first = days[0], last = days[days.length - 1];
 
-  // Pad so the first column starts on the right weekday row.
+  // Pad so the 1st starts on the right weekday row.
   var lead = first.getDay();               // 0 = Sunday
   var cells = [];
   for (var p = 0; p < lead; p++) cells.push(null);
   cells = cells.concat(days);
   var weeks = Math.ceil(cells.length / 7);
 
-  // ---- month labels ----
-  // A label is ~24px wide but a column is only 14px, so labels overflow to the
-  // right (as GitHub's do). Two months starting one column apart therefore
-  // collide into unreadable mush ("MAWUN"). Require MIN_GAP columns of clear
-  // space before printing the next label, and drop the one that would collide.
-  var MIN_GAP = 3;
-  var monthRow = '';
-  var seenMonth = -1, lastLabelCol = -99;
-  for (var w = 0; w < weeks; w++){
-    var lab = '';
-    for (var r = 0; r < 7; r++){
-      var dd = cells[w * 7 + r];
-      if (!dd) continue;
-      if (dd.getMonth() !== seenMonth){
-        if (w - lastLabelCol >= MIN_GAP){
-          lab = MON_SHORT[dd.getMonth()];
-          lastLabelCol = w;
-        }
-        seenMonth = dd.getMonth();
-      }
-      break;                       // only the first real day of a column decides
-    }
-    monthRow += '<span class="hm-mon">' + lab + '</span>';
-  }
+  // ---- month title (the eyebrow doubles as the calendar's header) ----
+  var monthEl = document.getElementById('hmMonth');
+  if (monthEl) monthEl.textContent = MON_TITLE[month].toUpperCase() + ' ' + year;
 
   // ---- day-of-week labels: Mon / Wed / Fri, as GitHub does ----
   var dowRow = '';
@@ -2426,12 +2402,18 @@ function buildHeatmap(){
     for (var r2 = 0; r2 < 7; r2++){
       var d = cells[w2 * 7 + r2];
       if (!d){ grid += '<span class="hcell hcell--pad" aria-hidden="true"></span>'; continue; }
+      var isToday = d.getDate() === now.getDate();
+      var isFuture = d.getDate() > now.getDate();
+      if (isFuture){
+        // No tooltip, hidden from assistive tech — there is nothing to report.
+        grid += '<span class="hcell hcell--future in" aria-hidden="true"></span>';
+        continue;
+      }
       var minsVal = HEAT_BY_DAY[dayKeyUTC(d)] || 0;
       var lvl = heatLevel(minsVal);
-      var isToday = (w2 * 7 + r2) === cells.length - 1;
       var label = (minsVal === 0 ? 'No learning' : minsVal + ' min') + ' on ' +
         DAY_TIP[d.getDay()] + ' ' + d.getDate() + ' ' + MON_SHORT[d.getMonth()];
-      // role+aria-label so all 56 values are reachable by assistive tech —
+      // role+aria-label so every day's value is reachable by assistive tech —
       // the tooltip alone is mouseenter-only and invisible to keyboard/touch.
       grid += '<span class="hcell l' + lvl + (isToday ? ' is-today' : '') +
         '" role="img" aria-label="' + escapeHtml(label) + '" data-tip="' +
@@ -2441,20 +2423,18 @@ function buildHeatmap(){
   }
 
   hm.innerHTML =
-    '<div class="hm-months">' + monthRow + '</div>' +
     '<div class="hm-body"><div class="hm-dows">' + dowRow + '</div>' +
     '<div class="hm-grid">' + grid + '</div></div>';
 
-  // The caption used to be the static string "APR — JUN" while the grid always
-  // spans the last 8 weeks, so it had been wrong since about the day it was typed.
+  // e.g. "1 JUL — 21 JUL · TODAY" — the range covered so far this month.
   var rangeEl = document.getElementById('hmRange');
-  if (rangeEl && first && last){
-    rangeEl.textContent = first.getDate() + ' ' + MON_SHORT[first.getMonth()] +
-      ' — ' + last.getDate() + ' ' + MON_SHORT[last.getMonth()];
+  if (rangeEl){
+    rangeEl.textContent = '1 ' + MON_SHORT[month] + ' — ' +
+      now.getDate() + ' ' + MON_SHORT[month] + ' · TODAY';
   }
 
   $$('.hcell', hm).forEach(function(cell){
-    if (cell.classList.contains('hcell--pad')) return;
+    if (cell.classList.contains('hcell--pad') || cell.classList.contains('hcell--future')) return;
     cell.addEventListener('mouseenter', function(){
       var r = cell.getBoundingClientRect();
       tip.textContent = cell.getAttribute('data-tip');
