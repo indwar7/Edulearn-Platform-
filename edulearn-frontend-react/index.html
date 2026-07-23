@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EduLearn · Learn Smart, Score Better</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Nunito:wght@400;500;600;700;800;900&family=Fragment+Mono:ital@0;1&display=swap" rel="stylesheet" />
+
+    <!--
+      Stylesheet order is load-bearing. It mirrors the static site exactly:
+
+        theme.css  ->  the active page's own CSS  ->  vivid.css
+
+      vivid.css is last so its platform-wide overrides win by source order,
+      which is how it was authored. #page-css is the swap slot: each route
+      writes its lifted stylesheet there via usePageCss(). Do not reorder,
+      and do not import global CSS from JS — Vite would append it after
+      vivid.css and quietly outrank the theme.
+    -->
+    <link rel="stylesheet" href="/theme.css" />
+    <style id="page-css"></style>
+    <link rel="stylesheet" href="/vivid.css" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+
+    <!--
+      Shared page scripts, carried over from the static site where every page
+      loaded them. Both are self-contained DOM scripts that append themselves
+      to <body> once, so they survive client-side route changes the same way
+      they existed on every page before. The .html links features-panel.js
+      builds are translated by useLegacyLinks().
+    -->
+    <script defer src="/theme.js"></script>
+    <script defer src="/features-panel.js"></script>
+  </body>
+</html>

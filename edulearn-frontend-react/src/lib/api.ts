@@ -1,0 +1,336 @@
+const API_DEFAULT = 'http://65.2.183.7';
+const TOKEN_KEY = 'edulearn_token';
+const USER_KEY = 'edulearn_user';
+
+function resolveApiBase(): string {
+  let base = API_DEFAULT;
+
+  try {
+    if (location.protocol === 'https:' && !isLocalHost(location.hostname)) {
+      base = '/backend-api';
+    }
+  } catch { /* non-browser */ }
+
+  try {
+    const override = localStorage.getItem('edulearn_api');
+    if (override) {
+      const clean = override.replace(/\/+$/, '');
+      const httpOnHttps = location.protocol === 'https:' && clean.startsWith('http://');
+      if (!httpOnHttps) base = clean;
+    }
+  } catch { /* storage unavailable */ }
+
+  return base;
+}
+
+function isLocalHost(h: string) {
+  return h === 'localhost' || h === '127.0.0.1' || h === '[::1]' || h === '::1';
+}
+
+export const API_BASE = resolveApiBase();
+
+export interface User {
+  _id: string;
+  name: string;
+  email: string;
+  role: 'student' | 'teacher' | 'parent' | 'admin';
+  className?: string;
+  section?: string;
+  board?: string;
+  rollNumber?: string;
+  teacherId?: string;
+  phone?: string;
+  childRollNumber?: string;
+  childName?: string;
+  childClass?: string;
+  preferences?: {
+    language?: string;
+    theme?: string;
+    emailNotifications?: boolean;
+  };
+}
+
+export function getToken(): string {
+  return localStorage.getItem(TOKEN_KEY) || '';
+}
+
+export function getUser(): User | null {
+  try {
+    return JSON.parse(localStorage.getItem(USER_KEY) || 'null');
+  } catch {
+    return null;
+  }
+}
+
+function setSession(token: string, user: User) {
+  clearUserDataKeys();
+  if (token) localStorage.setItem(TOKEN_KEY, token);
+  if (user) localStorage.setItem(USER_KEY, JSON.stringify(user));
+}
+
+function clearUserDataKeys() {
+  const USER_DATA_KEYS = [
+    'edulearn_pal_chats', 'edulearn_live', 'edutok_state',
+    'edulearn_mock', 'edulearn_arena', 'edulearn_state',
+  ];
+  const doomed: string[] = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (!k) continue;
+    if (USER_DATA_KEYS.includes(k) || k.startsWith('edulearn_pal_chats_')) {
+      doomed.push(k);
+    }
+  }
+  doomed.forEach(k => localStorage.removeItem(k));
+}
+
+export function clearSession() {
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(USER_KEY);
+  clearUserDataKeys();
+}
+
+let refreshPromise: Promise<string | null> | null = null;
+
+function refreshAccessToken(): Promise<string | null> {
+  if (!refreshPromise) {
+    refreshPromise = fetch(API_BASE + '/api/auth/refresh', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+    })
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        const token = data?.accessToken;
+        if (token) localStorage.setItem(TOKEN_KEY, token);
+        return token || null;
+      })
+      .catch(() => null)
+      .finally(() => { refreshPromise = null; });
+  }
+  return refreshPromise;
+}
+
+function isAuthPath(path: string) {
+  return path.startsWith('/api/auth/');
+}
+
+export interface ApiError extends Error {
+  status: number;
+  code?: string;
+  userId?: string;
+  email?: string;
+  phone?: string;
+  emailVerified?: boolean;
+  phoneVerified?: boolean;
+}
+
+async function request<T = any>(
+  path: string,
+  options: { method?: string; body?: any; headers?: Record<string, string> } = {},
+  isRetry = false
+): Promise<T> {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...options.headers,
+  };
+  const token = getToken();
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+
+  let res: Response;
+  try {
+    res = await fetch(API_BASE + path, {
+      method: options.method || 'GET',
+      headers,
+      credentials: 'include',
+      body: options.body ? JSON.stringify(options.body) : undefined,
+    });
+  } catch {
+    throw new Error(
+      `Could not reach ${API_BASE}. It may be down, or the browser may have blocked the response (CORS).`
+    );
+  }
+
+  if (res.status === 401 && !isRetry && token && !isAuthPath(path)) {
+    const fresh = await refreshAccessToken();
+    if (fresh) return request(path, options, true);
+  }
+
+  let data: any = {};
+  try { data = await res.json(); } catch { data = {}; }
+
+  if (!res.ok) {
+    const err = new Error(data.error || `Request failed (${res.status})`) as ApiError;
+    err.status = res.status;
+    err.code = data.code;
+    err.userId = data.userId;
+    err.email = data.email;
+    err.phone = data.phone;
+    err.emailVerified = data.emailVerified;
+    err.phoneVerified = data.phoneVerified;
+    throw err;
+  }
+  return data;
+}
+
+// Auth
+export async function login(email: string, password: string, role: string) {
+  const data = await request<{ accessToken: string; user: User }>('/api/auth/login', {
+    method: 'POST', body: { email, password, role },
+  });
+  setSession(data.accessToken, data.user);
+  return data.user;
+}
+
+export async function signup(role: string, fields: Record<string, any>) {
+  const data = await request<{ accessToken: string; user: User }>(`/api/auth/signup/${role}`, {
+    method: 'POST', body: fields,
+  });
+  setSession(data.accessToken, data.user);
+  return data.user;
+}
+
+export async function relinkChild(childRollNumber: string, childName: string, childClass: string) {
+  const data = await request<{ user: User }>('/api/auth/relink-child', {
+    method: 'POST', body: { childRollNumber, childName, childClass },
+  });
+  if (data.user) localStorage.setItem(USER_KEY, JSON.stringify(data.user));
+  return data.user;
+}
+
+export function logout() {
+  request('/api/auth/logout', { method: 'POST' }).catch(() => {});
+  clearSession();
+}
+
+// OTP
+export function sendOtp(channel: string, emailOrPhone?: string, userId?: string) {
+  const body: any = { channel };
+  if (userId) body.userId = userId;
+  else if (emailOrPhone) body.email = emailOrPhone;
+  return request('/api/auth/send-otp', { method: 'POST', body });
+}
+
+export function verifyOtp(channel: string, code: string, emailOrPhone?: string, userId?: string) {
+  const body: any = { channel, code };
+  if (userId) body.userId = userId;
+  else if (emailOrPhone) body.email = emailOrPhone;
+  return request('/api/auth/verify-otp', { method: 'POST', body });
+}
+
+// Dashboard & Progress
+export function getDashboard() { return request('/api/dashboard'); }
+export async function getProgress() {
+  const data = await request<{ progress: any }>('/api/progress');
+  return data?.progress || null;
+}
+export async function saveProgress(fields: any) {
+  const data = await request<{ progress: any }>('/api/progress', { method: 'PUT', body: fields });
+  return data?.progress || null;
+}
+
+// Profile
+export function me() { return request('/api/auth/me'); }
+export function getProfile() { return request('/api/users/me'); }
+export async function updateProfile(fields: any) {
+  const data = await request<{ user: User }>('/api/users/me/profile', { method: 'PUT', body: fields });
+  if (data.user) localStorage.setItem(USER_KEY, JSON.stringify(data.user));
+  return data.user;
+}
+
+// Live classes
+export async function listLive() {
+  const data = await request<{ sessions: any[] }>('/api/live');
+  return data.sessions || [];
+}
+export async function createLive(fields: any) {
+  const data = await request<{ session: any }>('/api/live', { method: 'POST', body: fields });
+  return data.session;
+}
+export function joinLive(id: string) {
+  return request(`/api/live/${id}/join`, { method: 'POST' });
+}
+export function joinLiveByCode(code: string) {
+  return request('/api/live/join-by-code', { method: 'POST', body: { code } });
+}
+export function endLive(id: string) {
+  return request(`/api/live/${id}/end`, { method: 'POST' });
+}
+export function liveRoster(id: string) {
+  return request(`/api/live/${id}/roster`);
+}
+
+// Videos
+export async function listVideos(filters: Record<string, string> = {}) {
+  const qs = Object.entries(filters)
+    .filter(([, v]) => v)
+    .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+    .join('&');
+  const data = await request<{ videos: any[] }>('/api/videos' + (qs ? '?' + qs : ''));
+  return data.videos || [];
+}
+export function recordVideoView(id: string) {
+  request(`/api/videos/${id}/view`, { method: 'POST' }).catch(() => {});
+}
+
+// Live reports
+export async function submitLiveReport(report: any) {
+  try {
+    const data = await request<{ report: any }>('/api/live/reports', { method: 'POST', body: report });
+    return data?.report || null;
+  } catch { return null; }
+}
+export async function listLiveReports(childId?: string) {
+  try {
+    const qs = childId ? `?childId=${encodeURIComponent(childId)}` : '';
+    const data = await request<{ reports: any[] }>('/api/live/reports' + qs);
+    return data?.reports || [];
+  } catch { return []; }
+}
+
+// PAL AI
+export function listPalSessions() { return request('/api/pal/sessions'); }
+export function getPalSession(id: string) { return request(`/api/pal/sessions/${id}`); }
+export function chatPal(message: string, sessionId?: string) {
+  const body: any = { message };
+  if (sessionId) body.sessionId = sessionId;
+  return request('/api/pal/chat', { method: 'POST', body });
+}
+export function renamePalSession(id: string, title: string) {
+  return request(`/api/pal/sessions/${id}`, { method: 'PATCH', body: { title } });
+}
+export function deletePalSession(id: string) {
+  return request(`/api/pal/sessions/${id}`, { method: 'DELETE' });
+}
+
+// Assessments - Mock tests
+export function startMockTest(subject: string, chapterSlug?: string, count?: number) {
+  const body: any = { subject };
+  if (chapterSlug) body.chapterSlug = chapterSlug;
+  if (count) body.count = count;
+  return request('/api/assessments/mock/start', { method: 'POST', body });
+}
+export function answerMockQuestion(attemptId: string, index: number, chosenIndex: number) {
+  return request(`/api/assessments/mock/${attemptId}/answer`, {
+    method: 'POST', body: { index, chosenIndex },
+  });
+}
+export function submitMockTest(attemptId: string, answers: any[]) {
+  return request(`/api/assessments/mock/${attemptId}/submit`, { method: 'POST', body: { answers } });
+}
+export function recordMockAttempt(fields: any) {
+  return request('/api/assessments/mock/record', { method: 'POST', body: fields });
+}
+export function getMockHistory() { return request('/api/assessments/mock/history'); }
+export function createQuestion(fields: any) {
+  return request('/api/assessments/questions', { method: 'POST', body: fields });
+}
+
+// Assessments - Arena / Challenge
+export function getChallenge() { return request('/api/assessments/challenge'); }
+export function answerChallenge(questionId: string, chosenIndex: number, msTaken: number) {
+  return request('/api/assessments/challenge/answer', {
+    method: 'POST', body: { questionId, chosenIndex, msTaken },
+  });
+}
+export function getChallengeLeaderboard() { return request('/api/assessments/challenge/leaderboard'); }
