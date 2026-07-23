@@ -4,6 +4,8 @@ import AccountMenu from './components/AccountMenu';
 import AuroraDefs from './components/AuroraDefs';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useLegacyLinks } from './lib/useLegacyLinks';
+import { usePageChrome } from './lib/usePageChrome';
+import { pageFromPath } from './lib/pages';
 
 import Landing from './pages/Landing';
 import Login from './pages/Login';
@@ -36,6 +38,9 @@ export default function App() {
   // The ported markup still links to "learn.html" etc., exactly as the static
   // pages did; this turns those into in-app navigations.
   useLegacyLinks();
+
+  // Only load the shared assets this route's original page loaded.
+  usePageChrome(pageFromPath(pathname));
 
   return (
     <>

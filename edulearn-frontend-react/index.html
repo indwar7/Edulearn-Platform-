@@ -21,9 +21,12 @@
       and do not import global CSS from JS — Vite would append it after
       vivid.css and quietly outrank the theme.
     -->
-    <link rel="stylesheet" href="/theme.css" />
+    <link id="theme-css" rel="stylesheet" href="/theme.css" />
     <style id="page-css"></style>
     <link rel="stylesheet" href="/vivid.css" />
+
+    <!-- Per-route chrome corrections; see usePageChrome(). Last so it wins. -->
+    <style id="chrome-css"></style>
   </head>
   <body>
     <div id="root"></div>

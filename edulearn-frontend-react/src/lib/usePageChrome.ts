@@ -1,0 +1,45 @@
+import { useLayoutEffect } from 'react';
+
+/**
+ * Match each route to the shared assets its static page actually loaded.
+ *
+ * The 15 pages were not uniform about this, and the differences are visible:
+ *
+ *   vivid.css        all 15   (loaded globally in index.html)
+ *   theme.css         9/15    forces html/body colour with !important
+ *   features-panel.js 10/15   fixed right-hand panel; its off-screen shadow
+ *                             darkens the right edge even while closed
+ *   theme.js         13/15    only forces light mode, and login/signup do the
+ *                             same thing inline, so it stays global
+ *
+ * Loading all of them everywhere is what made /login render 6.8% different
+ * from login.html — it gained a feature panel the original never had.
+ */
+
+/** Pages whose <head> linked ../theme.css. */
+const THEME_CSS = new Set([
+  'index', 'dashboard', 'learn', 'lesson', 'videos', 'mocktest', 'challenge', 'pal', 'live',
+]);
+
+/** Pages that loaded ../features-panel.js. */
+const FEATURES_PANEL = new Set([
+  'index', 'dashboard', 'learn', 'lesson', 'mocktest', 'create-test',
+  'challenge', 'pal', 'live', 'signup',
+]);
+
+/**
+ * features-panel.js appends itself to <body> once and cannot be unloaded, so
+ * on the pages that never had it the elements are hidden instead. display:none
+ * also removes the panel's shadow, which is the part that actually shows.
+ */
+const HIDE_PANEL_CSS = '#efp-btn, #efp-ov, #efp { display: none !important; }';
+
+export function usePageChrome(page: string): void {
+  useLayoutEffect(() => {
+    const themeLink = document.getElementById('theme-css') as HTMLLinkElement | null;
+    if (themeLink) themeLink.disabled = !THEME_CSS.has(page);
+
+    const slot = document.getElementById('chrome-css');
+    if (slot) slot.textContent = FEATURES_PANEL.has(page) ? '' : HIDE_PANEL_CSS;
+  }, [page]);
+}

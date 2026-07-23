@@ -22,5 +22,10 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"]
+  "include": ["src"],
+
+  // src/pages/legacy holds the previous Tailwind rewrite, kept only as a
+  // reference while each page's behaviour is ported onto the real markup.
+  // Nothing imports it, so it is excluded rather than repaired.
+  "exclude": ["src/pages/legacy"]
 }

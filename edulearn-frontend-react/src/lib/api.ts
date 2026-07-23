@@ -6,7 +6,14 @@ function resolveApiBase(): string {
   let base = API_DEFAULT;
 
   try {
-    if (location.protocol === 'https:' && !isLocalHost(location.hostname)) {
+    // Dev: go through Vite's proxy (see vite.config.ts) so calls are
+    // same-origin. Hitting the deployed API directly from :5173 would be
+    // blocked — production CORS deliberately allows only :8000 and the Vercel
+    // origin — and a blocked response surfaces as a misleading "Failed to
+    // fetch" rather than an explicit CORS error.
+    if (isLocalHost(location.hostname)) return '';
+
+    if (location.protocol === 'https:') {
       base = '/backend-api';
     }
   } catch { /* non-browser */ }
