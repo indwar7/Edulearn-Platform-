@@ -8,7 +8,9 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Nunito:wght@400;500;600;700;800;900&family=Fragment+Mono:ital@0;1&display=swap" rel="stylesheet" />
+    <!-- Swapped per route by usePageChrome(); see src/lib/pageFonts.ts.
+         The pages do not all request the same Fraunces weights. -->
+    <link id="page-fonts" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Nunito:wght@400;500;600;700;800;900&family=Fragment+Mono:ital@0;1&display=swap" rel="stylesheet" />
 
     <!--
       Stylesheet order is load-bearing. It mirrors the static site exactly:

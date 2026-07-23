@@ -1,4 +1,5 @@
 import { useLayoutEffect } from 'react';
+import { PAGE_FONTS } from './pageFonts';
 
 /**
  * Match each route to the shared assets its static page actually loaded.
@@ -50,6 +51,12 @@ const HIDE_ACCOUNT_CSS = '.acct-fab, .acct-overlay, .acct-panel { display: none 
 
 export function usePageChrome(page: string): void {
   useLayoutEffect(() => {
+    const fontLink = document.getElementById('page-fonts') as HTMLLinkElement | null;
+    const fonts = PAGE_FONTS[page];
+    if (fontLink && fonts && fontLink.getAttribute('href') !== fonts) {
+      fontLink.setAttribute('href', fonts);
+    }
+
     const themeLink = document.getElementById('theme-css') as HTMLLinkElement | null;
     if (themeLink) themeLink.disabled = !THEME_CSS.has(page);
 

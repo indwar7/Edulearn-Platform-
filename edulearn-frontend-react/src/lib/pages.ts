@@ -46,22 +46,20 @@ export function routeForHtmlHref(rawHref: string, base: string = window.location
   if (!route) return null;
 
   // lesson.html?ch=c6-sci-food carried its target in the query string; the SPA
-  // takes it as a path param instead. Same for take-test.html?attempt=...
+  // takes it as a path param instead. take-test.html keeps its query string
+  // (?subject=&chapter=&count=...), which is passed through untouched.
   let to = route;
   if (page === 'lesson') {
     const chapter = url.searchParams.get('ch') || url.searchParams.get('chapter');
     if (chapter) return `/lesson/${encodeURIComponent(chapter)}${url.hash}`;
-  } else if (page === 'take-test') {
-    const attempt = url.searchParams.get('attempt') || url.searchParams.get('id');
-    if (attempt) return `/take-test/${encodeURIComponent(attempt)}${url.hash}`;
   }
   if (url.search) to += url.search;
   return to + url.hash;
 }
 
 /**
- * Which page a path belongs to. Routes with params (/lesson/:chapterId,
- * /take-test/:attemptId) match on their first segment.
+ * Which page a path belongs to. /lesson/:chapterId matches on its first
+ * segment.
  */
 export function pageFromPath(pathname: string): string {
   if (pathname === '/') return 'index';

@@ -8,10 +8,12 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "sync:css": "node scripts/extract-page-css.mjs"
+    "sync:css": "node scripts/extract-page-css.mjs",
+    "sync:markup": "node scripts/gen-markup.mjs",
+    "sync:js": "node scripts/extract-page-js.mjs",
+    "sync:pages": "node scripts/gen-pages.mjs"
   },
   "dependencies": {
-    "lucide-react": "^1.25.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-router-dom": "^7.18.1"

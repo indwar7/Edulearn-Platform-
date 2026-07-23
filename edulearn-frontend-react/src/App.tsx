@@ -71,7 +71,7 @@ export default function App() {
         <Route path="/live" element={<ProtectedRoute page="live"><Live /></ProtectedRoute>} />
 
         {/* Unguarded, matching the originals — each self-gates where needed. */}
-        <Route path="/take-test/:attemptId" element={<TakeTest />} />
+        <Route path="/take-test" element={<TakeTest />} />
         <Route path="/create-test" element={<CreateTest />} />
         <Route path="/videos" element={<Videos />} />
         <Route path="/upload" element={<Upload />} />

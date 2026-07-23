@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth, roleAllows } from '../context/AuthContext';
 import { ROUTE_BY_PAGE } from '../lib/pages';
 
@@ -32,11 +32,36 @@ const NAV_LINKS: { page: string; label: string; i18n: string }[] = [
  */
 const GUARDED = new Set(['dashboard', 'learn', 'lesson', 'mocktest', 'challenge', 'pal', 'live']);
 
+/**
+ * Which nav item each page marked `is-current`.
+ *
+ * Six pages are not themselves in the nav and highlighted their parent
+ * section instead — a lesson is part of Learn, creating a test is part of
+ * Tests, and the teacher tools sit under Dashboard. Deriving this from the
+ * route alone leaves those pages with no highlight at all, which is what the
+ * pixel diff caught on upload, admin, videos, lesson and create-test.
+ */
+const CURRENT_NAV: Record<string, string> = {
+  dashboard: 'dashboard',
+  learn: 'learn',
+  lesson: 'learn',
+  videos: 'learn',
+  mocktest: 'mocktest',
+  'take-test': 'mocktest',
+  'create-test': 'mocktest',
+  challenge: 'challenge',
+  pal: 'pal',
+  live: 'live',
+  upload: 'dashboard',
+  admin: 'dashboard',
+  // index deliberately absent: the landing page highlights nothing.
+};
+
 export default function Navbar({ page }: { page: string }) {
   const { loggedIn, role } = useAuth();
-  const { pathname } = useLocation();
 
   const guarded = GUARDED.has(page);
+  const currentNav = CURRENT_NAV[page];
   // role-guard.js rewrote the brand href to the dashboard once signed in, so
   // clicking it never bounces an authenticated user out to the landing page.
   const brandHref = loggedIn && guarded ? '/dashboard' : '/';
@@ -64,7 +89,7 @@ export default function Navbar({ page }: { page: string }) {
               return (
                 <Link
                   key={l.page}
-                  className={`nav__link${pathname === to ? ' is-current' : ''}`}
+                  className={`nav__link${l.page === currentNav ? ' is-current' : ''}`}
                   to={to}
                   data-i18n={l.i18n}
                 >

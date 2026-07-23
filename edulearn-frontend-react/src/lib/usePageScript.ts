@@ -16,11 +16,11 @@ export type PageScript = (env: ReturnType<typeof createPageEnv>) => void;
  * should leave that page's static content on screen, not blank the whole app
  * via an unhandled render error.
  */
-export function usePageScript(script: PageScript): void {
+export function usePageScript(script: PageScript, searchOverride?: string): void {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const env = createPageEnv(navigate);
+    const env = createPageEnv(navigate, searchOverride);
     try {
       script(env);
       env.flushReady();
@@ -28,5 +28,5 @@ export function usePageScript(script: PageScript): void {
       console.error('[edulearn] page script failed:', err);
     }
     return () => env.dispose();
-  }, [script, navigate]);
+  }, [script, navigate, searchOverride]);
 }

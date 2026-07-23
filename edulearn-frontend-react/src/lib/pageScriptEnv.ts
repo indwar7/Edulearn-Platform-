@@ -45,7 +45,13 @@ interface PageLocation {
 
 type Navigate = (to: string, opts?: { replace?: boolean }) => void;
 
-export function createPageEnv(navigate: Navigate): PageEnv {
+/**
+ * @param searchOverride query string a param route must present to its script.
+ *   lesson.html read its chapter from `?ch=`, and take-test.html its attempt
+ *   from `?attempt=`; the SPA carries both as path params, so window.location
+ *   .search is empty and the script would fall back to a generic title.
+ */
+export function createPageEnv(navigate: Navigate, searchOverride?: string): PageEnv {
   const cleanups: Array<() => void> = [];
   const ready: Array<() => void> = [];
 
@@ -58,10 +64,14 @@ export function createPageEnv(navigate: Navigate): PageEnv {
   }
 
   const location: PageLocation = {
-    get href() { return window.location.href; },
+    get href() {
+      const u = new URL(window.location.href);
+      if (searchOverride !== undefined) u.search = searchOverride;
+      return u.toString();
+    },
     set href(v: string) { go(v, false); },
     get pathname() { return window.location.pathname; },
-    get search() { return window.location.search; },
+    get search() { return searchOverride !== undefined ? searchOverride : window.location.search; },
     get hash() { return window.location.hash; },
     get origin() { return window.location.origin; },
     get host() { return window.location.host; },
@@ -70,7 +80,7 @@ export function createPageEnv(navigate: Navigate): PageEnv {
     assign: (url: string) => go(url, false),
     replace: (url: string) => go(url, true),
     reload: () => window.location.reload(),
-    toString: () => window.location.href,
+    toString() { return this.href; },
   };
 
   /**
@@ -81,6 +91,11 @@ export function createPageEnv(navigate: Navigate): PageEnv {
   function wrap<T extends EventTarget>(target: T): T {
     return new Proxy(target, {
       get(t, prop, receiver) {
+        // Scripts reach for `window.location` and `document.location` as often
+        // as the bare global, and those must resolve to the shim too —
+        // otherwise a param route's synthesized query string is invisible and
+        // a ".html" assignment escapes the router.
+        if (prop === 'location') return location;
         if (prop === 'addEventListener') {
           return (type: string, fn: EventListenerOrEventListenerObject, opts?: unknown) => {
             if (type === 'DOMContentLoaded' || type === 'load') {
