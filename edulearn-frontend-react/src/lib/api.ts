@@ -75,10 +75,25 @@ export function getUser(): User | null {
   }
 }
 
+/**
+ * Announce that the stored session changed, so AuthProvider re-reads it.
+ *
+ * The lifted page scripts call these module functions directly — login.js does
+ * `EduAPI.login(...)` — not AuthContext's wrappers. Without this, React state
+ * keeps whatever it read at mount, and a user who just logged in is still
+ * `loggedIn: false` to ProtectedRoute, which bounces them straight back out.
+ */
+function announceSession() {
+  window.dispatchEvent(new Event(SESSION_EVENT));
+}
+
+export const SESSION_EVENT = 'edulearn:session';
+
 function setSession(token: string, user: User) {
   clearUserDataKeys();
   if (token) localStorage.setItem(TOKEN_KEY, token);
   if (user) localStorage.setItem(USER_KEY, JSON.stringify(user));
+  announceSession();
 }
 
 function clearUserDataKeys() {
@@ -101,6 +116,7 @@ export function clearSession() {
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(USER_KEY);
   clearUserDataKeys();
+  announceSession();
 }
 
 let refreshPromise: Promise<string | null> | null = null;

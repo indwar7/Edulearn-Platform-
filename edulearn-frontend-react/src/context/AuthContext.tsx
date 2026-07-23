@@ -1,5 +1,5 @@
-import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
-import { getUser, getToken, login as apiLogin, signup as apiSignup, logout as apiLogout, type User } from '../lib/api';
+import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
+import { getUser, getToken, login as apiLogin, signup as apiSignup, logout as apiLogout, SESSION_EVENT, type User } from '../lib/api';
 
 interface AuthContextValue {
   user: User | null;
@@ -66,6 +66,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(getUser());
     setToken(getToken());
   }, []);
+
+  /**
+   * Pick up sessions the lifted page scripts establish.
+   *
+   * login.html's script — carried over verbatim — calls EduAPI.login() and
+   * then navigates to /dashboard. That writes localStorage but not this state,
+   * so ProtectedRoute would read the pre-login value and redirect back to the
+   * landing page. api.ts fires SESSION_EVENT on every session write; re-read
+   * on it. The same event covers account-menu.js's logout.
+   */
+  useEffect(() => {
+    window.addEventListener(SESSION_EVENT, refreshUser);
+    return () => window.removeEventListener(SESSION_EVENT, refreshUser);
+  }, [refreshUser]);
 
   return (
     <AuthContext.Provider value={{ user, token, loggedIn, role, login, signup, logout, refreshUser }}>
