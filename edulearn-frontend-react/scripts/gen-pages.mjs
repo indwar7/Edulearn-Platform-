@@ -44,18 +44,21 @@ for (const [comp, [cssName, markup]] of Object.entries(PAGES)) {
 
   const src =
     `import { usePageCss } from '../lib/usePageCss';\n` +
+    `import { usePageScript } from '../lib/usePageScript';\n` +
     `import ${markup} from './markup/${markup}';\n` +
     `import css from '../styles/pages/${cssName}.css?inline';\n` +
+    `import script from './scripts/${cssName}.js';\n` +
     `\n` +
     `/**\n` +
-    ` * ${comp} — renders ${cssName}.html's real stylesheet and markup.\n` +
+    ` * ${comp} — ${cssName}.html's real stylesheet, markup and script.\n` +
     ` *\n` +
-    ` * Behaviour from the original page's <script> is not ported yet, so any\n` +
-    ` * region it used to fill at runtime renders empty. The static structure and\n` +
-    ` * styling are already exact.\n` +
+    ` * All three are lifted from the original page rather than reimplemented,\n` +
+    ` * so the behaviour is the code that was already working, running against\n` +
+    ` * markup that reproduces the same element ids it queries.\n` +
     ` */\n` +
     `export default function ${comp}() {\n` +
     `  usePageCss(css);\n` +
+    `  usePageScript(script);\n` +
     `  return <${markup} />;\n` +
     `}\n`;
 

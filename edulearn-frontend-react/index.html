@@ -25,6 +25,19 @@
     <style id="page-css"></style>
     <link rel="stylesheet" href="/vivid.css" />
 
+    <style>
+      /*
+        #root must not introduce a box between <body> and the page content.
+        The lifted stylesheets set heights, flex and grid layouts directly on
+        body — as they could, when the markup was body's direct children — and
+        an extra wrapper breaks those chains. The visible symptom is the page
+        background stopping at content height instead of filling the viewport.
+        display:contents removes the wrapper from layout while keeping it as
+        React's mount point.
+      */
+      #root { display: contents; }
+    </style>
+
     <!-- Per-route chrome corrections; see usePageChrome(). Last so it wins. -->
     <style id="chrome-css"></style>
   </head>
@@ -39,7 +52,9 @@
       they existed on every page before. The .html links features-panel.js
       builds are translated by useLegacyLinks().
     -->
+    <script defer src="/curriculum.js"></script>
     <script defer src="/theme.js"></script>
+    <script defer src="/account-menu.js"></script>
     <script defer src="/features-panel.js"></script>
   </body>
 </html>

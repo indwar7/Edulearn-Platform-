@@ -19,6 +19,14 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': { target: API_TARGET, changeOrigin: true },
+      // Production serves the API under /backend-api via a Vercel rewrite, and
+      // some page scripts fall back to that path directly. Proxied here too so
+      // that fallback reaches the backend instead of the SPA's index.html.
+      '/backend-api': {
+        target: API_TARGET,
+        changeOrigin: true,
+        rewrite: (p) => p.replace(/^\/backend-api/, ''),
+      },
       '/uploads': { target: API_TARGET, changeOrigin: true },
       '/socket.io': { target: API_TARGET, ws: true, changeOrigin: true },
     },

@@ -1,15 +1,18 @@
 import { usePageCss } from '../lib/usePageCss';
+import { usePageScript } from '../lib/usePageScript';
 import LessonMarkup from './markup/LessonMarkup';
 import css from '../styles/pages/lesson.css?inline';
+import script from './scripts/lesson.js';
 
 /**
- * Lesson — renders lesson.html's real stylesheet and markup.
+ * Lesson — lesson.html's real stylesheet, markup and script.
  *
- * Behaviour from the original page's <script> is not ported yet, so any
- * region it used to fill at runtime renders empty. The static structure and
- * styling are already exact.
+ * All three are lifted from the original page rather than reimplemented,
+ * so the behaviour is the code that was already working, running against
+ * markup that reproduces the same element ids it queries.
  */
 export default function Lesson() {
   usePageCss(css);
+  usePageScript(script);
   return <LessonMarkup />;
 }

@@ -23,13 +23,23 @@ const NAV_LINKS: { page: string; label: string; i18n: string }[] = [
   { page: 'dashboard', label: 'Dashboard', i18n: 'nav_dash' },
 ];
 
-export default function Navbar() {
+/**
+ * Only these pages loaded role-guard.js, and its nav cosmetics — hiding the
+ * "Start free" CTA, repointing the brand at the dashboard, hiding links the
+ * role cannot open — ran nowhere else. videos.html and the teacher tools show
+ * the signed-out CTA even to a signed-in user for exactly this reason, so the
+ * cosmetics are applied per page rather than globally.
+ */
+const GUARDED = new Set(['dashboard', 'learn', 'lesson', 'mocktest', 'challenge', 'pal', 'live']);
+
+export default function Navbar({ page }: { page: string }) {
   const { loggedIn, role } = useAuth();
   const { pathname } = useLocation();
 
+  const guarded = GUARDED.has(page);
   // role-guard.js rewrote the brand href to the dashboard once signed in, so
   // clicking it never bounces an authenticated user out to the landing page.
-  const brandHref = loggedIn ? '/dashboard' : '/';
+  const brandHref = loggedIn && guarded ? '/dashboard' : '/';
 
   return (
     <nav className="nav">
@@ -48,7 +58,7 @@ export default function Navbar() {
           {NAV_LINKS
             // Logged out, the static nav still rendered every link — the guard
             // only hid them for a signed-in role that may not open the page.
-            .filter((l) => !loggedIn || roleAllows(role, l.page))
+            .filter((l) => !guarded || !loggedIn || roleAllows(role, l.page))
             .map((l) => {
               const to = ROUTE_BY_PAGE[l.page];
               return (
@@ -65,12 +75,32 @@ export default function Navbar() {
         </div>
 
         <div className="nav__right">
-          {/* "Start free" points at the login screen, so it is hidden once
-              signed in rather than bouncing the user back there. */}
-          {!loggedIn && (
+          {/*
+            #backLink lives here, not in the page body. The lesson bootstrap
+            reads it by id and points it at the chapter's subject listing; when
+            it went missing before, `back.href = ...` threw and aborted the
+            bootstrap before LESSON.cls/.subject/.slug were set, silently
+            killing the video lookup gated on them. It must render before the
+            CTA, as it did in lesson.html.
+          */}
+          {page === 'lesson' && (
+            <a className="btn-back" id="backLink" href="learn.html">← Back</a>
+          )}
+
+          {/* "Start free" points at the login screen, so role-guard.js hid it
+              once signed in rather than bouncing the user back there — but
+              only on the pages that loaded it. */}
+          {!(loggedIn && guarded) && (
             <Link className="btn-primary" to="/login" data-i18n="nav_cta">
               Start free
             </Link>
+          )}
+
+          {/* PAL's sidebar toggle also sat inside .nav__right. */}
+          {page === 'pal' && (
+            <button className="menu-btn" id="menuBtn" type="button" aria-label="Toggle sidebar">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+            </button>
           )}
         </div>
       </div>

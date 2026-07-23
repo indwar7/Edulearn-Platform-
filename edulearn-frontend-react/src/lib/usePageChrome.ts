@@ -16,9 +16,16 @@ import { useLayoutEffect } from 'react';
  * from login.html — it gained a feature panel the original never had.
  */
 
-/** Pages whose <head> linked ../theme.css. */
+/**
+ * Pages whose <head> actually linked ../theme.css.
+ *
+ * videos.html only mentions it in a CSS comment, and is deliberately absent:
+ * theme.css sets an opaque html background, which stops body's background from
+ * propagating to the canvas. Enabling it there left the page white below the
+ * content instead of filling the viewport.
+ */
 const THEME_CSS = new Set([
-  'index', 'dashboard', 'learn', 'lesson', 'videos', 'mocktest', 'challenge', 'pal', 'live',
+  'index', 'dashboard', 'learn', 'lesson', 'mocktest', 'challenge', 'pal', 'live',
 ]);
 
 /** Pages that loaded ../features-panel.js. */
@@ -27,12 +34,19 @@ const FEATURES_PANEL = new Set([
   'challenge', 'pal', 'live', 'signup',
 ]);
 
+/** Pages that loaded account-menu.js (the settings FAB, overlay and panel). */
+const ACCOUNT_MENU = new Set([
+  'dashboard', 'learn', 'lesson', 'mocktest', 'take-test', 'create-test',
+  'challenge', 'pal', 'live',
+]);
+
 /**
  * features-panel.js appends itself to <body> once and cannot be unloaded, so
  * on the pages that never had it the elements are hidden instead. display:none
  * also removes the panel's shadow, which is the part that actually shows.
  */
 const HIDE_PANEL_CSS = '#efp-btn, #efp-ov, #efp { display: none !important; }';
+const HIDE_ACCOUNT_CSS = '.acct-fab, .acct-overlay, .acct-panel { display: none !important; }';
 
 export function usePageChrome(page: string): void {
   useLayoutEffect(() => {
@@ -40,6 +54,10 @@ export function usePageChrome(page: string): void {
     if (themeLink) themeLink.disabled = !THEME_CSS.has(page);
 
     const slot = document.getElementById('chrome-css');
-    if (slot) slot.textContent = FEATURES_PANEL.has(page) ? '' : HIDE_PANEL_CSS;
+    if (!slot) return;
+    slot.textContent = [
+      FEATURES_PANEL.has(page) ? '' : HIDE_PANEL_CSS,
+      ACCOUNT_MENU.has(page) ? '' : HIDE_ACCOUNT_CSS,
+    ].filter(Boolean).join('\n');
   }, [page]);
 }

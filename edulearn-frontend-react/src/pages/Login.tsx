@@ -1,15 +1,18 @@
 import { usePageCss } from '../lib/usePageCss';
+import { usePageScript } from '../lib/usePageScript';
 import LoginMarkup from './markup/LoginMarkup';
 import css from '../styles/pages/login.css?inline';
+import script from './scripts/login.js';
 
 /**
- * Login — renders login.html's real stylesheet and markup.
+ * Login — login.html's real stylesheet, markup and script.
  *
- * Behaviour from the original page's <script> is not ported yet, so any
- * region it used to fill at runtime renders empty. The static structure and
- * styling are already exact.
+ * All three are lifted from the original page rather than reimplemented,
+ * so the behaviour is the code that was already working, running against
+ * markup that reproduces the same element ids it queries.
  */
 export default function Login() {
   usePageCss(css);
+  usePageScript(script);
   return <LoginMarkup />;
 }

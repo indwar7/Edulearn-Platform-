@@ -11,7 +11,13 @@ function resolveApiBase(): string {
     // blocked — production CORS deliberately allows only :8000 and the Vercel
     // origin — and a blocked response surfaces as a misleading "Failed to
     // fetch" rather than an explicit CORS error.
-    if (isLocalHost(location.hostname)) return '';
+    // Must be a non-empty, same-origin absolute URL rather than ''. The lifted
+    // page scripts resolve their base as
+    //     (window.EduAPI && EduAPI.API_BASE) || '/backend-api'
+    // and an empty string is falsy, so '' would silently fall through to
+    // /backend-api — which the dev server does not proxy, returning index.html
+    // and failing as "Unexpected token '<'".
+    if (isLocalHost(location.hostname)) return location.origin;
 
     if (location.protocol === 'https:') {
       base = '/backend-api';
@@ -341,3 +347,24 @@ export function answerChallenge(questionId: string, chosenIndex: number, msTaken
   });
 }
 export function getChallengeLeaderboard() { return request('/api/assessments/challenge/leaderboard'); }
+
+/**
+ * Port of api.js's requireAuth, kept because the lifted page scripts call it.
+ *
+ * ProtectedRoute already enforces this before a page mounts, so in practice
+ * this only ever returns the user. The redirects stay for the cases the router
+ * cannot see — a page script asserting a specific role for itself — and go
+ * through the SPA by dispatching to the shim rather than reloading the app.
+ */
+export function requireAuth(requiredRole?: string): User | null {
+  const user = getUser();
+  if (!getToken() || !user) {
+    window.dispatchEvent(new CustomEvent('edulearn:navigate', { detail: { to: '/login', replace: true } }));
+    return null;
+  }
+  if (requiredRole && user.role !== requiredRole) {
+    window.dispatchEvent(new CustomEvent('edulearn:navigate', { detail: { to: '/dashboard', replace: true } }));
+    return null;
+  }
+  return user;
+}

@@ -1,4 +1,3 @@
-import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
@@ -14,12 +13,14 @@ import App from './App';
 // reads window.EduAPI to show real progress.
 installEduApiGlobal();
 
+// Deliberately not wrapped in <StrictMode>. Its double-invoked effects would
+// run each page's lifted script twice per mount, and that legacy code is not
+// idempotent — it appends nodes and binds handlers imperatively, so a second
+// pass duplicates UI rather than being a no-op.
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <BrowserRouter>
-      <AuthProvider>
-        <App />
-      </AuthProvider>
-    </BrowserRouter>
-  </StrictMode>,
+  <BrowserRouter>
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  </BrowserRouter>,
 );

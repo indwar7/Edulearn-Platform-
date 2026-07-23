@@ -55,7 +55,18 @@ export function useLegacyLinks(): void {
       navigate(to);
     }
 
+    // api.ts's requireAuth() has no router access, so it asks for navigation
+    // by dispatching this instead of assigning to window.location.
+    function onNavigate(e: Event) {
+      const detail = (e as CustomEvent<{ to: string; replace?: boolean }>).detail;
+      if (detail?.to) navigate(detail.to, { replace: !!detail.replace });
+    }
+
     document.addEventListener('click', onClick);
-    return () => document.removeEventListener('click', onClick);
+    window.addEventListener('edulearn:navigate', onNavigate);
+    return () => {
+      document.removeEventListener('click', onClick);
+      window.removeEventListener('edulearn:navigate', onNavigate);
+    };
   }, [navigate]);
 }
