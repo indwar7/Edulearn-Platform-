@@ -1665,4 +1665,17 @@ if (document.readyState === 'loading'){
 
 })();
 
+
+
+/* ---- inline on* handlers, re-attached; see extract-page-js.mjs ---- */
+;(function () {
+  function __bindEvt(sel, type, fn) {
+    document.querySelectorAll(sel).forEach(function (el) {
+      el.addEventListener(type, fn);
+      onCleanup(function () { el.removeEventListener(type, fn); });
+    });
+  }
+  __bindEvt("#view-student > div:nth-of-type(1) > div:nth-of-type(13) > div:nth-of-type(1) > a:nth-of-type(1)", "mouseover", function (event) { this.style.color='var(--cream)' });
+  __bindEvt("#view-student > div:nth-of-type(1) > div:nth-of-type(13) > div:nth-of-type(1) > a:nth-of-type(1)", "mouseout", function (event) { this.style.color='var(--muted)' });
+})();
 }

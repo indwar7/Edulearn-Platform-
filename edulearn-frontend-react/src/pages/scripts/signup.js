@@ -279,4 +279,23 @@ try{document.documentElement.classList.add('light-mode');localStorage.setItem('e
 
     (function () { try{document.documentElement.classList.add('light-mode');localStorage.setItem('edulearn-theme','light');}catch(e){document.documentElement.classList.add('light-mode');} })();
   
+
+
+/* ---- inline on* handlers, re-attached; see extract-page-js.mjs ---- */
+;(function () {
+  function __bindEvt(sel, type, fn) {
+    document.querySelectorAll(sel).forEach(function (el) {
+      el.addEventListener(type, fn);
+      onCleanup(function () { el.removeEventListener(type, fn); });
+    });
+  }
+  __bindEvt("#signupFormView > form:nth-of-type(1)", "submit", function (event) { handleSignup(event) });
+  __bindEvt("#signupFormView > form:nth-of-type(1) > div:nth-of-type(10) > button:nth-of-type(1)", "click", function (event) { handleSocial('google') });
+  __bindEvt("#signupFormView > form:nth-of-type(1) > div:nth-of-type(10) > button:nth-of-type(2)", "click", function (event) { handleSocial('apple') });
+  __bindEvt("#channelBtnEmail", "click", function (event) { setOtpChannel('email') });
+  __bindEvt("#channelBtnPhone", "click", function (event) { setOtpChannel('phone') });
+  __bindEvt("#otpFormView > form:nth-of-type(1)", "submit", function (event) { handleVerifyOtp(event) });
+  __bindEvt("#resendOtpLink", "click", function (event) { resendOtp(event) });
+  __bindEvt("#otpFormView > form:nth-of-type(1) > div:nth-of-type(4) > a:nth-of-type(1)", "click", function (event) { showSignupView(event) });
+})();
 }
