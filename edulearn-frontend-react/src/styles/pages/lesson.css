@@ -219,6 +219,13 @@ main{
 .nrecap li>svg{position:absolute;left:2px;top:3px;color:#3DE8C5}
 .notes__foot{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
 .notes__empty{text-align:center;color:var(--muted);padding:10px 0 4px}
+.dlnotes{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+.dlnote{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;text-decoration:none;color:inherit;transition:border-color .15s,background .15s}
+.dlnote:hover{border-color:var(--teal);background:rgba(16,185,129,.07)}
+.dlnote__ic{flex:0 0 auto;color:var(--teal);display:flex}
+.dlnote__body{display:flex;flex-direction:column;min-width:0}
+.dlnote__t{font-weight:700;font-size:14.5px;color:var(--cream)}
+.dlnote__m{color:var(--muted);font-size:12px;margin-top:2px}
 @media (max-width:640px){
   .hub__grid{grid-template-columns:1fr}
   .notes__card{padding:30px 22px 34px}

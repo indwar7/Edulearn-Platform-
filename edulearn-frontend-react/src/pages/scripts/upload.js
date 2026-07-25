@@ -64,11 +64,54 @@ export default function init({ location, document, window, onCleanup }) {
 
     function msg(text, ok){ var m = document.getElementById('msg'); m.textContent = text; m.className = 'msg ' + (ok?'ok':'err'); }
 
+    // Upload type — a lecture video or chapter notes. Both share the same
+    // metadata fields (class/subject/topic); only the endpoint, file field,
+    // accepted types and copy differ, so it's one form with a toggle rather
+    // than two.
+    var TYPES = {
+      video: { ep:'/api/videos', field:'video', accept:'video/*',
+        kind:'Video Lecture', titleLabel:'Video Title *', fileLabel:'Video File *',
+        dropText:'Click or drop a video here', dropHint:'MP4, up to 500 MB',
+        btn:'Upload Lecture', need:'Please choose a video file.',
+        ok:'✓ Uploaded! Students in this class can now watch it.' },
+      note: { ep:'/api/notes', field:'note', accept:'.pdf,application/pdf,image/*',
+        kind:'Notes', titleLabel:'Notes Title *', fileLabel:'Notes File *',
+        dropText:'Click or drop a PDF here', dropHint:'PDF or image, up to 50 MB',
+        btn:'Upload Notes', need:'Please choose a PDF or image file.',
+        ok:'✓ Uploaded! Students in this class can now open these notes.' }
+    };
+    var uploadType = 'video';
+
+    function applyType(t){
+      uploadType = TYPES[t] ? t : 'video';
+      var cfg = TYPES[uploadType];
+      var set = function(id, text){ var el = document.getElementById(id); if (el) el.textContent = text; };
+      set('uploadKind', cfg.kind);
+      set('titleLabel', cfg.titleLabel);
+      set('fileLabel', cfg.fileLabel);
+      set('dropText', cfg.dropText);
+      set('dropHint', cfg.dropHint);
+      var sb = document.getElementById('submit'); if (sb && !sb.disabled) sb.textContent = cfg.btn;
+      fileInput.setAttribute('accept', cfg.accept);
+      // A file chosen for the other type may not fit — clear the selection.
+      fileInput.value = ''; document.getElementById('fileName').textContent = '';
+      Array.prototype.forEach.call(document.querySelectorAll('.utype__tab'), function(tab){
+        var on = tab.getAttribute('data-utype') === uploadType;
+        tab.classList.toggle('on', on);
+        tab.setAttribute('aria-selected', String(on));
+      });
+    }
+
+    Array.prototype.forEach.call(document.querySelectorAll('.utype__tab'), function(tab){
+      tab.addEventListener('click', function(){ applyType(tab.getAttribute('data-utype')); });
+    });
+
     document.getElementById('submit').addEventListener('click', function(){
+      var cfg = TYPES[uploadType];
       var title = document.getElementById('title').value.trim();
       var file = fileInput.files[0];
       if (!title){ msg('Please enter a title.', false); return; }
-      if (!file){ msg('Please choose a video file.', false); return; }
+      if (!file){ msg(cfg.need, false); return; }
 
       var fd = new FormData();
       fd.append('title', title);
@@ -77,7 +120,7 @@ export default function init({ location, document, window, onCleanup }) {
       fd.append('topic', document.getElementById('topic').value.trim());
       fd.append('description', document.getElementById('description').value.trim());
       fd.append('uploaderName', user.name || '');
-      fd.append('video', file);
+      fd.append(cfg.field, file);
 
       var btn = document.getElementById('submit'); btn.disabled = true; btn.textContent = 'Uploading…';
       var bar = document.getElementById('bar'); bar.style.display = 'block';
@@ -85,20 +128,20 @@ export default function init({ location, document, window, onCleanup }) {
 
       // XHR for real upload progress.
       var xhr = new XMLHttpRequest();
-      xhr.open('POST', API + '/api/videos');
+      xhr.open('POST', API + cfg.ep);
       xhr.setRequestHeader('Authorization', 'Bearer ' + EduAPI.getToken());
       xhr.upload.onprogress = function(e){ if (e.lengthComputable) fill.style.width = Math.round(e.loaded/e.total*100) + '%'; };
       xhr.onload = function(){
-        btn.disabled = false; btn.textContent = 'Upload Lecture';
+        btn.disabled = false; btn.textContent = cfg.btn;
         if (xhr.status === 201){
-          msg('✓ Uploaded! Students in this class can now watch it.', true);
+          msg(cfg.ok, true);
           document.getElementById('title').value=''; document.getElementById('fileName').textContent=''; fileInput.value='';
           setTimeout(function(){ fill.style.width='0'; bar.style.display='none'; }, 1200);
         } else {
           try { msg(JSON.parse(xhr.responseText).error || 'Upload failed', false); } catch(e){ msg('Upload failed ('+xhr.status+')', false); }
         }
       };
-      xhr.onerror = function(){ btn.disabled=false; btn.textContent='Upload Lecture'; msg('Cannot reach server. Is the backend running?', false); };
+      xhr.onerror = function(){ btn.disabled=false; btn.textContent=cfg.btn; msg('Cannot reach server. Is the backend running?', false); };
       xhr.send(fd);
     });
   

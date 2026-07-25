@@ -367,6 +367,19 @@
     request('/api/videos/' + id + '/view', { method: 'POST' }).catch(function () {});
   }
 
+  // ---- Notes calls ----
+  // List uploaded chapter notes (PDF/images), filtered like videos. Each note
+  // carries a `fileUrl` the lesson hub turns into a token-authed link.
+  async function listNotes(filters) {
+    filters = filters || {};
+    var qs = Object.keys(filters)
+      .filter(function (k) { return filters[k]; })
+      .map(function (k) { return encodeURIComponent(k) + '=' + encodeURIComponent(filters[k]); })
+      .join('&');
+    var data = await request('/api/notes' + (qs ? '?' + qs : ''));
+    return data.notes || [];
+  }
+
   // ---- Live-class attention/monitoring reports ----
   // Persist a report server-side so it survives a device change and reaches the
   // linked parent. Returns the saved report, or null if the endpoint isn't
@@ -534,6 +547,7 @@
     liveRoster: liveRoster,
     listVideos: listVideos,
     recordVideoView: recordVideoView,
+    listNotes: listNotes,
     submitLiveReport: submitLiveReport,
     listLiveReports: listLiveReports,
     startMockTest: startMockTest,

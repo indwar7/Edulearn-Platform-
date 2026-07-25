@@ -6,12 +6,12 @@ export default function UploadMarkup() {
       <div className="wrap">
         <h1>
           {"Upload "}
-          <em>
+          <em id="uploadKind">
             Video Lecture
           </em>
         </h1>
         <p className="sub">
-          Teachers & admins — add an animated lecture for a class & subject.
+          Teachers & admins — add a lecture video or chapter notes for a class & subject.
         </p>
         <div id="gate" className="gate" style={{ display: "none" }}>
           {" You must be logged in as a "}
@@ -24,7 +24,16 @@ export default function UploadMarkup() {
           </a>
         </div>
         <div className="card" id="form">
-          <label>
+          <div className="utype" id="utype" role="tablist" aria-label="What to upload">
+            <button type="button" className="utype__tab on" data-utype="video" role="tab" aria-selected="true">
+              Video Lecture
+            </button>
+            {' '}
+            <button type="button" className="utype__tab" data-utype="note" role="tab" aria-selected="false">
+              Notes
+            </button>
+          </div>
+          <label id="titleLabel">
             Video Title *
           </label>
           {' '}
@@ -83,7 +92,7 @@ export default function UploadMarkup() {
           {' '}
           <textarea id="description" rows={2} placeholder="What this lecture covers…" />
           {' '}
-          <label>
+          <label id="fileLabel">
             Video File *
           </label>
           <div className="drop" id="drop">
@@ -104,10 +113,10 @@ export default function UploadMarkup() {
                 <path d="M4 14.9A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.24" />
               </svg>
             </div>
-            <div className="t">
+            <div className="t" id="dropText">
               Click or drop a video here
             </div>
-            <div className="s">
+            <div className="s" id="dropHint">
               MP4, up to 500 MB
             </div>
             <div className="file-name" id="fileName" />

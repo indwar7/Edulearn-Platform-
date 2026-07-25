@@ -358,6 +358,36 @@ function esc(s){ return String(s).replace(/[&<>"]/g, function(c){
   return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];
 }); }
 
+// Teacher-uploaded notes for this chapter, filled by the note-lookup script.
+// null = still loading, [] = none exist, [ ... ] = downloadable uploads.
+var uploadedNotes = null;
+
+function fmtBytes(n){
+  n = Number(n) || 0;
+  if (n >= 1048576) return (n / 1048576).toFixed(1) + ' MB';
+  if (n >= 1024) return Math.round(n / 1024) + ' KB';
+  return n + ' B';
+}
+
+// Render the uploaded notes as token-authed download links (a plain <a> can't
+// send an auth header, so the token rides the query string like video stream).
+function uploadedNotesHTML(){
+  if (!uploadedNotes || !uploadedNotes.length) return '';
+  var token = (window.EduAPI && EduAPI.getToken && EduAPI.getToken()) || '';
+  var base = (window.EduAPI && EduAPI.API_BASE) || '';
+  var items = uploadedNotes.map(function(n){
+    var href = base + n.fileUrl + '?token=' + encodeURIComponent(token);
+    var meta = [n.uploadedByName ? 'By ' + n.uploadedByName : '', fmtBytes(n.size)].filter(Boolean).join(' · ');
+    return '<a class="dlnote" href="' + href + '" target="_blank" rel="noopener">' +
+      '<span class="dlnote__ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg></span>' +
+      '<span class="dlnote__body"><span class="dlnote__t">' + esc(n.title || 'Notes') + '</span>' +
+      (meta ? '<span class="dlnote__m">' + esc(meta) + '</span>' : '') + '</span></a>';
+  }).join('');
+  return '<div class="nsec"><h2 class="nsec__h"><span class="n">' +
+    (uploadedNotes.length < 10 ? '0' : '') + uploadedNotes.length +
+    '</span>Downloadable notes</h2><div class="dlnotes">' + items + '</div></div>';
+}
+
 function renderNotes(){
   var note = LESSON.slug ? NOTES[LESSON.slug] : null;
   var host = $('notesBody');
@@ -365,31 +395,64 @@ function renderNotes(){
     '<div class="notes__crumb mono">' + esc(LESSON.chapterCrumb || 'Lesson') + '</div>' +
     '<h1 class="notes__title">' + esc(LESSON.chapterTitle || 'Notes') + '</h1>';
 
-  if(!note){
-    host.innerHTML = head +
-      '<hr class="notes__hr">' +
-      '<p class="notes__empty">Notes for this chapter are being written and will appear here soon.<br>In the meantime you can watch the video lecture.</p>';
+  var uploads = uploadedNotesHTML();
+
+  // Nothing authored AND nothing uploaded — a loading-aware placeholder.
+  if(!note && !uploads){
+    var msg = uploadedNotes === null
+      ? 'Checking for notes…'
+      : 'Notes for this chapter are being written and will appear here soon.<br>In the meantime you can watch the video lecture.';
+    host.innerHTML = head + '<hr class="notes__hr"><p class="notes__empty">' + msg + '</p>';
     return;
   }
 
-  var html = head +
-    '<div class="notes__read">' +
-      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>' +
-      note.read + ' min read</div>' +
-    '<hr class="notes__hr">';
+  var html = head;
 
-  note.sections.forEach(function(sec, i){
-    var n = (i + 1 < 10 ? '0' : '') + (i + 1);
-    html += '<div class="nsec"><h2 class="nsec__h"><span class="n">' + n + '</span>' + esc(sec.h) + '</h2>' + sec.body + '</div>';
-  });
+  if(note){
+    html +=
+      '<div class="notes__read">' +
+        '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>' +
+        note.read + ' min read</div>' +
+      '<hr class="notes__hr">';
 
-  if(note.recap && note.recap.length){
-    html += '<div class="nrecap"><div class="nrecap__h">Quick recap</div><ul>';
-    note.recap.forEach(function(r){ html += '<li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>' + esc(r) + '</li>'; });
-    html += '</ul></div>';
+    note.sections.forEach(function(sec, i){
+      var n = (i + 1 < 10 ? '0' : '') + (i + 1);
+      html += '<div class="nsec"><h2 class="nsec__h"><span class="n">' + n + '</span>' + esc(sec.h) + '</h2>' + sec.body + '</div>';
+    });
+
+    if(note.recap && note.recap.length){
+      html += '<div class="nrecap"><div class="nrecap__h">Quick recap</div><ul>';
+      note.recap.forEach(function(r){ html += '<li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>' + esc(r) + '</li>'; });
+      html += '</ul></div>';
+    }
+  }
+
+  if(uploads){
+    if(note) html += '<hr class="notes__hr">';
+    html += uploads;
   }
 
   host.innerHTML = html;
+}
+
+// Called by the note-lookup script once the API responds (or fails).
+function setNotes(list){
+  uploadedNotes = list || [];
+  var notesTag = $('notesTag'), notesTagTxt = $('notesTagText');
+  if(notesTag && notesTagTxt){
+    var hasStatic = !!(LESSON.slug && NOTES[LESSON.slug]);
+    if(uploadedNotes.length){
+      notesTag.classList.add('is-live');
+      notesTagTxt.textContent = uploadedNotes.length + ' note' + (uploadedNotes.length > 1 ? 's' : '') + (hasStatic ? ' + summary' : '');
+    } else if(hasStatic){
+      notesTag.classList.add('is-live');
+      notesTagTxt.textContent = 'Notes ready';
+    } else {
+      notesTag.classList.remove('is-live');
+      notesTagTxt.textContent = 'Coming soon';
+    }
+  }
+  renderNotes(); // refresh the (possibly open) notes stage in place
 }
 
 /* ------------------------------------------------------------------
@@ -444,7 +507,7 @@ document.addEventListener('DOMContentLoaded', function(){
   });
 });
 
-return { setVideoState: setVideoState };
+return { setVideoState: setVideoState, setNotes: setNotes };
 })();
 
 
@@ -458,11 +521,20 @@ return { setVideoState: setVideoState };
 // When we can't look one up, tell the hub so the Video option resolves to
 // "Coming soon" instead of hanging on "Checking…".
 if (!LESSON.cls || !LESSON.subject || !LESSON.slug || !window.EduAPI) {
-  if (window.HUB) window.HUB.setVideoState('none');
+  if (window.HUB) {
+    window.HUB.setVideoState('none');
+    if (window.HUB.setNotes) window.HUB.setNotes([]);
+  }
   return;
 }
 
 var searchTerm = LESSON.slug.replace(/-/g, ' ');
+
+// Uploaded notes for this chapter — same class/subject/topic lookup as videos,
+// so a chapter surfaces its notes wherever a teacher filed them.
+EduAPI.listNotes({ className: LESSON.cls, subject: LESSON.subject, topic: searchTerm })
+  .then(function(notes){ if (window.HUB && window.HUB.setNotes) window.HUB.setNotes(notes || []); })
+  .catch(function(){ if (window.HUB && window.HUB.setNotes) window.HUB.setNotes([]); });
 
 EduAPI.listVideos({ className: LESSON.cls, subject: LESSON.subject, topic: searchTerm })
   .then(function(videos){

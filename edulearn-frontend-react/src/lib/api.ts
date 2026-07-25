@@ -302,6 +302,18 @@ export function recordVideoView(id: string) {
   request(`/api/videos/${id}/view`, { method: 'POST' }).catch(() => {});
 }
 
+// Notes — chapter notes (usually a PDF) a teacher uploaded. Same class/subject/
+// topic filtering as videos; each note carries a `fileUrl` the lesson hub turns
+// into a token-authed link.
+export async function listNotes(filters: Record<string, string> = {}) {
+  const qs = Object.entries(filters)
+    .filter(([, v]) => v)
+    .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+    .join('&');
+  const data = await request<{ notes: any[] }>('/api/notes' + (qs ? '?' + qs : ''));
+  return data.notes || [];
+}
+
 // Live reports
 export async function submitLiveReport(report: any) {
   try {
