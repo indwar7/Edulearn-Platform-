@@ -1,6 +1,7 @@
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import AuroraDefs from './components/AuroraDefs';
+import ErrorBoundary from './components/ErrorBoundary';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useLegacyLinks } from './lib/useLegacyLinks';
 import { usePageChrome } from './lib/usePageChrome';
@@ -50,6 +51,7 @@ export default function App() {
           the static pages loaded it, and gated per route by usePageChrome. */}
       {!chromeless && <Navbar page={page} />}
 
+      <ErrorBoundary resetKey={pathname}>
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
@@ -65,6 +67,14 @@ export default function App() {
         <Route path="/dashboard" element={<ProtectedRoute page="dashboard"><Dashboard /></ProtectedRoute>} />
         <Route path="/learn" element={<ProtectedRoute page="learn"><Learn /></ProtectedRoute>} />
         <Route path="/lesson/:chapterId" element={<ProtectedRoute page="lesson"><Lesson /></ProtectedRoute>} />
+        {/*
+          A lesson URL that lost its :chapterId — e.g. a full-page load of
+          "lesson.html?ch=…" that nginx 301s to bare "/lesson" (dropping the
+          query), or the browser Back button landing there. Without this it
+          matches no route and the page renders blank. Send it back to Learn,
+          the lesson's parent.
+        */}
+        <Route path="/lesson" element={<Navigate to="/learn" replace />} />
         <Route path="/pal" element={<ProtectedRoute page="pal"><Pal /></ProtectedRoute>} />
         <Route path="/challenge" element={<ProtectedRoute page="challenge"><Challenge /></ProtectedRoute>} />
         <Route path="/mocktest" element={<ProtectedRoute page="mocktest"><MockTest /></ProtectedRoute>} />
@@ -76,7 +86,16 @@ export default function App() {
         <Route path="/videos" element={<Videos />} />
         <Route path="/upload" element={<Upload />} />
         <Route path="/admin" element={<Admin />} />
+
+        {/*
+          Catch-all: any URL that matches no route above — a stale ".html"
+          link, a mistyped path, or a Back/redirect that dropped its params —
+          used to render nothing (a white screen). Fall back to the dashboard,
+          which itself sends logged-out users to the landing page.
+        */}
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
+      </ErrorBoundary>
 
       {/* Defines url(#auroraGrad), which the brand mark fills itself with. */}
       <AuroraDefs />
