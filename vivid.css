@@ -64,14 +64,18 @@
    CANVAS
    ============================================================ */
 body{
-  background-color:var(--u-canvas) !important;
-  background-image:
-    radial-gradient(900px 520px at 0% -6%,   rgba(0,168,143,.07), transparent 60%),
-    radial-gradient(900px 540px at 100% -2%, rgba(63,91,224,.08), transparent 58%),
-    radial-gradient(760px 520px at 50% 108%, rgba(201,154,46,.07), transparent 60%);
+  /* Seamless flat white across every page (per review: "white color issue,
+     left and right, check all the pages"). The tinted radial canvas pooled
+     colour at the corners and made centred content read as a floating box.
+     Auth pages keep their own surface via the .auth-shell rule below. */
+  background-color:#FFFFFF !important;
+  background-image:none !important;
   background-attachment:fixed;
   background-repeat:no-repeat;
 }
+/* Decorative colour "blobs" (dashboard/learn/etc.) pooled tint at the left and
+   right edges. Hidden everywhere so the white surface stays seamless. */
+.blobs, .blob{ display:none !important; }
 
 /* ============================================================
    TYPE — Unfluke hierarchy
@@ -494,7 +498,7 @@ h1, h2, h3, .card-title, .foot-tag, .cname{ font-weight:800 !important; }
    page reads as distinct blocks rather than white-on-white.
    Covers the test/mocktest surfaces plus their siblings elsewhere.
    ============================================================ */
-.attcard, .howcard, .qcard, .rescard, .blurbox, .panel, .pcard,
+.attcard, .howcard, .qcard, .rescard, .blurbox, .pcard,
 .opt, .optcard, .stage, .board__grid, .roster, .tbl-wrap,
 .reco-card, .cont-card, .child-card, .alerts, .shelf{
   border:2px solid #000000 !important;

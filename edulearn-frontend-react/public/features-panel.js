@@ -111,10 +111,10 @@
      page can wash them out — this is what fixes the "can't read" bug. */
   var css = [
     '#efp-btn{position:fixed;right:18px;bottom:18px;z-index:99998;display:inline-flex;align-items:center;gap:9px;',
-    'background:linear-gradient(115deg,#3DE8C5,#7C9BFF 55%,#FFB454);color:#0B1224;font-family:"Schibsted Grotesk",system-ui,sans-serif;',
-    'font-weight:700;font-size:14px;border:none;cursor:pointer;border-radius:999px;padding:12px 18px;',
-    'box-shadow:0 12px 34px rgba(61,232,197,.4);transition:transform .25s cubic-bezier(.22,1,.36,1)}',
-    '#efp-btn:hover{transform:translateY(-2px) scale(1.03)}',
+    'background:linear-gradient(135deg,#5B6CF0,#3F5BE0);color:#FFFFFF;font-family:"Schibsted Grotesk",system-ui,sans-serif;',
+    'font-weight:800;font-size:14px;border:2px solid #000;cursor:pointer;border-radius:999px;padding:11px 18px;',
+    'box-shadow:3px 3px 0 #000;transition:transform .2s,box-shadow .2s}',
+    '#efp-btn:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 #000}',
     '#efp-btn svg{display:block}',
     '@media(max-width:600px){#efp-btn span{display:none}#efp-btn{padding:13px;right:14px;bottom:14px}}',
     '#efp-ov{position:fixed;inset:0;z-index:99998;background:rgba(8,12,22,.55);backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .3s ease}',
