@@ -131,8 +131,6 @@
         '<option value="light"' + (currentTheme==='light'?' selected':'') + '>Light</option>' +
         '<option value="dark"' + (currentTheme!=='light'?' selected':'') + '>Dark</option>' +
       '</select></div>' +
-      '<div class="acct-row"><span>Email notifications</span>' +
-        '<input type="checkbox" id="acctEmail"' + (prefs.emailNotifications?' checked':'') + '></div>' +
     '</div>' +
     '<button class="acct-save" id="acctSave">Save changes</button>' +
     '<button class="acct-logout" id="acctLogout">Log out</button>';
@@ -176,8 +174,7 @@
     btn.disabled = true; btn.textContent = 'Saving…';
     applyTheme(val('acctThemeSel')); // apply immediately on save too
     var body = { name: val('acctName'), preferences: {
-      language: val('acctLang'), theme: val('acctThemeSel'),
-      emailNotifications: document.getElementById('acctEmail').checked
+      language: val('acctLang'), theme: val('acctThemeSel')
     }};
     if (user.role === 'student'){
       body.className = val('acctClass');
