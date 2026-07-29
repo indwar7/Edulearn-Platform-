@@ -455,6 +455,12 @@ table.roster{width:100%;border-collapse:collapse;min-width:640px;}
 .roster th.sortable svg{vertical-align:-2px;margin-left:5px;transition:transform .3s var(--ease);}
 .roster th.sortable.desc svg{transform:rotate(180deg);}
 .roster td{padding:13px 14px;border-bottom:1px solid var(--hair);font-size:13.5px;white-space:nowrap;}
+/* Roster table polish (per review): larger header type, real header padding,
+   and thinner/softer borders than vivid.css's hard black. `table.roster …`
+   out-specifies vivid's `.roster …`/`.roster th` rules so these win. */
+table.roster{border-width:1px !important;border-color:rgba(15,23,42,.14) !important;box-shadow:none !important;}
+table.roster th{font-size:12.5px !important;padding:15px 16px 13px !important;letter-spacing:.08em !important;border-bottom:1px solid rgba(15,23,42,.16) !important;}
+table.roster td{padding:14px 16px !important;border-bottom-color:rgba(15,23,42,.08) !important;}
 .roster tbody tr{transition:background .25s ease;}
 .roster tbody tr:hover{background:rgba(255,255,255,.025);}
 .stud-cell{display:flex;align-items:center;gap:11px;font-weight:600;}
