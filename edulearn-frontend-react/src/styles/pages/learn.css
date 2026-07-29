@@ -59,6 +59,11 @@ body{
   -webkit-font-smoothing:antialiased;
   overflow-x:hidden;
   min-height:100vh;
+  /* Column layout so the footer can sit at the viewport bottom on short pages
+     (the SPA mounts these body children under #root{display:contents}, so they
+     lay out as body's own flow children). */
+  display:flex;
+  flex-direction:column;
 }
 a{color:inherit;text-decoration:none}
 button{font-family:inherit;color:inherit;background:none;border:none;cursor:pointer}
@@ -661,7 +666,7 @@ input{font-family:inherit;color:inherit}
 .footer{
   position:relative;z-index:2;
   border-top:1px solid var(--line);
-  margin-top:40px;
+  margin-top:auto; /* flex body pushes the footer to the viewport bottom */
   overflow:hidden;
   background:linear-gradient(180deg, transparent, rgba(248,249,250,.6));
 }

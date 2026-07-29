@@ -736,8 +736,10 @@ footer .foot-cols li,
   color:var(--u-text) !important;
 }
 /* the giant watermark stays a faint tint — making it black would
-   swamp the column text sitting on top of it */
-.foot-word{ color:rgba(14,15,20,.05) !important; }
+   swamp the column text sitting on top of it. .footer__mark is the same
+   watermark on the Learn footer; without it here the global "all text black"
+   rule turns it into a huge solid-black EduLearn that overflows the footer. */
+.foot-word, .footer__mark{ color:rgba(14,15,20,.05) !important; }
 
 
 /* ---------- signed-in user chip (shared) ---------- */
