@@ -368,7 +368,11 @@ th, td{ border-color:var(--u-border) !important; color:var(--u-text) !important;
   gap:26px !important;
 }
 .nav__links, .nav-links{
-  display:flex !important; gap:4px !important; margin:0 auto !important;
+  /* flex:1 + centre reliably centres the links between the brand and the right
+     actions regardless of how many there are. The old `margin:0 auto` fought
+     .nav__right's `margin-left:auto`, which pushed a short link set (e.g. a
+     parent's Live/PAL/Dashboard) off to one side. */
+  display:flex !important; gap:4px !important; flex:1 1 auto !important; justify-content:center !important;
   align-items:center !important;
 }
 

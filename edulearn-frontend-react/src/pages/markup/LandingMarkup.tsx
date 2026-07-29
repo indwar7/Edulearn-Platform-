@@ -633,18 +633,9 @@ export default function LandingMarkup() {
           </div>
         </section>
       </main>
-      <footer>
-        <p>
-          {"© 2026 EduLearn Learning Pvt. Ltd. · Made for Bharat · "}
-          <a href="/privacy" style={{ color: "var(--teal)" }}>
-            Privacy Policy
-          </a>
-          {" · "}
-          <a href="/terms" style={{ color: "var(--teal)" }}>
-            Terms
-          </a>
-        </p>
-      </footer>
+      {/* The site footer is rendered by the React <SiteFooter/> component on the
+         landing route (see Landing.tsx), so the marketing home shows the full
+         Product/Classes/Company/Languages footer while logged out. */}
       {' '}
       {' '}
     </>

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { usePageCss } from '../lib/usePageCss';
 import { useAuth } from '../context/AuthContext';
 import LandingMarkup from './markup/LandingMarkup';
+import SiteFooter from '../components/SiteFooter';
 import css from '../styles/pages/index.css?inline';
 
 /**
@@ -22,5 +23,10 @@ export default function Landing() {
     if (loggedIn) navigate('/dashboard', { replace: true });
   }, [loggedIn, navigate]);
 
-  return <LandingMarkup />;
+  return (
+    <>
+      <LandingMarkup />
+      <SiteFooter />
+    </>
+  );
 }
