@@ -504,7 +504,7 @@ h1, h2, h3, .card-title, .foot-tag, .cname{ font-weight:800 !important; }
    ============================================================ */
 .attcard, .howcard, .qcard, .rescard, .blurbox, .pcard,
 .opt, .optcard, .stage, .board__grid, .roster, .tbl-wrap,
-.reco-card, .cont-card, .child-card, .alerts, .shelf{
+.reco-card, .cont-card, .child-card, .alerts{
   border:2px solid #000000 !important;
   border-radius:14px !important;
   background:#FFFFFF !important;
@@ -515,7 +515,7 @@ h1, h2, h3, .card-title, .foot-tag, .cname{ font-weight:800 !important; }
    .pick (the mocktest test cards) was the visible gap. */
 .pick, .feat-card, .qz__opt, .ph-opt, .solution, .report,
 .stat, .stats, .ladder, .lb__row, .rung, .hist__row, .roster__row,
-.sess, .starter, .listwrap, .mini-row, .vpitem, .vtoggle,
+.sess, .starter, .mini-row, .vpitem, .vtoggle,
 .role-tabs, .otp-digit, .composer__field, .demo-info, .sentbanner,
 .calledon, .cam-consent, .lap-screen, .selftile, .feature-icon,
 .chatitem, .chat{

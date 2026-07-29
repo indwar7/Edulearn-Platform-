@@ -93,8 +93,11 @@ export default function Navbar({ page }: { page: string }) {
         <div className="nav__links">
           {loggedIn
             ? NAV_LINKS
-                // Signed in: hide only the links this role cannot open.
-                .filter((l) => !guarded || roleAllows(role, l.page))
+                // Signed in: show only the sections this role can open — on
+                // every page, not just the role-guarded ones. Otherwise a
+                // teacher on the upload/dashboard tools saw student links
+                // (Learn/Arena/Tests) that aren't theirs.
+                .filter((l) => roleAllows(role, l.page))
                 .map((l) => {
                   const to = ROUTE_BY_PAGE[l.page];
                   return (
@@ -130,10 +133,10 @@ export default function Navbar({ page }: { page: string }) {
             <a className="btn-back" id="backLink" href="learn.html">← Back</a>
           )}
 
-          {/* "Start free" points at the login screen, so role-guard.js hid it
-              once signed in rather than bouncing the user back there — but
-              only on the pages that loaded it. */}
-          {!(loggedIn && guarded) && (
+          {/* "Start free" points at the login screen — only ever shown to a
+              signed-out visitor. A signed-in user manages their session through
+              the account menu instead. */}
+          {!loggedIn && (
             <Link className="btn-primary" to="/login" data-i18n="nav_cta">
               Start free
             </Link>
