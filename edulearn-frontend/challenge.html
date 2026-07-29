@@ -29,6 +29,8 @@ html.dark-mode{
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--ink);color:var(--cream);font-family:'Nunito',sans-serif;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+/* Seamless full-white surface (see live.html) — drop vivid.css's tinted canvas. */
+html body{background:#FFFFFF !important;background-image:none !important}
 a{color:inherit;text-decoration:none}
 button{font-family:inherit;color:inherit;background:none;border:none;cursor:pointer}
 .mono{font-family:'Fragment Mono',monospace;text-transform:uppercase;letter-spacing:.12em;font-size:11px;color:var(--muted)}

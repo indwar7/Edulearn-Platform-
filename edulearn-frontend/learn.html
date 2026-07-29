@@ -76,6 +76,11 @@ body{
   display:flex;
   flex-direction:column;
 }
+/* Seamless full-white surface — drop vivid.css's tinted radial canvas and the
+   blob glow so the page reads as one clean white surface (per feedback).
+   `html body` out-specifies vivid's body{…!important}. */
+html body{background:#FFFFFF !important;background-image:none !important}
+.blobs{display:none !important}
 a{color:inherit;text-decoration:none}
 button{font-family:inherit;color:inherit;background:none;border:none;cursor:pointer}
 input{font-family:inherit;color:inherit}
