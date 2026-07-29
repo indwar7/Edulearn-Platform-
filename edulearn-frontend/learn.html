@@ -1579,6 +1579,13 @@ var params = new URLSearchParams(window.location.search);
 var SESSION_USER = (function(){
   try { return JSON.parse(localStorage.getItem('edulearn_user') || 'null'); } catch(e){ return null; }
 })();
+// Logged in → drop the whole "Classes" column from the footer. Browsing other
+// classes is a signed-out / marketing affordance; a signed-in student has their
+// own class already (per review feedback).
+if (SESSION_USER) {
+  var _footerClasses = document.getElementById('footerClasses');
+  if (_footerClasses) _footerClasses.style.display = 'none';
+}
 function classNumFromLabel(v){
   var m = String(v || '').match(/\d+/);
   return m ? parseInt(m[0], 10) : null;

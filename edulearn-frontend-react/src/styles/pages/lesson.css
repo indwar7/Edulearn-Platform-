@@ -186,7 +186,7 @@ main{
 /* ------------------------------------------------------------
    Notes reader
    ------------------------------------------------------------ */
-.notes{width:100%;max-width:760px;display:flex;flex-direction:column;gap:20px}
+.notes{width:100%;max-width:1040px;display:flex;flex-direction:column;gap:20px}
 .notes__card{
   background:var(--card);border:1px solid var(--line);border-radius:24px;
   padding:40px 40px 44px;
