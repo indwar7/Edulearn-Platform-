@@ -111,7 +111,13 @@
     /* ============ SHOWCASE — light mode only ============ */
     .showcase{display:none}
 
-    footer{position:relative;z-index:10;margin-top:80px;padding:60px 40px 40px;border-top:1px solid var(--border-color);text-align:center;color:var(--text-secondary);font-size:14px}
+    footer{position:relative;z-index:10;margin-top:56px;padding:44px 40px 40px;text-align:center;color:var(--text-secondary);font-size:14px}
+    /* Seamless page end (per design feedback): drop vivid.css's hard 2px black
+       rule above the footer so the copyright line blends into the page instead
+       of reading as a separate gray strip. `html footer` out-specifies vivid's
+       bare `footer{…!important}`; scoped here since this CSS only loads on the
+       landing page. */
+    html footer{ border-top:0 !important; }
 
     /* ============================================================
        LIGHT MODE REDESIGN — every rule below is scoped so the
@@ -664,7 +670,7 @@
   </main>
 
   <footer>
-    <p>© 2026 EduLearn Learning Pvt. Ltd. · Made for Bharat · <a href="#" style="color:var(--teal)">Privacy Policy</a> · <a href="#" style="color:var(--teal)">Terms</a></p>
+    <p>© 2026 EduLearn Learning Pvt. Ltd. · Made for Bharat · <a href="/privacy" style="color:var(--teal)">Privacy Policy</a> · <a href="/terms" style="color:var(--teal)">Terms</a></p>
   </footer>
 
   <script src="api.js"></script>

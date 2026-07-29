@@ -65,6 +65,12 @@ body{
   overflow-x:hidden;
   min-height:100vh;
 }
+/* Full-white, seamless surface for the dashboard — no canvas tint or blob glow
+   bleeding in at the left/right edges (per design feedback). `html body` out-
+   specifies vivid.css's `body{…!important}`, so it wins even though this page
+   CSS loads earlier in the cascade. */
+html body{ background:#FFFFFF !important; background-image:none !important; }
+.blobs{ display:none !important; }
 ::selection{background:rgba(61,232,197,.3);color:var(--cream);}
 a{color:inherit;text-decoration:none;}
 button{font-family:inherit;color:inherit;background:none;border:none;cursor:pointer;}

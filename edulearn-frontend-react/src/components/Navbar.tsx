@@ -24,6 +24,17 @@ const NAV_LINKS: { page: string; label: string; i18n: string }[] = [
 ];
 
 /**
+ * Signed-out visitors see a marketing nav, not the app sections — those pages
+ * are for authenticated users and just bounce a logged-out click back to the
+ * landing page. These anchor to real sections of the landing page (see
+ * LandingMarkup: #features, #stats), so there are no dead links.
+ */
+const MARKETING_LINKS: { href: string; label: string }[] = [
+  { href: '/#features', label: 'Features' },
+  { href: '/#stats', label: 'Results' },
+];
+
+/**
  * Only these pages loaded role-guard.js, and its nav cosmetics — hiding the
  * "Start free" CTA, repointing the brand at the dashboard, hiding links the
  * role cannot open — ran nowhere else. videos.html and the teacher tools show
@@ -80,23 +91,30 @@ export default function Navbar({ page }: { page: string }) {
         </Link>
 
         <div className="nav__links">
-          {NAV_LINKS
-            // Logged out, the static nav still rendered every link — the guard
-            // only hid them for a signed-in role that may not open the page.
-            .filter((l) => !guarded || !loggedIn || roleAllows(role, l.page))
-            .map((l) => {
-              const to = ROUTE_BY_PAGE[l.page];
-              return (
-                <Link
-                  key={l.page}
-                  className={`nav__link${l.page === currentNav ? ' is-current' : ''}`}
-                  to={to}
-                  data-i18n={l.i18n}
-                >
-                  {l.label}
-                </Link>
-              );
-            })}
+          {loggedIn
+            ? NAV_LINKS
+                // Signed in: hide only the links this role cannot open.
+                .filter((l) => !guarded || roleAllows(role, l.page))
+                .map((l) => {
+                  const to = ROUTE_BY_PAGE[l.page];
+                  return (
+                    <Link
+                      key={l.page}
+                      className={`nav__link${l.page === currentNav ? ' is-current' : ''}`}
+                      to={to}
+                      data-i18n={l.i18n}
+                    >
+                      {l.label}
+                    </Link>
+                  );
+                })
+            : // Signed out: marketing links only (the app sections are for
+              // authenticated users). Plain anchors so same-page hashes scroll.
+              MARKETING_LINKS.map((m) => (
+                <a key={m.href} className="nav__link" href={m.href}>
+                  {m.label}
+                </a>
+              ))}
         </div>
 
         <div className="nav__right">

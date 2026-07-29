@@ -636,11 +636,11 @@ export default function LandingMarkup() {
       <footer>
         <p>
           {"© 2026 EduLearn Learning Pvt. Ltd. · Made for Bharat · "}
-          <a href="#" style={{ color: "var(--teal)" }}>
+          <a href="/privacy" style={{ color: "var(--teal)" }}>
             Privacy Policy
           </a>
           {" · "}
-          <a href="#" style={{ color: "var(--teal)" }}>
+          <a href="/terms" style={{ color: "var(--teal)" }}>
             Terms
           </a>
         </p>

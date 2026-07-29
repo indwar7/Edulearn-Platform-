@@ -22,6 +22,8 @@ import Live from './pages/Live';
 import Videos from './pages/Videos';
 import Upload from './pages/Upload';
 import Admin from './pages/Admin';
+import Privacy from './pages/Privacy';
+import Terms from './pages/Terms';
 
 /**
  * login.html and signup.html are the only pages with no shared nav — they own
@@ -86,6 +88,14 @@ export default function App() {
         <Route path="/videos" element={<Videos />} />
         <Route path="/upload" element={<Upload />} />
         <Route path="/admin" element={<Admin />} />
+
+        {/* Public legal pages, linked from the landing footer. */}
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
+
+        {/* Legacy ".html" aliases in case an old link is followed. */}
+        <Route path="/privacy.html" element={<Navigate to="/privacy" replace />} />
+        <Route path="/terms.html" element={<Navigate to="/terms" replace />} />
 
         {/*
           Catch-all: any URL that matches no route above — a stale ".html"

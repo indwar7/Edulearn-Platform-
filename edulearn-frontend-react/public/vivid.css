@@ -33,6 +33,9 @@
   --u-gold:#C99A2E;
   --u-gold-bright:#B8860B;
   --u-gold-tint:#FBF1D8;
+  /* Primary CTA — indigo/blue (replaces the gold fill on .btn-primary etc.). */
+  --u-cta:#3F5BE0;
+  --u-cta-bright:#5B6CF0;
   --u-profit:#0E9E6E;
   --u-loss:#E0483B;
   --u-radius:18px;
@@ -243,16 +246,16 @@ h1 em, h2 em, h3 em, .grad, .greet h1 em, .hero-title em, .bar-foot .big{
    BUTTONS — gold gradient primary, outlined secondary
    ============================================================ */
 .btn-primary, .btn, .btn-book, .btn-join, .btn-new, .btn-resume, .btn-fix{
-  background:linear-gradient(135deg, var(--u-gold-bright), var(--u-gold)) !important;
-  color:#1A1404 !important;
-  -webkit-text-fill-color:#1A1404 !important;
+  background:linear-gradient(135deg, var(--u-cta-bright), var(--u-cta)) !important;
+  color:#FFFFFF !important;
+  -webkit-text-fill-color:#FFFFFF !important;
   border:none !important;
   border-radius:999px;
   font-weight:800;
-  box-shadow:0 6px 18px color-mix(in srgb, var(--u-gold) 34%, transparent);
+  box-shadow:0 6px 18px color-mix(in srgb, var(--u-cta) 34%, transparent);
 }
 .btn-primary:hover, .btn:hover, .btn-fix:hover{
-  box-shadow:0 10px 26px color-mix(in srgb, var(--u-gold) 46%, transparent);
+  box-shadow:0 10px 26px color-mix(in srgb, var(--u-cta) 46%, transparent);
 }
 .btn-ghost, .social-btn{
   background:var(--u-surface) !important;
@@ -260,7 +263,7 @@ h1 em, h2 em, h3 em, .grad, .greet h1 em, .hero-title em, .bar-foot .big{
   color:var(--u-text) !important;
   border-radius:999px;
 }
-.btn-ghost:hover{ border-color:var(--u-gold) !important; }
+.btn-ghost:hover{ border-color:var(--u-cta) !important; }
 
 /* ============================================================
    INPUTS
@@ -299,7 +302,7 @@ th, td{ border-color:var(--u-border) !important; color:var(--u-text) !important;
 @supports not (color: color-mix(in srgb, red 50%, blue)){
   .pcard:hover, .vcard:hover, .feature-card:hover{border-color:var(--u-border) !important;}
   .chip, .tag, .pill{border-color:var(--u-gold);}
-  .btn-primary, .btn{box-shadow:0 6px 18px rgba(201,154,46,.34);}
+  .btn-primary, .btn{box-shadow:0 6px 18px rgba(63,91,224,.34);}
 }
 
 /* ============================================================
