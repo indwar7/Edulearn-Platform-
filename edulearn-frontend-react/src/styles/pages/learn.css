@@ -219,7 +219,11 @@ input{font-family:inherit;color:inherit}
 /* ============================================================
    Layout shell
    ============================================================ */
-.wrap{max-width:1600px;margin:0 auto;padding:0 32px;position:relative;z-index:2}
+/* Learn runs edge to edge — full viewport width, no 1600px cap, so there are no
+   empty margins on the left/right. The nav and footer are widened to match
+   below (both are shared and 1600px by default) so the whole page is seamless. */
+.wrap{max-width:none;margin:0 auto;padding:0 44px;position:relative;z-index:2}
+body .nav__inner, body .feat-foot__inner{max-width:none !important}
 
 /* ============================================================
    Hero strip
