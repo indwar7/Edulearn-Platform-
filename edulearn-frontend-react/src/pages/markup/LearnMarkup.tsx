@@ -40,12 +40,17 @@ export default function LearnMarkup() {
             </span>
           </div>
           <div className="hero__row">
-            <h1 className="hero__title rv" style={{ animationDelay: ".12s" }} data-i18n="hero_title">
-              {"Choose your "}
-              <em>
-                battlefield.
-              </em>
-            </h1>
+            <div className="hero__lead">
+              <h1 className="hero__title rv" style={{ animationDelay: ".12s" }} data-i18n="hero_title">
+                {"Choose your "}
+                <em>
+                  battlefield.
+                </em>
+              </h1>
+              <p className="hero__sub rv" style={{ animationDelay: ".18s" }}>
+                Pick a subject to open its chapters — watch the lecture, read the notes, and pick up right where you left off. Your whole syllabus, in one place.
+              </p>
+            </div>
             <div className="hero__chips">
               <div className="chip chip--gold rv" style={{ animationDelay: ".22s" }}>
                 <svg

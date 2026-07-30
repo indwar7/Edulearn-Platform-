@@ -254,6 +254,8 @@ body .nav__inner, body .feat-foot__inner{max-width:none !important}
   -webkit-text-fill-color:transparent;
   color:transparent;
 }
+.hero__lead{max-width:680px}
+.hero__sub{color:var(--muted);font-size:16.5px;line-height:1.6;margin-top:18px;max-width:600px}
 .hero__chips{display:flex;flex-direction:column;gap:10px;align-items:flex-start;padding-bottom:8px}
 .chip{
   display:inline-flex;align-items:center;gap:10px;
@@ -419,10 +421,7 @@ body .nav__inner, body .feat-foot__inner{max-width:none !important}
 /* ============================================================
    Chapter rows
    ============================================================ */
-/* Auto-fill grid: a single full-width column left the rows sparse. This packs
-   as many ~460px chapter cards per row as the screen allows (≈3 on 1600px, ≈4
-   on a wide monitor), so the page fills edge to edge instead of looking empty. */
-.chapters{display:grid;grid-template-columns:repeat(auto-fill,minmax(460px,1fr));gap:16px;min-height:320px}
+.chapters{display:flex;flex-direction:column;gap:14px;min-height:320px}
 .chrow{
   --cc:var(--c7);
   position:relative;
