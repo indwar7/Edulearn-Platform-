@@ -159,479 +159,635 @@ export default function LiveMarkup() {
               </div>
             </aside>
           </section>
-          {/* This week in Class 7 — illustrative weekly live schedule to give the
-           page substance even before a teacher schedules real backend sessions.
-           Fictional tutors, matching the simulated tutor tile in the classroom. */}
-          <section className="wk">
-            <div className="wk__head">
-              <h2 className="sect-title rv" style={{ animationDelay: ".1s" }}>
-                This week in Class 7 — live
-              </h2>
-              <p className="wk__sub rv" style={{ animationDelay: ".16s" }}>
-                Every weekday, subject by subject. Small groups, real tutors, doubts cleared on the spot — all mapped to the Class 7 NCERT syllabus.
-              </p>
-            </div>
-            <div className="wk__grid">
-              <article
-                className="wkc rv"
-                style={{ '--sa': "var(--teal)", animationDelay: ".20s" } as CSSProperties}
-              >
-                <div className="wkc__top">
-                  <span className="wkc__day">
-                    Mon
-                  </span>
-                  <span className="wkc__subj">
-                    Science
-                  </span>
-                </div>
-                <div className="wkc__topic">
-                  Electricity: Circuits & Their Components
-                </div>
-                <div className="wkc__meta">
-                  {"with "}
-                  <b>
-                    Priya Sharma
-                  </b>
-                </div>
-                <div className="wkc__foot">
-                  <span className="wkc__time">
-                    4:00 – 5:00 PM
-                  </span>
-                  <span className="wkc__seats low">
-                    4 seats left
-                  </span>
-                </div>
-              </article>
-              <article
-                className="wkc rv"
-                style={{ '--sa': "var(--peri)", animationDelay: ".24s" } as CSSProperties}
-              >
-                <div className="wkc__top">
-                  <span className="wkc__day">
-                    Mon
-                  </span>
-                  <span className="wkc__subj">
-                    Maths
-                  </span>
-                </div>
-                <div className="wkc__topic">
-                  Integers — Properties & Problem Solving
-                </div>
-                <div className="wkc__meta">
-                  {"with "}
-                  <b>
-                    Rahul Verma
-                  </b>
-                </div>
-                <div className="wkc__foot">
-                  <span className="wkc__time">
-                    5:15 – 6:15 PM
-                  </span>
-                  <span className="wkc__seats">
-                    9 seats left
-                  </span>
-                </div>
-              </article>
-              <article
-                className="wkc rv"
-                style={{ '--sa': "var(--teal)", animationDelay: ".28s" } as CSSProperties}
-              >
-                <div className="wkc__top">
-                  <span className="wkc__day">
-                    Tue
-                  </span>
-                  <span className="wkc__subj">
-                    Science
-                  </span>
-                </div>
-                <div className="wkc__topic">
-                  Heat: Conduction, Convection & Radiation
-                </div>
-                <div className="wkc__meta">
-                  {"with "}
-                  <b>
-                    Anjali Rao
-                  </b>
-                </div>
-                <div className="wkc__foot">
-                  <span className="wkc__time">
-                    4:00 – 5:00 PM
-                  </span>
-                  <span className="wkc__seats low">
-                    3 seats left
-                  </span>
-                </div>
-              </article>
-              <article
-                className="wkc rv"
-                style={{ '--sa': "var(--amber)", animationDelay: ".32s" } as CSSProperties}
-              >
-                <div className="wkc__top">
-                  <span className="wkc__day">
-                    Tue
-                  </span>
-                  <span className="wkc__subj">
-                    Social
-                  </span>
-                </div>
-                <div className="wkc__topic">
-                  The Mughal Empire — Rise & Administration
-                </div>
-                <div className="wkc__meta">
-                  {"with "}
-                  <b>
-                    Imran Khan
-                  </b>
-                </div>
-                <div className="wkc__foot">
-                  <span className="wkc__time">
-                    5:15 – 6:15 PM
-                  </span>
-                  <span className="wkc__seats">
-                    11 seats left
-                  </span>
-                </div>
-              </article>
-              <article
-                className="wkc rv"
-                style={{ '--sa': "var(--peri)", animationDelay: ".36s" } as CSSProperties}
-              >
-                <div className="wkc__top">
-                  <span className="wkc__day">
-                    Wed
-                  </span>
-                  <span className="wkc__subj">
-                    Maths
-                  </span>
-                </div>
-                <div className="wkc__topic">
-                  Fractions & Decimals — Operations
-                </div>
-                <div className="wkc__meta">
-                  {"with "}
-                  <b>
-                    Rahul Verma
-                  </b>
-                </div>
-                <div className="wkc__foot">
-                  <span className="wkc__time">
-                    4:00 – 5:00 PM
-                  </span>
-                  <span className="wkc__seats">
-                    7 seats left
-                  </span>
-                </div>
-              </article>
-              <article
-                className="wkc rv"
-                style={{ '--sa': "var(--rose)", animationDelay: ".40s" } as CSSProperties}
-              >
-                <div className="wkc__top">
-                  <span className="wkc__day">
-                    Wed
-                  </span>
-                  <span className="wkc__subj">
-                    English
-                  </span>
-                </div>
-                <div className="wkc__topic">
-                  Reading Comprehension & Vocabulary
-                </div>
-                <div className="wkc__meta">
-                  {"with "}
-                  <b>
-                    Sara Thomas
-                  </b>
-                </div>
-                <div className="wkc__foot">
-                  <span className="wkc__time">
-                    5:15 – 6:00 PM
-                  </span>
-                  <span className="wkc__seats">
-                    8 seats left
-                  </span>
-                </div>
-              </article>
-              <article
-                className="wkc rv"
-                style={{ '--sa': "var(--teal)", animationDelay: ".44s" } as CSSProperties}
-              >
-                <div className="wkc__top">
-                  <span className="wkc__day">
-                    Thu
-                  </span>
-                  <span className="wkc__subj">
-                    Science
-                  </span>
-                </div>
-                <div className="wkc__topic">
-                  The World of Metals & Non-metals
-                </div>
-                <div className="wkc__meta">
-                  {"with "}
-                  <b>
-                    Anjali Rao
-                  </b>
-                </div>
-                <div className="wkc__foot">
-                  <span className="wkc__time">
-                    4:00 – 5:00 PM
-                  </span>
-                  <span className="wkc__seats low">
-                    2 seats left
-                  </span>
-                </div>
-              </article>
-              <article
-                className="wkc rv"
-                style={{ '--sa': "var(--amber)", animationDelay: ".48s" } as CSSProperties}
-              >
-                <div className="wkc__top">
-                  <span className="wkc__day">
-                    Thu
-                  </span>
-                  <span className="wkc__subj">
-                    Hindi
-                  </span>
-                </div>
-                <div className="wkc__topic">
-                  व्याकरण — संधि और समास
-                </div>
-                <div className="wkc__meta">
-                  {"with "}
-                  <b>
-                    Neha Gupta
-                  </b>
-                </div>
-                <div className="wkc__foot">
-                  <span className="wkc__time">
-                    5:15 – 6:00 PM
-                  </span>
-                  <span className="wkc__seats">
-                    10 seats left
-                  </span>
-                </div>
-              </article>
-              <article
-                className="wkc rv"
-                style={{ '--sa': "var(--peri)", animationDelay: ".52s" } as CSSProperties}
-              >
-                <div className="wkc__top">
-                  <span className="wkc__day">
-                    Fri
-                  </span>
-                  <span className="wkc__subj">
-                    Maths
-                  </span>
-                </div>
-                <div className="wkc__topic">
-                  Simple Equations — Solving & Applications
-                </div>
-                <div className="wkc__meta">
-                  {"with "}
-                  <b>
-                    Rahul Verma
-                  </b>
-                </div>
-                <div className="wkc__foot">
-                  <span className="wkc__time">
-                    4:00 – 5:00 PM
-                  </span>
-                  <span className="wkc__seats">
-                    5 seats left
-                  </span>
-                </div>
-              </article>
-              <article
-                className="wkc rv"
-                style={{ '--sa': "var(--teal)", animationDelay: ".56s" } as CSSProperties}
-              >
-                <div className="wkc__top">
-                  <span className="wkc__day">
-                    Fri
-                  </span>
-                  <span className="wkc__subj">
-                    Science
-                  </span>
-                </div>
-                <div className="wkc__topic">
-                  Measurement of Time and Motion
-                </div>
-                <div className="wkc__meta">
-                  {"with "}
-                  <b>
-                    Priya Sharma
-                  </b>
-                </div>
-                <div className="wkc__foot">
-                  <span className="wkc__time">
-                    5:15 – 6:15 PM
-                  </span>
-                  <span className="wkc__seats">
-                    6 seats left
-                  </span>
-                </div>
-              </article>
-              <article
-                className="wkc rv"
-                style={{ '--sa': "var(--amber)", animationDelay: ".60s" } as CSSProperties}
-              >
-                <div className="wkc__top">
-                  <span className="wkc__day">
-                    Sat
-                  </span>
-                  <span className="wkc__subj">
-                    Social
-                  </span>
-                </div>
-                <div className="wkc__topic">
-                  Our Environment — Air, Water & Land
-                </div>
-                <div className="wkc__meta">
-                  {"with "}
-                  <b>
-                    Imran Khan
-                  </b>
-                </div>
-                <div className="wkc__foot">
-                  <span className="wkc__time">
-                    11:00 AM – 12:00 PM
-                  </span>
-                  <span className="wkc__seats">
-                    12 seats left
-                  </span>
-                </div>
-              </article>
-              <article
-                className="wkc rv"
-                style={{ '--sa': "var(--teal)", animationDelay: ".64s" } as CSSProperties}
-              >
-                <div className="wkc__top">
-                  <span className="wkc__day">
-                    Sat
-                  </span>
-                  <span className="wkc__subj">
-                    Science
-                  </span>
-                </div>
-                <div className="wkc__topic">
-                  Doubt Marathon — This Week's Science
-                </div>
-                <div className="wkc__meta">
-                  {"with "}
-                  <b>
-                    Anjali Rao
-                  </b>
-                </div>
-                <div className="wkc__foot">
-                  <span className="wkc__time">
-                    12:15 – 1:15 PM
-                  </span>
-                  <span className="wkc__seats low">
-                    4 seats left
-                  </span>
-                </div>
-              </article>
-            </div>
-            <div className="wk__why">
-              <h2 className="sect-title rv" style={{ animationDelay: ".2s" }}>
-                Why join live
-              </h2>
-              <div className="wk__feats">
-                <div className="wkf rv" style={{ animationDelay: ".24s" }}>
-                  <div className="wkf__ic">
-                    <svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.7"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                      <circle cx="9" cy="7" r="4" />
-                      <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-                    </svg>
-                  </div>
-                  <div className="wkf__h">
-                    Small groups, max 15
-                  </div>
-                  <p className="wkf__p">
-                    Ask freely — the tutor knows your name and can see when you're stuck.
-                  </p>
-                </div>
-                <div className="wkf rv" style={{ animationDelay: ".28s" }}>
-                  <div className="wkf__ic">
-                    <svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.7"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                    </svg>
-                  </div>
-                  <div className="wkf__h">
-                    Doubts cleared live
-                  </div>
-                  <p className="wkf__p">
-                    Raise a hand, get called on, and no question is ever too small.
-                  </p>
-                </div>
-                <div className="wkf rv" style={{ animationDelay: ".32s" }}>
-                  <div className="wkf__ic">
-                    <svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.7"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M9 11l3 3L22 4" />
-                      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
-                    </svg>
-                  </div>
-                  <div className="wkf__h">
-                    Weekly test review
-                  </div>
-                  <p className="wkf__p">
-                    Walk through the week's test paper together and fix mistakes on the spot.
-                  </p>
-                </div>
-                <div className="wkf rv" style={{ animationDelay: ".36s" }}>
-                  <div className="wkf__ic">
-                    <svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.7"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path
-                        d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"
-                       />
-                    </svg>
-                  </div>
-                  <div className="wkf__h">
-                    Saturday revision marathons
-                  </div>
-                  <p className="wkf__p">
-                    Lock in the whole week's chapters before the syllabus moves on.
-                  </p>
-                </div>
+          {/* Class 7 NCERT syllabus at a glance — the real chapters of every
+           subject, with the foundational / high-weightage "must-do" ones
+           starred. Fills the browse view with genuine study content. */}
+          <section className="syl">
+            <div className="syl__head">
+              <div>
+                <h2 className="sect-title rv" style={{ margin: "0", animationDelay: ".1s" }}>
+                  Class 7 NCERT — the must-do syllabus
+                </h2>
+                <p className="syl__sub rv" style={{ animationDelay: ".16s" }}>
+                  Every subject, chapter by chapter, straight from the NCERT syllabus. Start with the starred chapters — they carry the most weight and everything else builds on them.
+                </p>
               </div>
+              <span className="syl__legend rv" style={{ animationDelay: ".2s" }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--amber)" aria-hidden="true">
+                  <path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4l1.4-6.8L2.2 9l6.9-.7z" />
+                </svg>
+                {" Must-do — foundational / high-weightage "}
+              </span>
+            </div>
+            <div className="syl__grid">
+              {/* SCIENCE */}
+              <article
+                className="sylc rv"
+                style={{ '--sa': "var(--teal)", animationDelay: ".22s" } as CSSProperties}
+              >
+                <div className="sylc__hd">
+                  <span className="sylc__ic">
+                    <svg
+                      width="22"
+                      height="22"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.7"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M9 2h6M10 2v6.5L5.2 17A2 2 0 0 0 7 20h10a2 2 0 0 0 1.8-3L14 8.5V2" />
+                      <path d="M7.5 14h9" />
+                    </svg>
+                  </span>
+                  <div>
+                    <div className="sylc__name">
+                      Science
+                    </div>
+                    <div className="sylc__count">
+                      12 chapters
+                    </div>
+                  </div>
+                </div>
+                <ul className="sylc__list">
+                  <li className="sylc__ch is-key">
+                    <span className="sylc__n">
+                      01
+                    </span>
+                    <span className="sylc__t">
+                      Electricity: Circuits and their Components
+                    </span>
+                    <svg className="sylc__key" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4l1.4-6.8L2.2 9l6.9-.7z" />
+                    </svg>
+                  </li>
+                  <li className="sylc__ch is-key">
+                    <span className="sylc__n">
+                      02
+                    </span>
+                    <span className="sylc__t">
+                      The World of Metals and Non-metals
+                    </span>
+                    <svg className="sylc__key" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4l1.4-6.8L2.2 9l6.9-.7z" />
+                    </svg>
+                  </li>
+                  <li className="sylc__ch is-key">
+                    <span className="sylc__n">
+                      03
+                    </span>
+                    <span className="sylc__t">
+                      Changes Around Us: Physical and Chemical
+                    </span>
+                    <svg className="sylc__key" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4l1.4-6.8L2.2 9l6.9-.7z" />
+                    </svg>
+                  </li>
+                  <li className="sylc__ch">
+                    <span className="sylc__n">
+                      04
+                    </span>
+                    <span className="sylc__t">
+                      Adolescence: A Stage of Growth and Change
+                    </span>
+                  </li>
+                  <li className="sylc__ch is-key">
+                    <span className="sylc__n">
+                      05
+                    </span>
+                    <span className="sylc__t">
+                      Heat Transfer in Nature
+                    </span>
+                    <svg className="sylc__key" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4l1.4-6.8L2.2 9l6.9-.7z" />
+                    </svg>
+                  </li>
+                  <li className="sylc__ch">
+                    <span className="sylc__n">
+                      06
+                    </span>
+                    <span className="sylc__t">
+                      Measurement of Time and Motion
+                    </span>
+                  </li>
+                  <li className="sylc__ch">
+                    <span className="sylc__n">
+                      07
+                    </span>
+                    <span className="sylc__t">
+                      The Ever-Evolving World of Science
+                    </span>
+                  </li>
+                  <li className="sylc__ch is-key">
+                    <span className="sylc__n">
+                      08
+                    </span>
+                    <span className="sylc__t">
+                      Exploring Substances: Acidic, Basic & Neutral
+                    </span>
+                    <svg className="sylc__key" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4l1.4-6.8L2.2 9l6.9-.7z" />
+                    </svg>
+                  </li>
+                  <li className="sylc__ch">
+                    <span className="sylc__n">
+                      09
+                    </span>
+                    <span className="sylc__t">
+                      Life Processes in Animals
+                    </span>
+                  </li>
+                  <li className="sylc__ch is-key">
+                    <span className="sylc__n">
+                      10
+                    </span>
+                    <span className="sylc__t">
+                      Life Processes in Plants
+                    </span>
+                    <svg className="sylc__key" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4l1.4-6.8L2.2 9l6.9-.7z" />
+                    </svg>
+                  </li>
+                  <li className="sylc__ch">
+                    <span className="sylc__n">
+                      11
+                    </span>
+                    <span className="sylc__t">
+                      Light: Shadows and Reflections
+                    </span>
+                  </li>
+                  <li className="sylc__ch">
+                    <span className="sylc__n">
+                      12
+                    </span>
+                    <span className="sylc__t">
+                      Earth, Moon and the Sun
+                    </span>
+                  </li>
+                </ul>
+              </article>
+              {/* MATHS */}
+              <article
+                className="sylc rv"
+                style={{ '--sa': "var(--peri)", animationDelay: ".26s" } as CSSProperties}
+              >
+                <div className="sylc__hd">
+                  <span className="sylc__ic">
+                    <span
+                      style={{ fontFamily: "'Fraunces',serif", fontWeight: "700", fontSize: "18px", lineHeight: "1" }}
+                    >
+                      x²
+                    </span>
+                  </span>
+                  <div>
+                    <div className="sylc__name">
+                      Mathematics
+                    </div>
+                    <div className="sylc__count">
+                      10 chapters
+                    </div>
+                  </div>
+                </div>
+                <ul className="sylc__list">
+                  <li className="sylc__ch is-key">
+                    <span className="sylc__n">
+                      01
+                    </span>
+                    <span className="sylc__t">
+                      Integers
+                    </span>
+                    <svg className="sylc__key" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4l1.4-6.8L2.2 9l6.9-.7z" />
+                    </svg>
+                  </li>
+                  <li className="sylc__ch is-key">
+                    <span className="sylc__n">
+                      02
+                    </span>
+                    <span className="sylc__t">
+                      Fractions and Decimals
+                    </span>
+                    <svg className="sylc__key" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4l1.4-6.8L2.2 9l6.9-.7z" />
+                    </svg>
+                  </li>
+                  <li className="sylc__ch">
+                    <span className="sylc__n">
+                      03
+                    </span>
+                    <span className="sylc__t">
+                      Data Handling
+                    </span>
+                  </li>
+                  <li className="sylc__ch is-key">
+                    <span className="sylc__n">
+                      04
+                    </span>
+                    <span className="sylc__t">
+                      Simple Equations
+                    </span>
+                    <svg className="sylc__key" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4l1.4-6.8L2.2 9l6.9-.7z" />
+                    </svg>
+                  </li>
+                  <li className="sylc__ch">
+                    <span className="sylc__n">
+                      05
+                    </span>
+                    <span className="sylc__t">
+                      Lines and Angles
+                    </span>
+                  </li>
+                  <li className="sylc__ch is-key">
+                    <span className="sylc__n">
+                      06
+                    </span>
+                    <span className="sylc__t">
+                      The Triangle and its Properties
+                    </span>
+                    <svg className="sylc__key" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4l1.4-6.8L2.2 9l6.9-.7z" />
+                    </svg>
+                  </li>
+                  <li className="sylc__ch">
+                    <span className="sylc__n">
+                      07
+                    </span>
+                    <span className="sylc__t">
+                      Congruence of Triangles
+                    </span>
+                  </li>
+                  <li className="sylc__ch is-key">
+                    <span className="sylc__n">
+                      08
+                    </span>
+                    <span className="sylc__t">
+                      Comparing Quantities
+                    </span>
+                    <svg className="sylc__key" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4l1.4-6.8L2.2 9l6.9-.7z" />
+                    </svg>
+                  </li>
+                  <li className="sylc__ch">
+                    <span className="sylc__n">
+                      09
+                    </span>
+                    <span className="sylc__t">
+                      Rational Numbers
+                    </span>
+                  </li>
+                  <li className="sylc__ch is-key">
+                    <span className="sylc__n">
+                      10
+                    </span>
+                    <span className="sylc__t">
+                      Perimeter and Area
+                    </span>
+                    <svg className="sylc__key" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4l1.4-6.8L2.2 9l6.9-.7z" />
+                    </svg>
+                  </li>
+                </ul>
+              </article>
+              {/* SOCIAL SCIENCE */}
+              <article
+                className="sylc rv"
+                style={{ '--sa': "var(--amber)", animationDelay: ".30s" } as CSSProperties}
+              >
+                <div className="sylc__hd">
+                  <span className="sylc__ic">
+                    <svg
+                      width="22"
+                      height="22"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.7"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <circle cx="12" cy="12" r="9" />
+                      <path d="M3 12h18" />
+                      <path d="M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18" />
+                    </svg>
+                  </span>
+                  <div>
+                    <div className="sylc__name">
+                      Social Science
+                    </div>
+                    <div className="sylc__count">
+                      9 chapters
+                    </div>
+                  </div>
+                </div>
+                <ul className="sylc__list">
+                  <li className="sylc__ch">
+                    <span className="sylc__n">
+                      01
+                    </span>
+                    <span className="sylc__t">
+                      Tracing Changes Through a Thousand Years
+                    </span>
+                  </li>
+                  <li className="sylc__ch">
+                    <span className="sylc__n">
+                      02
+                    </span>
+                    <span className="sylc__t">
+                      New Kings and Kingdoms
+                    </span>
+                  </li>
+                  <li className="sylc__ch is-key">
+                    <span className="sylc__n">
+                      03
+                    </span>
+                    <span className="sylc__t">
+                      The Delhi Sultans
+                    </span>
+                    <svg className="sylc__key" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4l1.4-6.8L2.2 9l6.9-.7z" />
+                    </svg>
+                  </li>
+                  <li className="sylc__ch is-key">
+                    <span className="sylc__n">
+                      04
+                    </span>
+                    <span className="sylc__t">
+                      The Mughal Empire
+                    </span>
+                    <svg className="sylc__key" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4l1.4-6.8L2.2 9l6.9-.7z" />
+                    </svg>
+                  </li>
+                  <li className="sylc__ch">
+                    <span className="sylc__n">
+                      05
+                    </span>
+                    <span className="sylc__t">
+                      Rulers and Buildings
+                    </span>
+                  </li>
+                  <li className="sylc__ch is-key">
+                    <span className="sylc__n">
+                      06
+                    </span>
+                    <span className="sylc__t">
+                      Environment
+                    </span>
+                    <svg className="sylc__key" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4l1.4-6.8L2.2 9l6.9-.7z" />
+                    </svg>
+                  </li>
+                  <li className="sylc__ch">
+                    <span className="sylc__n">
+                      07
+                    </span>
+                    <span className="sylc__t">
+                      Inside Our Earth
+                    </span>
+                  </li>
+                  <li className="sylc__ch is-key">
+                    <span className="sylc__n">
+                      08
+                    </span>
+                    <span className="sylc__t">
+                      On Equality
+                    </span>
+                    <svg className="sylc__key" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4l1.4-6.8L2.2 9l6.9-.7z" />
+                    </svg>
+                  </li>
+                  <li className="sylc__ch">
+                    <span className="sylc__n">
+                      09
+                    </span>
+                    <span className="sylc__t">
+                      Markets Around Us
+                    </span>
+                  </li>
+                </ul>
+              </article>
+              {/* ENGLISH */}
+              <article
+                className="sylc rv"
+                style={{ '--sa': "var(--rose)", animationDelay: ".34s" } as CSSProperties}
+              >
+                <div className="sylc__hd">
+                  <span className="sylc__ic">
+                    <svg
+                      width="22"
+                      height="22"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.7"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                    </svg>
+                  </span>
+                  <div>
+                    <div className="sylc__name">
+                      English
+                    </div>
+                    <div className="sylc__count">
+                      9 chapters · Honeycomb
+                    </div>
+                  </div>
+                </div>
+                <ul className="sylc__list">
+                  <li className="sylc__ch is-key">
+                    <span className="sylc__n">
+                      01
+                    </span>
+                    <span className="sylc__t">
+                      Three Questions
+                    </span>
+                    <svg className="sylc__key" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4l1.4-6.8L2.2 9l6.9-.7z" />
+                    </svg>
+                  </li>
+                  <li className="sylc__ch">
+                    <span className="sylc__n">
+                      02
+                    </span>
+                    <span className="sylc__t">
+                      A Gift of Chappals
+                    </span>
+                  </li>
+                  <li className="sylc__ch">
+                    <span className="sylc__n">
+                      03
+                    </span>
+                    <span className="sylc__t">
+                      Gopal and the Hilsa-Fish
+                    </span>
+                  </li>
+                  <li className="sylc__ch">
+                    <span className="sylc__n">
+                      04
+                    </span>
+                    <span className="sylc__t">
+                      The Ashes That Made Trees Bloom
+                    </span>
+                  </li>
+                  <li className="sylc__ch is-key">
+                    <span className="sylc__n">
+                      05
+                    </span>
+                    <span className="sylc__t">
+                      Quality
+                    </span>
+                    <svg className="sylc__key" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4l1.4-6.8L2.2 9l6.9-.7z" />
+                    </svg>
+                  </li>
+                  <li className="sylc__ch">
+                    <span className="sylc__n">
+                      06
+                    </span>
+                    <span className="sylc__t">
+                      Expert Detectives
+                    </span>
+                  </li>
+                  <li className="sylc__ch">
+                    <span className="sylc__n">
+                      07
+                    </span>
+                    <span className="sylc__t">
+                      The Invention of Vita-Wonk
+                    </span>
+                  </li>
+                  <li className="sylc__ch is-key">
+                    <span className="sylc__n">
+                      08
+                    </span>
+                    <span className="sylc__t">
+                      Fire: Friend and Foe
+                    </span>
+                    <svg className="sylc__key" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4l1.4-6.8L2.2 9l6.9-.7z" />
+                    </svg>
+                  </li>
+                  <li className="sylc__ch is-key">
+                    <span className="sylc__n">
+                      09
+                    </span>
+                    <span className="sylc__t">
+                      The Story of Cricket
+                    </span>
+                    <svg className="sylc__key" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4l1.4-6.8L2.2 9l6.9-.7z" />
+                    </svg>
+                  </li>
+                </ul>
+              </article>
+              {/* HINDI */}
+              <article className="sylc rv" style={{ '--sa': "#8B5CF6", animationDelay: ".38s" } as CSSProperties}>
+                <div className="sylc__hd">
+                  <span className="sylc__ic">
+                    <span
+                      style={{ fontFamily: "'Nunito',sans-serif", fontWeight: "800", fontSize: "19px", lineHeight: "1" }}
+                    >
+                      अ
+                    </span>
+                  </span>
+                  <div>
+                    <div className="sylc__name">
+                      Hindi
+                    </div>
+                    <div className="sylc__count">
+                      9 chapters · वसंत
+                    </div>
+                  </div>
+                </div>
+                <ul className="sylc__list">
+                  <li className="sylc__ch is-key">
+                    <span className="sylc__n">
+                      01
+                    </span>
+                    <span className="sylc__t">
+                      हम पंछी उन्मुक्त गगन के
+                    </span>
+                    <svg className="sylc__key" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4l1.4-6.8L2.2 9l6.9-.7z" />
+                    </svg>
+                  </li>
+                  <li className="sylc__ch">
+                    <span className="sylc__n">
+                      02
+                    </span>
+                    <span className="sylc__t">
+                      दादी माँ
+                    </span>
+                  </li>
+                  <li className="sylc__ch">
+                    <span className="sylc__n">
+                      03
+                    </span>
+                    <span className="sylc__t">
+                      हिमालय की बेटियाँ
+                    </span>
+                  </li>
+                  <li className="sylc__ch">
+                    <span className="sylc__n">
+                      04
+                    </span>
+                    <span className="sylc__t">
+                      कठपुतली
+                    </span>
+                  </li>
+                  <li className="sylc__ch is-key">
+                    <span className="sylc__n">
+                      05
+                    </span>
+                    <span className="sylc__t">
+                      मिठाईवाला
+                    </span>
+                    <svg className="sylc__key" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4l1.4-6.8L2.2 9l6.9-.7z" />
+                    </svg>
+                  </li>
+                  <li className="sylc__ch is-key">
+                    <span className="sylc__n">
+                      06
+                    </span>
+                    <span className="sylc__t">
+                      रक्त और हमारा शरीर
+                    </span>
+                    <svg className="sylc__key" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4l1.4-6.8L2.2 9l6.9-.7z" />
+                    </svg>
+                  </li>
+                  <li className="sylc__ch">
+                    <span className="sylc__n">
+                      07
+                    </span>
+                    <span className="sylc__t">
+                      पापा खो गए
+                    </span>
+                  </li>
+                  <li className="sylc__ch">
+                    <span className="sylc__n">
+                      08
+                    </span>
+                    <span className="sylc__t">
+                      शाम — एक किसान
+                    </span>
+                  </li>
+                  <li className="sylc__ch">
+                    <span className="sylc__n">
+                      09
+                    </span>
+                    <span className="sylc__t">
+                      चिड़िया की बच्ची
+                    </span>
+                  </li>
+                </ul>
+              </article>
             </div>
           </section>
         </div>
