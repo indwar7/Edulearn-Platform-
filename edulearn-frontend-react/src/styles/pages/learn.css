@@ -341,8 +341,8 @@ input{font-family:inherit;color:inherit}
   border:1px solid var(--line);
   border-radius:20px;
   background:var(--card);
-  padding:26px 22px 22px;
-  display:flex;flex-direction:column;gap:14px;
+  padding:34px 28px 28px;
+  display:flex;flex-direction:column;gap:16px;
   text-align:left;
   transition:all .45s var(--ease);
   overflow:hidden;
@@ -364,9 +364,9 @@ input{font-family:inherit;color:inherit}
   box-shadow:var(--shadow-soft), 0 0 0 1px color-mix(in srgb, var(--sa) 25%, transparent) inset;
 }
 .subj.is-active::after{transform:scaleX(1)}
-.subj__icon{color:var(--sa);height:40px;display:flex;align-items:center}
-.subj__icon svg{width:38px;height:38px}
-.subj__name{font-size:17px;font-weight:700;line-height:1.25}
+.subj__icon{color:var(--sa);height:50px;display:flex;align-items:center}
+.subj__icon svg{width:46px;height:46px}
+.subj__name{font-size:19px;font-weight:700;line-height:1.25}
 .subj__count{
   font-family:'Fragment Mono',monospace;
   font-size:10px;letter-spacing:.12em;text-transform:uppercase;

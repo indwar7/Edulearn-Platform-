@@ -163,12 +163,6 @@ export default function LearnMarkup() {
               </div>
               <div className="continue" id="continueBody" />
             </div>
-            <div className="pcard io" style={{ transitionDelay: ".1s" }}>
-              <div className="pcard__eyebrow" data-i18n="beyond_title">
-                Beyond academics
-              </div>
-              <div className="beyond" id="beyondList" />
-            </div>
             <div className="pcard pcard--tokky io" style={{ transitionDelay: ".2s" }}>
               <div id="panelTokky" />
               <p>
