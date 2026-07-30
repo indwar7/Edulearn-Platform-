@@ -430,7 +430,10 @@ body .nav__inner, body .feat-foot__inner{max-width:none !important}
 /* ============================================================
    Chapter rows
    ============================================================ */
-.chapters{display:flex;flex-direction:column;gap:14px;min-height:320px}
+/* Auto-fill grid: a single full-width column left the rows sparse. This packs
+   as many ~460px chapter cards per row as the screen allows (≈3 on 1600px, ≈4
+   on a wide monitor), so the page fills edge to edge instead of looking empty. */
+.chapters{display:grid;grid-template-columns:repeat(auto-fill,minmax(460px,1fr));gap:16px;min-height:320px}
 .chrow{
   --cc:var(--c7);
   position:relative;
