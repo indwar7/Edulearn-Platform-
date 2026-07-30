@@ -1,5 +1,7 @@
 /* Generated from edulearn-frontend/live.html — do not hand-edit.
    Regenerate with `npm run sync:markup`. */
+import type { CSSProperties } from 'react';
+
 export default function LiveMarkup() {
   return (
     <>
@@ -156,6 +158,481 @@ export default function LiveMarkup() {
                 </div>
               </div>
             </aside>
+          </section>
+          {/* This week in Class 7 — illustrative weekly live schedule to give the
+           page substance even before a teacher schedules real backend sessions.
+           Fictional tutors, matching the simulated tutor tile in the classroom. */}
+          <section className="wk">
+            <div className="wk__head">
+              <h2 className="sect-title rv" style={{ animationDelay: ".1s" }}>
+                This week in Class 7 — live
+              </h2>
+              <p className="wk__sub rv" style={{ animationDelay: ".16s" }}>
+                Every weekday, subject by subject. Small groups, real tutors, doubts cleared on the spot — all mapped to the Class 7 NCERT syllabus.
+              </p>
+            </div>
+            <div className="wk__grid">
+              <article
+                className="wkc rv"
+                style={{ '--sa': "var(--teal)", animationDelay: ".20s" } as CSSProperties}
+              >
+                <div className="wkc__top">
+                  <span className="wkc__day">
+                    Mon
+                  </span>
+                  <span className="wkc__subj">
+                    Science
+                  </span>
+                </div>
+                <div className="wkc__topic">
+                  Electricity: Circuits & Their Components
+                </div>
+                <div className="wkc__meta">
+                  {"with "}
+                  <b>
+                    Priya Sharma
+                  </b>
+                </div>
+                <div className="wkc__foot">
+                  <span className="wkc__time">
+                    4:00 – 5:00 PM
+                  </span>
+                  <span className="wkc__seats low">
+                    4 seats left
+                  </span>
+                </div>
+              </article>
+              <article
+                className="wkc rv"
+                style={{ '--sa': "var(--peri)", animationDelay: ".24s" } as CSSProperties}
+              >
+                <div className="wkc__top">
+                  <span className="wkc__day">
+                    Mon
+                  </span>
+                  <span className="wkc__subj">
+                    Maths
+                  </span>
+                </div>
+                <div className="wkc__topic">
+                  Integers — Properties & Problem Solving
+                </div>
+                <div className="wkc__meta">
+                  {"with "}
+                  <b>
+                    Rahul Verma
+                  </b>
+                </div>
+                <div className="wkc__foot">
+                  <span className="wkc__time">
+                    5:15 – 6:15 PM
+                  </span>
+                  <span className="wkc__seats">
+                    9 seats left
+                  </span>
+                </div>
+              </article>
+              <article
+                className="wkc rv"
+                style={{ '--sa': "var(--teal)", animationDelay: ".28s" } as CSSProperties}
+              >
+                <div className="wkc__top">
+                  <span className="wkc__day">
+                    Tue
+                  </span>
+                  <span className="wkc__subj">
+                    Science
+                  </span>
+                </div>
+                <div className="wkc__topic">
+                  Heat: Conduction, Convection & Radiation
+                </div>
+                <div className="wkc__meta">
+                  {"with "}
+                  <b>
+                    Anjali Rao
+                  </b>
+                </div>
+                <div className="wkc__foot">
+                  <span className="wkc__time">
+                    4:00 – 5:00 PM
+                  </span>
+                  <span className="wkc__seats low">
+                    3 seats left
+                  </span>
+                </div>
+              </article>
+              <article
+                className="wkc rv"
+                style={{ '--sa': "var(--amber)", animationDelay: ".32s" } as CSSProperties}
+              >
+                <div className="wkc__top">
+                  <span className="wkc__day">
+                    Tue
+                  </span>
+                  <span className="wkc__subj">
+                    Social
+                  </span>
+                </div>
+                <div className="wkc__topic">
+                  The Mughal Empire — Rise & Administration
+                </div>
+                <div className="wkc__meta">
+                  {"with "}
+                  <b>
+                    Imran Khan
+                  </b>
+                </div>
+                <div className="wkc__foot">
+                  <span className="wkc__time">
+                    5:15 – 6:15 PM
+                  </span>
+                  <span className="wkc__seats">
+                    11 seats left
+                  </span>
+                </div>
+              </article>
+              <article
+                className="wkc rv"
+                style={{ '--sa': "var(--peri)", animationDelay: ".36s" } as CSSProperties}
+              >
+                <div className="wkc__top">
+                  <span className="wkc__day">
+                    Wed
+                  </span>
+                  <span className="wkc__subj">
+                    Maths
+                  </span>
+                </div>
+                <div className="wkc__topic">
+                  Fractions & Decimals — Operations
+                </div>
+                <div className="wkc__meta">
+                  {"with "}
+                  <b>
+                    Rahul Verma
+                  </b>
+                </div>
+                <div className="wkc__foot">
+                  <span className="wkc__time">
+                    4:00 – 5:00 PM
+                  </span>
+                  <span className="wkc__seats">
+                    7 seats left
+                  </span>
+                </div>
+              </article>
+              <article
+                className="wkc rv"
+                style={{ '--sa': "var(--rose)", animationDelay: ".40s" } as CSSProperties}
+              >
+                <div className="wkc__top">
+                  <span className="wkc__day">
+                    Wed
+                  </span>
+                  <span className="wkc__subj">
+                    English
+                  </span>
+                </div>
+                <div className="wkc__topic">
+                  Reading Comprehension & Vocabulary
+                </div>
+                <div className="wkc__meta">
+                  {"with "}
+                  <b>
+                    Sara Thomas
+                  </b>
+                </div>
+                <div className="wkc__foot">
+                  <span className="wkc__time">
+                    5:15 – 6:00 PM
+                  </span>
+                  <span className="wkc__seats">
+                    8 seats left
+                  </span>
+                </div>
+              </article>
+              <article
+                className="wkc rv"
+                style={{ '--sa': "var(--teal)", animationDelay: ".44s" } as CSSProperties}
+              >
+                <div className="wkc__top">
+                  <span className="wkc__day">
+                    Thu
+                  </span>
+                  <span className="wkc__subj">
+                    Science
+                  </span>
+                </div>
+                <div className="wkc__topic">
+                  The World of Metals & Non-metals
+                </div>
+                <div className="wkc__meta">
+                  {"with "}
+                  <b>
+                    Anjali Rao
+                  </b>
+                </div>
+                <div className="wkc__foot">
+                  <span className="wkc__time">
+                    4:00 – 5:00 PM
+                  </span>
+                  <span className="wkc__seats low">
+                    2 seats left
+                  </span>
+                </div>
+              </article>
+              <article
+                className="wkc rv"
+                style={{ '--sa': "var(--amber)", animationDelay: ".48s" } as CSSProperties}
+              >
+                <div className="wkc__top">
+                  <span className="wkc__day">
+                    Thu
+                  </span>
+                  <span className="wkc__subj">
+                    Hindi
+                  </span>
+                </div>
+                <div className="wkc__topic">
+                  व्याकरण — संधि और समास
+                </div>
+                <div className="wkc__meta">
+                  {"with "}
+                  <b>
+                    Neha Gupta
+                  </b>
+                </div>
+                <div className="wkc__foot">
+                  <span className="wkc__time">
+                    5:15 – 6:00 PM
+                  </span>
+                  <span className="wkc__seats">
+                    10 seats left
+                  </span>
+                </div>
+              </article>
+              <article
+                className="wkc rv"
+                style={{ '--sa': "var(--peri)", animationDelay: ".52s" } as CSSProperties}
+              >
+                <div className="wkc__top">
+                  <span className="wkc__day">
+                    Fri
+                  </span>
+                  <span className="wkc__subj">
+                    Maths
+                  </span>
+                </div>
+                <div className="wkc__topic">
+                  Simple Equations — Solving & Applications
+                </div>
+                <div className="wkc__meta">
+                  {"with "}
+                  <b>
+                    Rahul Verma
+                  </b>
+                </div>
+                <div className="wkc__foot">
+                  <span className="wkc__time">
+                    4:00 – 5:00 PM
+                  </span>
+                  <span className="wkc__seats">
+                    5 seats left
+                  </span>
+                </div>
+              </article>
+              <article
+                className="wkc rv"
+                style={{ '--sa': "var(--teal)", animationDelay: ".56s" } as CSSProperties}
+              >
+                <div className="wkc__top">
+                  <span className="wkc__day">
+                    Fri
+                  </span>
+                  <span className="wkc__subj">
+                    Science
+                  </span>
+                </div>
+                <div className="wkc__topic">
+                  Measurement of Time and Motion
+                </div>
+                <div className="wkc__meta">
+                  {"with "}
+                  <b>
+                    Priya Sharma
+                  </b>
+                </div>
+                <div className="wkc__foot">
+                  <span className="wkc__time">
+                    5:15 – 6:15 PM
+                  </span>
+                  <span className="wkc__seats">
+                    6 seats left
+                  </span>
+                </div>
+              </article>
+              <article
+                className="wkc rv"
+                style={{ '--sa': "var(--amber)", animationDelay: ".60s" } as CSSProperties}
+              >
+                <div className="wkc__top">
+                  <span className="wkc__day">
+                    Sat
+                  </span>
+                  <span className="wkc__subj">
+                    Social
+                  </span>
+                </div>
+                <div className="wkc__topic">
+                  Our Environment — Air, Water & Land
+                </div>
+                <div className="wkc__meta">
+                  {"with "}
+                  <b>
+                    Imran Khan
+                  </b>
+                </div>
+                <div className="wkc__foot">
+                  <span className="wkc__time">
+                    11:00 AM – 12:00 PM
+                  </span>
+                  <span className="wkc__seats">
+                    12 seats left
+                  </span>
+                </div>
+              </article>
+              <article
+                className="wkc rv"
+                style={{ '--sa': "var(--teal)", animationDelay: ".64s" } as CSSProperties}
+              >
+                <div className="wkc__top">
+                  <span className="wkc__day">
+                    Sat
+                  </span>
+                  <span className="wkc__subj">
+                    Science
+                  </span>
+                </div>
+                <div className="wkc__topic">
+                  Doubt Marathon — This Week's Science
+                </div>
+                <div className="wkc__meta">
+                  {"with "}
+                  <b>
+                    Anjali Rao
+                  </b>
+                </div>
+                <div className="wkc__foot">
+                  <span className="wkc__time">
+                    12:15 – 1:15 PM
+                  </span>
+                  <span className="wkc__seats low">
+                    4 seats left
+                  </span>
+                </div>
+              </article>
+            </div>
+            <div className="wk__why">
+              <h2 className="sect-title rv" style={{ animationDelay: ".2s" }}>
+                Why join live
+              </h2>
+              <div className="wk__feats">
+                <div className="wkf rv" style={{ animationDelay: ".24s" }}>
+                  <div className="wkf__ic">
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.7"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                      <circle cx="9" cy="7" r="4" />
+                      <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                  </div>
+                  <div className="wkf__h">
+                    Small groups, max 15
+                  </div>
+                  <p className="wkf__p">
+                    Ask freely — the tutor knows your name and can see when you're stuck.
+                  </p>
+                </div>
+                <div className="wkf rv" style={{ animationDelay: ".28s" }}>
+                  <div className="wkf__ic">
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.7"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                    </svg>
+                  </div>
+                  <div className="wkf__h">
+                    Doubts cleared live
+                  </div>
+                  <p className="wkf__p">
+                    Raise a hand, get called on, and no question is ever too small.
+                  </p>
+                </div>
+                <div className="wkf rv" style={{ animationDelay: ".32s" }}>
+                  <div className="wkf__ic">
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.7"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M9 11l3 3L22 4" />
+                      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+                    </svg>
+                  </div>
+                  <div className="wkf__h">
+                    Weekly test review
+                  </div>
+                  <p className="wkf__p">
+                    Walk through the week's test paper together and fix mistakes on the spot.
+                  </p>
+                </div>
+                <div className="wkf rv" style={{ animationDelay: ".36s" }}>
+                  <div className="wkf__ic">
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.7"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path
+                        d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"
+                       />
+                    </svg>
+                  </div>
+                  <div className="wkf__h">
+                    Saturday revision marathons
+                  </div>
+                  <p className="wkf__p">
+                    Lock in the whole week's chapters before the syllabus moves on.
+                  </p>
+                </div>
+              </div>
+            </div>
           </section>
         </div>
         {/* ============ CLASSROOM ============ */}
