@@ -112,12 +112,13 @@
     .showcase{display:none}
 
     footer{position:relative;z-index:10;margin-top:56px;padding:44px 40px 40px;text-align:center;color:var(--text-secondary);font-size:14px}
-    /* Seamless page end (per design feedback): drop vivid.css's hard 2px black
-       rule above the footer so the copyright line blends into the page instead
-       of reading as a separate gray strip. `html footer` out-specifies vivid's
-       bare `footer{…!important}`; scoped here since this CSS only loads on the
+    /* Footer divider. vivid.css's full-bleed 2px black rule read as a separate
+       gray strip, but zeroing it (the previous fix) left the footer merging
+       into the showcase above it. A single clear hairline separates the two
+       without the heavy strip. `html footer` out-specifies vivid's bare
+       `footer{…!important}`; scoped here since this CSS only loads on the
        landing page. */
-    html footer{ border-top:0 !important; }
+    html footer{ border-top:1.5px solid rgba(11,18,36,.16) !important; }
 
     /* ============================================================
        LIGHT MODE REDESIGN — every rule below is scoped so the
@@ -224,16 +225,51 @@
     html:not(.dark-mode) .feature-card[data-ac="amber"]:hover{border-color:#FCD34D}
     html:not(.dark-mode) .feature-card[data-ac="rose"]:hover{border-color:#FDA4AF}
 
-    /* stats — light: deep navy band */
+    /* stats — light: black band with lit-up figures.
+       The indigo gradient this replaces lost its text: vivid.css paints every
+       word black (`[class*="num"]` catches .stat-number, the bare `div` rule
+       catches .stat-label), so the numbers and labels disappeared into the
+       blue. A true black surface makes that an exception worth declaring —
+       same deal as .hero-title — so every rule here carries !important to
+       out-rank vivid, and the accent hues finally show. */
     html:not(.dark-mode) .stats{
-      background:linear-gradient(135deg,#312E81 0%,#4338CA 50%,#6366F1 100%);border:none;border-radius:30px;padding:52px 40px;
-      box-shadow:0 30px 70px rgba(99,102,241,.3);
+      background:#0B0D12 !important;
+      border:2px solid #000000 !important;
+      border-radius:26px !important;
+      padding:44px 36px !important;
+      gap:20px !important;
+      box-shadow:8px 8px 0 rgba(11,13,18,.16) !important;
     }
-    html:not(.dark-mode) .stat-label{color:rgba(255,255,255,.8)}
-    html:not(.dark-mode) .stat:nth-child(1) .stat-number{color:#34D399}
-    html:not(.dark-mode) .stat:nth-child(2) .stat-number{color:#A5B4FC}
-    html:not(.dark-mode) .stat:nth-child(3) .stat-number{color:#FBBF24}
-    html:not(.dark-mode) .stat:nth-child(4) .stat-number{color:#FB7185}
+    /* each figure sits on its own faintly-lifted tile — vivid's hard black
+       edge is invisible against the black band, so swap it for a light one */
+    html:not(.dark-mode) .stat{
+      background:rgba(255,255,255,.05) !important;
+      border:1.5px solid rgba(255,255,255,.16) !important;
+      border-radius:16px !important;
+      box-shadow:none !important;
+      padding:26px 16px !important;
+      transition:border-color .2s ease, background .2s ease;
+    }
+    html:not(.dark-mode) .stat:hover{
+      background:rgba(255,255,255,.08) !important;
+      border-color:rgba(255,255,255,.3) !important;
+    }
+    html:not(.dark-mode) .stat-number{
+      font-size:40px !important;
+      color:#FFFFFF !important;
+      -webkit-text-fill-color:currentColor;
+    }
+    html:not(.dark-mode) .stat-label{
+      color:rgba(255,255,255,.78) !important;
+      font-size:12px !important;
+      font-weight:700 !important;
+      letter-spacing:.1em !important;
+      text-transform:uppercase !important;
+    }
+    html:not(.dark-mode) .stat:nth-child(1) .stat-number{color:#3DE8C5 !important}
+    html:not(.dark-mode) .stat:nth-child(2) .stat-number{color:#A5B4FC !important}
+    html:not(.dark-mode) .stat:nth-child(3) .stat-number{color:#FFC24D !important}
+    html:not(.dark-mode) .stat:nth-child(4) .stat-number{color:#FF7AA2 !important}
 
     /* showcase — light only */
     html:not(.dark-mode) .showcase{display:block;position:relative;z-index:10;max-width:1280px;margin:90px auto 0;padding:0 24px}
