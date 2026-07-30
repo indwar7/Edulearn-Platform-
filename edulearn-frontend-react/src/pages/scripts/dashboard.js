@@ -1262,6 +1262,17 @@ function lockToRole(role){
     document.querySelectorAll('.foot-learn-link').forEach(function(a){ a.style.display = 'none'; });
     var classesCol = document.getElementById('footClassesCol');
     if (classesCol) classesCol.style.display = 'none';
+  } else if (role === 'student'){
+    // A student sees only their OWN class in the footer, not all of 6–9.
+    var su = (window.EduAPI && EduAPI.getUser && EduAPI.getUser()) || null;
+    var myClass = su ? String(su.className || '').replace(/\D/g, '') : '';
+    var col = document.getElementById('footClassesCol');
+    if (col && myClass){
+      col.querySelectorAll('a').forEach(function(a){
+        var n = (a.textContent || '').replace(/\D/g, '');
+        if (n && n !== myClass) a.style.display = 'none';
+      });
+    }
   }
 }
 
