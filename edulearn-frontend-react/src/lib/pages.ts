@@ -46,12 +46,18 @@ export function routeForHtmlHref(rawHref: string, base: string = window.location
   if (!route) return null;
 
   // lesson.html?ch=c6-sci-food carried its target in the query string; the SPA
-  // takes it as a path param instead. take-test.html keeps its query string
-  // (?subject=&chapter=&count=...), which is passed through untouched.
+  // takes it as a path param instead, but the rest of the query (class, subject,
+  // t, view) is preserved — lesson.js needs class & subject to run its
+  // video/notes lookup. take-test.html keeps its full query string untouched.
   let to = route;
   if (page === 'lesson') {
     const chapter = url.searchParams.get('ch') || url.searchParams.get('chapter');
-    if (chapter) return `/lesson/${encodeURIComponent(chapter)}${url.hash}`;
+    if (chapter) {
+      const rest = new URLSearchParams(url.search);
+      rest.delete('ch'); rest.delete('chapter');
+      const qs = rest.toString();
+      return `/lesson/${encodeURIComponent(chapter)}${qs ? `?${qs}` : ''}${url.hash}`;
+    }
   }
   if (url.search) to += url.search;
   return to + url.hash;

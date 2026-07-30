@@ -41,11 +41,19 @@ export function useLegacyLinks(): void {
       if (!route) return;
 
       // lesson.html?ch=c6-sci-food carried its target in the query string; the
-      // SPA takes it as a path param instead.
+      // SPA takes it as a path param instead. The REST of the query string
+      // (class, subject, t, view) must be preserved — lesson.js gates its
+      // video/notes lookup on class & subject, so dropping them left every
+      // chapter stuck on "Coming soon".
       let to = route;
       if (page === 'lesson') {
         const chapter = url.searchParams.get('ch') || url.searchParams.get('chapter');
-        if (chapter) to = `/lesson/${encodeURIComponent(chapter)}`;
+        if (chapter) {
+          const rest = new URLSearchParams(url.search);
+          rest.delete('ch'); rest.delete('chapter');
+          const qs = rest.toString();
+          to = `/lesson/${encodeURIComponent(chapter)}` + (qs ? `?${qs}` : '');
+        }
       } else if (url.search) {
         to = route + url.search;
       }
