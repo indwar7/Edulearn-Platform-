@@ -412,10 +412,7 @@ input{font-family:inherit;color:inherit}
 /* ============================================================
    Chapter rows
    ============================================================ */
-/* Two-column grid so the chapter list fills the wide content area like the
-   dashboard's card grids, instead of one sparse column of full-width rows. */
-.chapters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;min-height:320px}
-@media (max-width:1000px){.chapters{grid-template-columns:1fr}}
+.chapters{display:flex;flex-direction:column;gap:10px;min-height:320px}
 .chrow{
   --cc:var(--c7);
   position:relative;
