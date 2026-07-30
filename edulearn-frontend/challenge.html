@@ -59,8 +59,12 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
 .chip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:8px 16px;font-size:13px;font-weight:500}
 .chip .dot{width:7px;height:7px;border-radius:50%;background:var(--aurora);flex:none}
 
-.split{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:34px;align-items:start;padding:18px 0 80px}
-.panel{position:sticky;top:96px;display:flex;flex-direction:column;gap:18px}
+/* Stack into full-width rows (quiz, then a 3-card stats strip, then the
+   question bank) so nothing sits tall-and-thin with dead space beside it —
+   the whole page fills left-to-right like the dashboard. */
+.split{display:flex;flex-direction:column;gap:24px;padding:18px 0 40px}
+.panel{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;align-items:stretch}
+@media(max-width:900px){.panel{grid-template-columns:1fr}}
 .pcard{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:22px}
 .pcard__eyebrow{font-family:'Fragment Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:8px}
 .pcard__eyebrow::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--aurora);flex:none}
@@ -70,12 +74,9 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
 .faq__head{margin-bottom:28px}
 .faq__head .sect-title{font-size:clamp(30px,3.2vw,44px);margin:0}
 .faq__sub{color:var(--muted);font-size:18px;max-width:820px;margin-top:12px;line-height:1.55}
-/* Five columns fill the full-width row so every subject is visible at once
-   (no wrap/scroll on desktop); collapses on smaller screens. */
-.faq__grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:22px;align-items:start}
-@media(max-width:1500px){.faq__grid{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:1024px){.faq__grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:680px){.faq__grid{grid-template-columns:1fr}}
+/* Auto-fit fills the full-width row edge-to-edge — five subjects across on a
+   wide screen, gracefully fewer on smaller ones, never any dead space. */
+.faq__grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px;align-items:start}
 .faqc{--sa:var(--teal);position:relative;background:var(--card);background:color-mix(in srgb,var(--sa) 8%,var(--card));border:1px solid var(--line);border-radius:26px;padding:28px 24px 20px;overflow:hidden;transition:transform .35s var(--ease),border-color .35s var(--ease),box-shadow .35s var(--ease)}
 .faqc:hover{transform:translateY(-4px);border-color:var(--sa);box-shadow:var(--shadow-soft)}
 .faqc::before{content:"";position:absolute;left:0;top:0;right:0;height:7px;background:var(--sa)}
