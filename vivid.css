@@ -439,6 +439,12 @@ th, td{ border-color:var(--u-border) !important; color:var(--u-text) !important;
   .nav__inner, .nav-inner{ padding:0 18px; }
 }
 .footer__base, .footer, footer{ border-top:2px solid #000000 !important; }
+/* The main feature pages now render one shared React <FeatureFooter/> (see
+   App.tsx); hide the per-page footers they used to ship (learn's mega, the
+   live/arena/tests one-liner) so it never doubles. The dashboard's own bare
+   <footer> and the landing's `.sf`/`.feat-foot` use different selectors and are
+   untouched. */
+footer.footer, footer.footer__base{ display:none !important; }
 th, td{ border-color:#000000 !important; }
 .roster th{ border-bottom:2px solid #000000 !important; }
 

@@ -23,7 +23,9 @@
     }
     *{box-sizing:border-box;}
     body{margin:0;font-family:'Nunito',system-ui,sans-serif;background:var(--bg);color:var(--ink);}
-    .wrap{max-width:1240px;margin:0 auto;padding:32px 24px 72px;}
+    /* 1600px to match the nav and the other main pages (dashboard/learn/live/
+       arena/tests), so the content width is consistent across the app. */
+    .wrap{max-width:1600px;margin:0 auto;padding:32px 40px 72px;}
     @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;}}
 
     /* ---- header ---- */

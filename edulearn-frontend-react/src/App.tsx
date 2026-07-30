@@ -2,6 +2,7 @@ import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import AuroraDefs from './components/AuroraDefs';
 import ErrorBoundary from './components/ErrorBoundary';
+import FeatureFooter from './components/FeatureFooter';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useLegacyLinks } from './lib/useLegacyLinks';
 import { usePageChrome } from './lib/usePageChrome';
@@ -32,6 +33,13 @@ import Terms from './pages/Terms';
  * deliberately excludes.
  */
 const CHROMELESS = ['/login', '/signup'];
+
+/**
+ * Pages that render the shared <FeatureFooter/> — the main content pages whose
+ * body is 1600px wide, so the footer matches the content width. Dashboard,
+ * landing and the narrow form/reader/chat pages are intentionally left out.
+ */
+const FOOTER_PAGES = new Set(['learn', 'live', 'challenge', 'mocktest', 'videos']);
 
 export default function App() {
   const { pathname } = useLocation();
@@ -106,6 +114,15 @@ export default function App() {
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
       </ErrorBoundary>
+
+      {/*
+        One shared footer on the main content feature pages — all 1600px wide,
+        so the footer's width matches the page content exactly (no negative
+        space). Deliberately excludes the dashboard (keeps its own footer), the
+        landing (its <SiteFooter/>), login/signup (chromeless), and the narrow
+        form/reader/chat pages (a 1600px footer would overhang their content).
+      */}
+      {FOOTER_PAGES.has(page) && <FeatureFooter />}
 
       {/* Defines url(#auroraGrad), which the brand mark fills itself with. */}
       <AuroraDefs />
