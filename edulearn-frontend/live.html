@@ -124,6 +124,23 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
 .rep__date{font-size:11.5px;color:var(--muted)}
 .empty-hint{color:var(--muted);font-size:13.5px;padding:6px 2px}
 
+/* Live actions (start a class / join by code) — a full-width band above the
+   syllabus so the top of the page reads as a complete section. */
+.live-actions{margin-bottom:32px;display:flex;flex-direction:column;gap:18px}
+.joinband{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:30px clamp(22px,2.6vw,38px);display:grid;grid-template-columns:1.25fr 1fr;gap:36px;align-items:center}
+.joinband__eyebrow{font-family:'Fragment Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.joinband__eyebrow::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--teal)}
+.joinband__title{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(21px,2.2vw,27px);line-height:1.15;margin:0}
+.joinband__row{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;max-width:540px}
+.joinband__steps{display:flex;flex-direction:column;gap:16px;border-left:1px solid var(--line);padding-left:32px}
+.joinstep{display:flex;gap:13px;align-items:flex-start}
+.joinstep__n{width:28px;height:28px;border-radius:9px;background:var(--teal);color:#fff;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;flex:none}
+.joinstep b{display:block;font-size:15px;color:var(--cream);font-weight:800;margin-bottom:2px}
+.joinstep span{font-size:13px;color:var(--muted);line-height:1.45}
+@media(max-width:860px){.joinband{grid-template-columns:1fr;gap:24px}.joinband__steps{border-left:none;border-top:1px solid var(--line);padding-left:0;padding-top:22px}}
+
+/* ── Class 7 NCERT syllabus — colourful subject panels ─────────────────── */
+
 /* ── Class 7 NCERT syllabus — colourful subject panels ─────────────────── */
 /* The page .wrap is full-width (max-width:none) so this fills the screen
    edge-to-edge; no empty left/right gutters. */
@@ -380,46 +397,41 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
       </div>
     </section>
 
-    <section class="split">
-      <div>
-        <!-- Teacher: start a real live class (shown only for teacher accounts) -->
-        <div class="pcard rv composer" id="teacherComposer" style="animation-delay:.3s">
-          <div class="pcard__eyebrow">Start a live class</div>
-          <form id="startForm" class="composer__form">
-            <input id="startTitle" type="text" class="composer__field" placeholder="Class topic, e.g. Photosynthesis" required>
-            <select id="startAssign" class="composer__field" required></select>
-            <input id="startMeetLink" type="url" class="composer__field" placeholder="Optional: paste a Google Meet link (meet.google.com/...) to use Meet instead of in-app video" pattern="https://meet\.google\.com/.*">
-            <button class="btn-try composer__go" type="submit">Go live</button>
-            <span id="startMsg" class="empty-hint composer__msg"></span>
-          </form>
-        </div>
-
-        <!-- Join with a class code -->
-        <div class="rv" id="joinCodeBox" style="animation-delay:.30s;display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:22px">
-          <input id="joinCodeInput" type="text" class="composer__field" style="flex:1;min-width:180px;text-transform:uppercase;letter-spacing:1px"
-            placeholder="Have a code? e.g. SCI-7A-4821" autocomplete="off" spellcheck="false">
-          <button class="btn-join" id="joinCodeBtn" type="button">Join with code</button>
-          <span id="joinCodeMsg" class="empty-hint" style="flex-basis:100%;margin:0"></span>
-        </div>
-
-        <!-- Real backend sessions (live now, eligibility-checked) -->
-        <h2 class="sect-title rv" id="liveNowTitle" style="animation-delay:.32s;display:none">Live now</h2>
-        <div class="sessions" id="liveGrid" style="margin-bottom:26px"></div>
-
-        <h2 class="sect-title rv" style="animation-delay:.34s" id="todayTitle">Today&rsquo;s sessions</h2>
-        <div class="sessions" id="sessionGrid"></div>
+    <!-- Live actions: start a class (teacher) or join by code. The "Live now"
+         list was removed; currently-live classes are joined via their code. -->
+    <div class="live-actions">
+      <!-- Teacher: start a real live class (shown only for teacher accounts) -->
+      <div class="pcard rv composer" id="teacherComposer" style="animation-delay:.3s">
+        <div class="pcard__eyebrow">Start a live class</div>
+        <form id="startForm" class="composer__form">
+          <input id="startTitle" type="text" class="composer__field" placeholder="Class topic, e.g. Photosynthesis" required>
+          <select id="startAssign" class="composer__field" required></select>
+          <input id="startMeetLink" type="url" class="composer__field" placeholder="Optional: paste a Google Meet link (meet.google.com/...) to use Meet instead of in-app video" pattern="https://meet\.google\.com/.*">
+          <button class="btn-try composer__go" type="submit">Go live</button>
+          <span id="startMsg" class="empty-hint composer__msg"></span>
+        </form>
       </div>
-      <aside class="panel">
-        <div class="pcard rv" style="animation-delay:.4s">
-          <div class="pcard__eyebrow">My sessions</div>
-          <div id="myList"><p class="empty-hint">Nothing booked yet — grab a seat from today&rsquo;s sessions.</p></div>
+
+      <!-- Join with a class code — full-width band so the top reads as a
+           complete section, not a stray input floating on empty space. -->
+      <div class="joinband rv" id="joinCodeBox" style="animation-delay:.30s">
+        <div class="joinband__main">
+          <div class="joinband__eyebrow">Join a live class</div>
+          <h2 class="joinband__title">Got a class code from your teacher?</h2>
+          <div class="joinband__row">
+            <input id="joinCodeInput" type="text" class="composer__field" style="flex:1;min-width:200px;text-transform:uppercase;letter-spacing:1px"
+              placeholder="e.g. SCI-7A-4821" autocomplete="off" spellcheck="false">
+            <button class="btn-join" id="joinCodeBtn" type="button">Join with code</button>
+          </div>
+          <span id="joinCodeMsg" class="empty-hint" style="display:block;margin:12px 0 0"></span>
         </div>
-        <div class="pcard rv" style="animation-delay:.48s">
-          <div class="pcard__eyebrow">Past session reports</div>
-          <div id="reportList"><p class="empty-hint">Join a class and your attentiveness report will appear here — and on the parent dashboard.</p></div>
+        <div class="joinband__steps">
+          <div class="joinstep"><span class="joinstep__n">1</span><div><b>Get the code</b><span>Your teacher shares a code like SCI-7A-4821 when class begins.</span></div></div>
+          <div class="joinstep"><span class="joinstep__n">2</span><div><b>Enter &amp; join</b><span>Paste it above and you're in the classroom in one tap.</span></div></div>
+          <div class="joinstep"><span class="joinstep__n">3</span><div><b>Camera on</b><span>Keep your camera on for a live attention report after class.</span></div></div>
         </div>
-      </aside>
-    </section>
+      </div>
+    </div>
 
     <!-- Class 7 NCERT syllabus at a glance — the real chapters of every
          subject, with the foundational / high-weightage "must-do" ones
@@ -536,6 +548,25 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
           </ul>
         </article>
       </div>
+    </section>
+
+    <!-- Booking: today's scheduled sessions + the student's own bookings and
+         past attentiveness reports. Moved below the syllabus; "Live now" removed. -->
+    <section class="split">
+      <div>
+        <h2 class="sect-title rv" style="animation-delay:.1s" id="todayTitle">Today&rsquo;s sessions</h2>
+        <div class="sessions" id="sessionGrid"></div>
+      </div>
+      <aside class="panel">
+        <div class="pcard rv" style="animation-delay:.14s">
+          <div class="pcard__eyebrow">My sessions</div>
+          <div id="myList"><p class="empty-hint">Nothing booked yet — grab a seat from today&rsquo;s sessions.</p></div>
+        </div>
+        <div class="pcard rv" style="animation-delay:.2s">
+          <div class="pcard__eyebrow">Past session reports</div>
+          <div id="reportList"><p class="empty-hint">Join a class and your attentiveness report will appear here — and on the parent dashboard.</p></div>
+        </div>
+      </aside>
     </section>
   </div>
 
@@ -1463,6 +1494,9 @@ async function loadRealSessions(){
 function renderRealSessions(){
   var host = document.getElementById('liveGrid');
   var title = document.getElementById('liveNowTitle');
+  // The "Live now" section was removed from the page — bail out quietly if its
+  // elements aren't present so this doesn't throw on a null innerHTML.
+  if (!host || !title) return;
   if (!realSessions.length){
     host.innerHTML = '';
     title.style.display = 'none';

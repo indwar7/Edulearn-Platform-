@@ -67,98 +67,110 @@ export default function LiveMarkup() {
               </span>
             </div>
           </section>
-          <section className="split">
-            <div>
-              {/* Teacher: start a real live class (shown only for teacher accounts) */}
-              <div className="pcard rv composer" id="teacherComposer" style={{ animationDelay: ".3s" }}>
-                <div className="pcard__eyebrow">
-                  Start a live class
-                </div>
-                <form id="startForm" className="composer__form">
-                  <input
-                    id="startTitle"
-                    type="text"
-                    className="composer__field"
-                    placeholder="Class topic, e.g. Photosynthesis"
-                    required={true}
-                   />
-                  {' '}
-                  <select id="startAssign" className="composer__field" required={true} />
-                  {' '}
-                  <input
-                    id="startMeetLink"
-                    type="url"
-                    className="composer__field"
-                    placeholder="Optional: paste a Google Meet link (meet.google.com/...) to use Meet instead of in-app video"
-                    pattern="https://meet\\.google\\.com/.*"
-                   />
-                  {' '}
-                  <button className="btn-try composer__go" type="submit">
-                    Go live
-                  </button>
-                  {' '}
-                  <span id="startMsg" className="empty-hint composer__msg" />
-                </form>
+          {/* Live actions: start a class (teacher) or join by code. The "Live now"
+           list was removed; currently-live classes are joined via their code. */}
+          <div className="live-actions">
+            {/* Teacher: start a real live class (shown only for teacher accounts) */}
+            <div className="pcard rv composer" id="teacherComposer" style={{ animationDelay: ".3s" }}>
+              <div className="pcard__eyebrow">
+                Start a live class
               </div>
-              {/* Join with a class code */}
-              <div
-                className="rv"
-                id="joinCodeBox"
-                style={{ animationDelay: ".30s", display: "flex", flexWrap: "wrap", gap: "10px", alignItems: "center", marginBottom: "22px" }}
-              >
+              <form id="startForm" className="composer__form">
                 <input
-                  id="joinCodeInput"
+                  id="startTitle"
                   type="text"
                   className="composer__field"
-                  style={{ flex: "1", minWidth: "180px", textTransform: "uppercase", letterSpacing: "1px" }}
-                  placeholder="Have a code? e.g. SCI-7A-4821"
-                  autoComplete="off"
-                  spellCheck="false"
+                  placeholder="Class topic, e.g. Photosynthesis"
+                  required={true}
                  />
                 {' '}
-                <button className="btn-join" id="joinCodeBtn" type="button">
-                  Join with code
+                <select id="startAssign" className="composer__field" required={true} />
+                {' '}
+                <input
+                  id="startMeetLink"
+                  type="url"
+                  className="composer__field"
+                  placeholder="Optional: paste a Google Meet link (meet.google.com/...) to use Meet instead of in-app video"
+                  pattern="https://meet\\.google\\.com/.*"
+                 />
+                {' '}
+                <button className="btn-try composer__go" type="submit">
+                  Go live
                 </button>
                 {' '}
-                <span id="joinCodeMsg" className="empty-hint" style={{ flexBasis: "100%", margin: "0" }} />
-              </div>
-              {/* Real backend sessions (live now, eligibility-checked) */}
-              <h2
-                className="sect-title rv"
-                id="liveNowTitle"
-                style={{ animationDelay: ".32s", display: "none" }}
-              >
-                Live now
-              </h2>
-              <div className="sessions" id="liveGrid" style={{ marginBottom: "26px" }} />
-              <h2 className="sect-title rv" style={{ animationDelay: ".34s" }} id="todayTitle">
-                Today’s sessions
-              </h2>
-              <div className="sessions" id="sessionGrid" />
+                <span id="startMsg" className="empty-hint composer__msg" />
+              </form>
             </div>
-            <aside className="panel">
-              <div className="pcard rv" style={{ animationDelay: ".4s" }}>
-                <div className="pcard__eyebrow">
-                  My sessions
+            {/* Join with a class code — full-width band so the top reads as a
+             complete section, not a stray input floating on empty space. */}
+            <div className="joinband rv" id="joinCodeBox" style={{ animationDelay: ".30s" }}>
+              <div className="joinband__main">
+                <div className="joinband__eyebrow">
+                  Join a live class
                 </div>
-                <div id="myList">
-                  <p className="empty-hint">
-                    Nothing booked yet — grab a seat from today’s sessions.
-                  </p>
+                <h2 className="joinband__title">
+                  Got a class code from your teacher?
+                </h2>
+                <div className="joinband__row">
+                  <input
+                    id="joinCodeInput"
+                    type="text"
+                    className="composer__field"
+                    style={{ flex: "1", minWidth: "200px", textTransform: "uppercase", letterSpacing: "1px" }}
+                    placeholder="e.g. SCI-7A-4821"
+                    autoComplete="off"
+                    spellCheck="false"
+                   />
+                  {' '}
+                  <button className="btn-join" id="joinCodeBtn" type="button">
+                    Join with code
+                  </button>
+                </div>
+                <span id="joinCodeMsg" className="empty-hint" style={{ display: "block", margin: "12px 0 0" }} />
+              </div>
+              <div className="joinband__steps">
+                <div className="joinstep">
+                  <span className="joinstep__n">
+                    1
+                  </span>
+                  <div>
+                    <b>
+                      Get the code
+                    </b>
+                    <span>
+                      Your teacher shares a code like SCI-7A-4821 when class begins.
+                    </span>
+                  </div>
+                </div>
+                <div className="joinstep">
+                  <span className="joinstep__n">
+                    2
+                  </span>
+                  <div>
+                    <b>
+                      Enter & join
+                    </b>
+                    <span>
+                      Paste it above and you're in the classroom in one tap.
+                    </span>
+                  </div>
+                </div>
+                <div className="joinstep">
+                  <span className="joinstep__n">
+                    3
+                  </span>
+                  <div>
+                    <b>
+                      Camera on
+                    </b>
+                    <span>
+                      Keep your camera on for a live attention report after class.
+                    </span>
+                  </div>
                 </div>
               </div>
-              <div className="pcard rv" style={{ animationDelay: ".48s" }}>
-                <div className="pcard__eyebrow">
-                  Past session reports
-                </div>
-                <div id="reportList">
-                  <p className="empty-hint">
-                    Join a class and your attentiveness report will appear here — and on the parent dashboard.
-                  </p>
-                </div>
-              </div>
-            </aside>
-          </section>
+            </div>
+          </div>
           {/* Class 7 NCERT syllabus at a glance — the real chapters of every
            subject, with the foundational / high-weightage "must-do" ones
            starred. Fills the browse view with genuine study content. */}
@@ -789,6 +801,38 @@ export default function LiveMarkup() {
                 </ul>
               </article>
             </div>
+          </section>
+          {/* Booking: today's scheduled sessions + the student's own bookings and
+           past attentiveness reports. Moved below the syllabus; "Live now" removed. */}
+          <section className="split">
+            <div>
+              <h2 className="sect-title rv" style={{ animationDelay: ".1s" }} id="todayTitle">
+                Today’s sessions
+              </h2>
+              <div className="sessions" id="sessionGrid" />
+            </div>
+            <aside className="panel">
+              <div className="pcard rv" style={{ animationDelay: ".14s" }}>
+                <div className="pcard__eyebrow">
+                  My sessions
+                </div>
+                <div id="myList">
+                  <p className="empty-hint">
+                    Nothing booked yet — grab a seat from today’s sessions.
+                  </p>
+                </div>
+              </div>
+              <div className="pcard rv" style={{ animationDelay: ".2s" }}>
+                <div className="pcard__eyebrow">
+                  Past session reports
+                </div>
+                <div id="reportList">
+                  <p className="empty-hint">
+                    Join a class and your attentiveness report will appear here — and on the parent dashboard.
+                  </p>
+                </div>
+              </div>
+            </aside>
           </section>
         </div>
         {/* ============ CLASSROOM ============ */}

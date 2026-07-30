@@ -781,6 +781,9 @@ async function loadRealSessions(){
 function renderRealSessions(){
   var host = document.getElementById('liveGrid');
   var title = document.getElementById('liveNowTitle');
+  // The "Live now" section was removed from the page — bail out quietly if its
+  // elements aren't present so this doesn't throw on a null innerHTML.
+  if (!host || !title) return;
   if (!realSessions.length){
     host.innerHTML = '';
     title.style.display = 'none';

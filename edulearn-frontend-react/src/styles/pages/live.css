@@ -113,6 +113,23 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
 .rep__date{font-size:11.5px;color:var(--muted)}
 .empty-hint{color:var(--muted);font-size:13.5px;padding:6px 2px}
 
+/* Live actions (start a class / join by code) — a full-width band above the
+   syllabus so the top of the page reads as a complete section. */
+.live-actions{margin-bottom:32px;display:flex;flex-direction:column;gap:18px}
+.joinband{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:30px clamp(22px,2.6vw,38px);display:grid;grid-template-columns:1.25fr 1fr;gap:36px;align-items:center}
+.joinband__eyebrow{font-family:'Fragment Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.joinband__eyebrow::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--teal)}
+.joinband__title{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(21px,2.2vw,27px);line-height:1.15;margin:0}
+.joinband__row{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;max-width:540px}
+.joinband__steps{display:flex;flex-direction:column;gap:16px;border-left:1px solid var(--line);padding-left:32px}
+.joinstep{display:flex;gap:13px;align-items:flex-start}
+.joinstep__n{width:28px;height:28px;border-radius:9px;background:var(--teal);color:#fff;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;flex:none}
+.joinstep b{display:block;font-size:15px;color:var(--cream);font-weight:800;margin-bottom:2px}
+.joinstep span{font-size:13px;color:var(--muted);line-height:1.45}
+@media(max-width:860px){.joinband{grid-template-columns:1fr;gap:24px}.joinband__steps{border-left:none;border-top:1px solid var(--line);padding-left:0;padding-top:22px}}
+
+/* ── Class 7 NCERT syllabus — colourful subject panels ─────────────────── */
+
 /* ── Class 7 NCERT syllabus — colourful subject panels ─────────────────── */
 /* The page .wrap is full-width (max-width:none) so this fills the screen
    edge-to-edge; no empty left/right gutters. */
