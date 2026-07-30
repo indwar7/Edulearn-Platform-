@@ -15,12 +15,12 @@ import { ROUTE_BY_PAGE } from '../lib/pages';
  * Link order matches the static nav exactly.
  */
 const NAV_LINKS: { page: string; label: string; i18n: string }[] = [
+  { page: 'dashboard', label: 'Dashboard', i18n: 'nav_dash' },
   { page: 'learn', label: 'Learn', i18n: 'nav_learn' },
   { page: 'live', label: 'Live', i18n: 'nav_live' },
   { page: 'challenge', label: 'Arena', i18n: 'nav_arena' },
   { page: 'mocktest', label: 'Tests', i18n: 'nav_tests' },
   { page: 'pal', label: 'PAL AI', i18n: 'nav_pal' },
-  { page: 'dashboard', label: 'Dashboard', i18n: 'nav_dash' },
 ];
 
 /**
