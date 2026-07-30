@@ -217,15 +217,7 @@ export default function LessonMarkup() {
             </span>
             {' '}
             <span className="modchip">
-              Practice
-            </span>
-            {' '}
-            <span className="modchip">
               Notes
-            </span>
-            {' '}
-            <span className="modchip">
-              Book
             </span>
             {' '}
             <span className="modchip">

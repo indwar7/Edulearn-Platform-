@@ -479,14 +479,18 @@ body .nav__inner, body .feat-foot__inner{max-width:none !important}
   vertical-align:2px;
   display:inline-block;
 }
+/* Transparent link stretched over the whole row — makes any empty area open
+   the chapter, while the mods (higher z-index) stay independently clickable. */
+.chrow__hit{position:absolute;inset:0;z-index:1;border-radius:22px;}
 .chrow__meta{display:flex;align-items:center;gap:14px}
-.mods{display:flex;align-items:center;gap:7px}
+.mods{position:relative;z-index:2;display:flex;align-items:center;gap:7px}
 .mod{
   position:relative;
   display:flex;align-items:center;justify-content:center;
   width:36px;height:36px;border-radius:10px;
   color:var(--muted);
   background:var(--card2);
+  text-decoration:none;
   transition:color .3s var(--ease),background .3s var(--ease);
 }
 .mod svg{width:19px;height:19px}

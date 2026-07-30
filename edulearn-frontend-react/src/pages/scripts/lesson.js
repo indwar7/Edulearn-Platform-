@@ -33,6 +33,7 @@ var ch = params.get('ch');
 var cls = params.get('class');
 var subject = params.get('subject');
 var titleParam = params.get('t'); // exact chapter name passed from learn.html
+var viewParam = params.get('view'); // 'video' | 'notes' — deep-link from Learn's module icons
 var slug = null;
 
 /* ------------------------------------------------------------
@@ -81,6 +82,7 @@ if(back && cls && subject){
 LESSON.cls = cls;
 LESSON.subject = subject;
 LESSON.slug = slug;
+LESSON.view = viewParam;
 LESSON.chapterTitle = title.textContent;
 LESSON.chapterCrumb = crumb.textContent;
 })();
@@ -505,6 +507,18 @@ document.addEventListener('DOMContentLoaded', function(){
   Array.prototype.forEach.call(document.querySelectorAll('[data-tohub]'), function(b){
     b.addEventListener('click', goHub);
   });
+
+  // Deep-link from Learn's module icons: skip the hub and open the requested
+  // resource directly. 'video' arms the video section so it reveals (and the
+  // lookup below auto-plays part 1) as soon as the lecture resolves; while it
+  // loads the placeholder shows. 'notes' opens the notes stage right away
+  // (it re-renders in place once the uploaded notes arrive).
+  if(LESSON.view === 'notes'){
+    show('notesStage');
+  } else if(LESSON.view === 'video'){
+    videoSectionActive = true;
+    openVideo();
+  }
 });
 
 return { setVideoState: setVideoState, setNotes: setNotes };
@@ -607,6 +621,13 @@ EduAPI.listVideos({ className: LESSON.cls, subject: LESSON.subject, topic: searc
     // A lecture exists — light up the "Watch Video" option on the hub. The hub
     // controller reveals the player if the student is already waiting on it.
     if (window.HUB) window.HUB.setVideoState('ready');
+
+    // Auto-play part 1 when the student deep-linked in via Learn's Video icon.
+    // Done AFTER setVideoState so the stage is already visible (playing a
+    // display:none <video> is unreliable). Browsers may still gate
+    // autoplay-with-sound; the rejection is swallowed and the loaded video sits
+    // ready with its controls for a single tap.
+    if (LESSON.view === 'video') { player.play().catch(function(){}); }
 
     // Not actually eligible for this specific video (e.g. wrong class/subject)
     // — fall back to the honest placeholder instead of a broken player.

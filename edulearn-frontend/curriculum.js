@@ -100,15 +100,20 @@ var CURRICULUM = {
       ['rational-numbers','Rational Numbers',24],
       ['perimeter-area','Perimeter and Area',22]
     ],
+    // Ordered so the chapters that already carry full content (videos + notes)
+    // surface first — electricity, metals, physical/chemical changes and
+    // adolescence, followed by chapters 7 (heat) and 8 (time & motion). The
+    // remaining chapters keep their original relative order below. Chapter
+    // identity is by slug, so reordering here doesn't disturb saved progress.
     science: [
-      ['evolving-science','The Ever-Evolving World of Science',18],
-      ['acidic-basic-neutral','Exploring Substances: Acidic, Basic & Neutral',22],
       ['electricity-circuits','Electricity: Circuits and their Components',26],
       ['metals-nonmetals','The World of Metals and Non-metals',22],
       ['physical-chemical-changes','Changes Around Us: Physical and Chemical',24],
       ['adolescence','Adolescence: A Stage of Growth and Change',26],
       ['heat-transfer','Heat Transfer in Nature',24],
       ['time-and-motion','Measurement of Time and Motion',22],
+      ['evolving-science','The Ever-Evolving World of Science',18],
+      ['acidic-basic-neutral','Exploring Substances: Acidic, Basic & Neutral',22],
       ['life-processes-animals','Life Processes in Animals',24],
       ['life-processes-plants','Life Processes in Plants',22],
       ['light-shadows','Light: Shadows and Reflections',23],
