@@ -210,8 +210,10 @@
     .checkbox-group a{color:var(--peri);text-decoration:none;font-weight:600}
     .checkbox-group a:hover{color:var(--teal)}
     .signin-link{text-align:center;font-size:14px;color:var(--muted)}
-    .signin-link a{color:var(--teal);font-weight:700;text-decoration:none}
-    .signin-link a:hover{opacity:.8}
+    /* Distinct highlight so "Sign in" stands out from the muted line — !important
+       beats vivid.css's global `a{color:#000}`, which was flattening it to black. */
+    .signin-link a{color:#3F5BE0 !important;-webkit-text-fill-color:#3F5BE0 !important;font-weight:800;text-decoration:underline;text-underline-offset:2px}
+    .signin-link a:hover{opacity:.82}
     html.light-mode select{background-color:#F4F7FB;border-color:rgba(15,23,42,.1);color:#0F1425}
     html.light-mode select option{background:#fff;color:#0F1425}
     html.light-mode .checkbox-group,html.light-mode .signin-link{color:#5C6478}
