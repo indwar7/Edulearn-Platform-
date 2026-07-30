@@ -1,5 +1,7 @@
 /* Generated from edulearn-frontend/challenge.html — do not hand-edit.
    Regenerate with `npm run sync:markup`. */
+import type { CSSProperties } from 'react';
+
 export default function ChallengeMarkup() {
   return (
     <>
@@ -133,6 +135,411 @@ export default function ChallengeMarkup() {
               </div>
             </div>
           </aside>
+        </section>
+        {/* Most-asked Class 7 questions — a colourful reference bank, subject by
+         subject, of the questions that come up again and again in exams. */}
+        <section className="faq">
+          <div className="faq__head">
+            <h2 className="sect-title rv" style={{ animationDelay: ".1s" }}>
+              Questions that come up again & again
+            </h2>
+            <p className="faq__sub rv" style={{ animationDelay: ".16s" }}>
+              The Class 7 questions your exams love to repeat — keep them handy, quiz a friend, and walk into the Arena ready. Straight from the NCERT chapters.
+            </p>
+          </div>
+          <div className="faq__grid">
+            {/* SCIENCE */}
+            <article
+              className="faqc rv"
+              style={{ '--sa': "var(--teal)", animationDelay: ".2s" } as CSSProperties}
+            >
+              <div className="faqc__hd">
+                <span className="faqc__ic">
+                  🔬
+                </span>
+                <div>
+                  <div className="faqc__name">
+                    Science
+                  </div>
+                  <div className="faqc__tag">
+                    Most repeated
+                  </div>
+                </div>
+              </div>
+              <div className="faqq">
+                <span className="faqq__q">
+                  Q1
+                </span>
+                <div className="faqq__body">
+                  <div className="faqq__text">
+                    Why does a metal spoon feel colder than a wooden one?
+                  </div>
+                  <span className="faqq__from">
+                    Heat Transfer in Nature
+                  </span>
+                </div>
+              </div>
+              <div className="faqq">
+                <span className="faqq__q">
+                  Q2
+                </span>
+                <div className="faqq__body">
+                  <div className="faqq__text">
+                    Give two differences between a physical and a chemical change.
+                  </div>
+                  <span className="faqq__from">
+                    Physical & Chemical Changes
+                  </span>
+                </div>
+              </div>
+              <div className="faqq">
+                <span className="faqq__q">
+                  Q3
+                </span>
+                <div className="faqq__body">
+                  <div className="faqq__text">
+                    Draw the symbols for a cell, a bulb and a switch in a circuit.
+                  </div>
+                  <span className="faqq__from">
+                    Electricity: Circuits
+                  </span>
+                </div>
+              </div>
+              <div className="faqq">
+                <span className="faqq__q">
+                  Q4
+                </span>
+                <div className="faqq__body">
+                  <div className="faqq__text">
+                    What happens to blue and red litmus in an acid and in a base?
+                  </div>
+                  <span className="faqq__from">
+                    Acidic, Basic & Neutral
+                  </span>
+                </div>
+              </div>
+              <div className="faqq">
+                <span className="faqq__q">
+                  Q5
+                </span>
+                <div className="faqq__body">
+                  <div className="faqq__text">
+                    Name the process by which green plants make their own food.
+                  </div>
+                  <span className="faqq__from">
+                    Life Processes in Plants
+                  </span>
+                </div>
+              </div>
+            </article>
+            {/* MATHS */}
+            <article
+              className="faqc rv"
+              style={{ '--sa': "var(--peri)", animationDelay: ".24s" } as CSSProperties}
+            >
+              <div className="faqc__hd">
+                <span className="faqc__ic">
+                  🧮
+                </span>
+                <div>
+                  <div className="faqc__name">
+                    Mathematics
+                  </div>
+                  <div className="faqc__tag">
+                    Most repeated
+                  </div>
+                </div>
+              </div>
+              <div className="faqq">
+                <span className="faqq__q">
+                  Q1
+                </span>
+                <div className="faqq__body">
+                  <div className="faqq__text">
+                    Solve for x: 3x + 5 = 20.
+                  </div>
+                  <span className="faqq__from">
+                    Simple Equations
+                  </span>
+                </div>
+              </div>
+              <div className="faqq">
+                <span className="faqq__q">
+                  Q2
+                </span>
+                <div className="faqq__body">
+                  <div className="faqq__text">
+                    Add the integers: (−7) + (+3).
+                  </div>
+                  <span className="faqq__from">
+                    Integers
+                  </span>
+                </div>
+              </div>
+              <div className="faqq">
+                <span className="faqq__q">
+                  Q3
+                </span>
+                <div className="faqq__body">
+                  <div className="faqq__text">
+                    Find the area and perimeter of a rectangle 8 cm × 5 cm.
+                  </div>
+                  <span className="faqq__from">
+                    Perimeter and Area
+                  </span>
+                </div>
+              </div>
+              <div className="faqq">
+                <span className="faqq__q">
+                  Q4
+                </span>
+                <div className="faqq__body">
+                  <div className="faqq__text">
+                    What is the sum of the three angles of a triangle?
+                  </div>
+                  <span className="faqq__from">
+                    The Triangle & its Properties
+                  </span>
+                </div>
+              </div>
+              <div className="faqq">
+                <span className="faqq__q">
+                  Q5
+                </span>
+                <div className="faqq__body">
+                  <div className="faqq__text">
+                    Convert 3/4 into a decimal and a percentage.
+                  </div>
+                  <span className="faqq__from">
+                    Comparing Quantities
+                  </span>
+                </div>
+              </div>
+            </article>
+            {/* SOCIAL SCIENCE */}
+            <article
+              className="faqc rv"
+              style={{ '--sa': "var(--amber)", animationDelay: ".28s" } as CSSProperties}
+            >
+              <div className="faqc__hd">
+                <span className="faqc__ic">
+                  🌍
+                </span>
+                <div>
+                  <div className="faqc__name">
+                    Social Science
+                  </div>
+                  <div className="faqc__tag">
+                    Most repeated
+                  </div>
+                </div>
+              </div>
+              <div className="faqq">
+                <span className="faqq__q">
+                  Q1
+                </span>
+                <div className="faqq__body">
+                  <div className="faqq__text">
+                    Name any two dynasties that ruled as the Delhi Sultans.
+                  </div>
+                  <span className="faqq__from">
+                    The Delhi Sultans
+                  </span>
+                </div>
+              </div>
+              <div className="faqq">
+                <span className="faqq__q">
+                  Q2
+                </span>
+                <div className="faqq__body">
+                  <div className="faqq__text">
+                    What is the difference between a manuscript and an inscription?
+                  </div>
+                  <span className="faqq__from">
+                    Tracing Changes
+                  </span>
+                </div>
+              </div>
+              <div className="faqq">
+                <span className="faqq__q">
+                  Q3
+                </span>
+                <div className="faqq__body">
+                  <div className="faqq__text">
+                    Why is Akbar remembered as a great ruler?
+                  </div>
+                  <span className="faqq__from">
+                    The Mughal Empire
+                  </span>
+                </div>
+              </div>
+              <div className="faqq">
+                <span className="faqq__q">
+                  Q4
+                </span>
+                <div className="faqq__body">
+                  <div className="faqq__text">
+                    Name the three domains of the Earth.
+                  </div>
+                  <span className="faqq__from">
+                    Environment
+                  </span>
+                </div>
+              </div>
+              <div className="faqq">
+                <span className="faqq__q">
+                  Q5
+                </span>
+                <div className="faqq__body">
+                  <div className="faqq__text">
+                    What do we mean by 'equality' in a democracy?
+                  </div>
+                  <span className="faqq__from">
+                    On Equality
+                  </span>
+                </div>
+              </div>
+            </article>
+            {/* ENGLISH */}
+            <article
+              className="faqc rv"
+              style={{ '--sa': "var(--rose)", animationDelay: ".32s" } as CSSProperties}
+            >
+              <div className="faqc__hd">
+                <span className="faqc__ic">
+                  📖
+                </span>
+                <div>
+                  <div className="faqc__name">
+                    English
+                  </div>
+                  <div className="faqc__tag">
+                    Most repeated
+                  </div>
+                </div>
+              </div>
+              <div className="faqq">
+                <span className="faqq__q">
+                  Q1
+                </span>
+                <div className="faqq__body">
+                  <div className="faqq__text">
+                    In 'Three Questions', what were the king's three questions?
+                  </div>
+                  <span className="faqq__from">
+                    Three Questions
+                  </span>
+                </div>
+              </div>
+              <div className="faqq">
+                <span className="faqq__q">
+                  Q2
+                </span>
+                <div className="faqq__body">
+                  <div className="faqq__text">
+                    Give one example each of a simile and a metaphor.
+                  </div>
+                  <span className="faqq__from">
+                    Grammar
+                  </span>
+                </div>
+              </div>
+              <div className="faqq">
+                <span className="faqq__q">
+                  Q3
+                </span>
+                <div className="faqq__body">
+                  <div className="faqq__text">
+                    Change into indirect speech: He said, "I am busy."
+                  </div>
+                  <span className="faqq__from">
+                    Grammar
+                  </span>
+                </div>
+              </div>
+              <div className="faqq">
+                <span className="faqq__q">
+                  Q4
+                </span>
+                <div className="faqq__body">
+                  <div className="faqq__text">
+                    What is the moral of the lesson 'Fire: Friend and Foe'?
+                  </div>
+                  <span className="faqq__from">
+                    Fire: Friend and Foe
+                  </span>
+                </div>
+              </div>
+            </article>
+            {/* HINDI */}
+            <article className="faqc rv" style={{ '--sa': "#8B5CF6", animationDelay: ".36s" } as CSSProperties}>
+              <div className="faqc__hd">
+                <span className="faqc__ic">
+                  ✍️
+                </span>
+                <div>
+                  <div className="faqc__name">
+                    Hindi
+                  </div>
+                  <div className="faqc__tag">
+                    Most repeated
+                  </div>
+                </div>
+              </div>
+              <div className="faqq">
+                <span className="faqq__q">
+                  Q1
+                </span>
+                <div className="faqq__body">
+                  <div className="faqq__text">
+                    'हम पंछी उन्मुक्त गगन के' कविता में पक्षी क्या चाहते हैं?
+                  </div>
+                  <span className="faqq__from">
+                    हम पंछी उन्मुक्त गगन के
+                  </span>
+                </div>
+              </div>
+              <div className="faqq">
+                <span className="faqq__q">
+                  Q2
+                </span>
+                <div className="faqq__body">
+                  <div className="faqq__text">
+                    संधि किसे कहते हैं? एक उदाहरण दीजिए।
+                  </div>
+                  <span className="faqq__from">
+                    व्याकरण
+                  </span>
+                </div>
+              </div>
+              <div className="faqq">
+                <span className="faqq__q">
+                  Q3
+                </span>
+                <div className="faqq__body">
+                  <div className="faqq__text">
+                    'मिठाईवाला' कहानी से हमें क्या सीख मिलती है?
+                  </div>
+                  <span className="faqq__from">
+                    मिठाईवाला
+                  </span>
+                </div>
+              </div>
+              <div className="faqq">
+                <span className="faqq__q">
+                  Q4
+                </span>
+                <div className="faqq__body">
+                  <div className="faqq__text">
+                    'सूरज' के दो पर्यायवाची शब्द लिखिए।
+                  </div>
+                  <span className="faqq__from">
+                    व्याकरण
+                  </span>
+                </div>
+              </div>
+            </article>
+          </div>
         </section>
       </main>
       <footer className="wrap footer__base">

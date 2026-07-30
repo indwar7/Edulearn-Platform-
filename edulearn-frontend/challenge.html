@@ -65,6 +65,27 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
 .pcard__eyebrow{font-family:'Fragment Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:8px}
 .pcard__eyebrow::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--aurora);flex:none}
 
+/* ── Most-asked Class 7 questions — colourful reference bank ──────────── */
+.faq{padding:10px 0 30px}
+.faq__head{margin-bottom:24px}
+.faq__head .sect-title{font-size:clamp(26px,3vw,36px);margin:0}
+.faq__sub{color:var(--muted);font-size:16.5px;max-width:740px;margin-top:10px;line-height:1.55}
+.faq__grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:20px;align-items:start}
+.faqc{--sa:var(--teal);position:relative;background:var(--card);background:color-mix(in srgb,var(--sa) 8%,var(--card));border:1px solid var(--line);border-radius:24px;padding:24px 22px 18px;overflow:hidden;transition:transform .35s var(--ease),border-color .35s var(--ease),box-shadow .35s var(--ease)}
+.faqc:hover{transform:translateY(-4px);border-color:var(--sa);box-shadow:var(--shadow-soft)}
+.faqc::before{content:"";position:absolute;left:0;top:0;right:0;height:6px;background:var(--sa)}
+.faqc__hd{display:flex;align-items:center;gap:13px;margin-bottom:8px}
+.faqc__ic{width:52px;height:52px;border-radius:15px;display:flex;align-items:center;justify-content:center;background:var(--sa);flex:none;font-size:26px;box-shadow:0 6px 16px -6px var(--sa)}
+.faqc__name{font-family:'Fraunces',serif;font-weight:700;font-size:24px;line-height:1.05}
+.faqc__tag{font-family:'Fragment Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.faqq{display:flex;gap:12px;align-items:flex-start;padding:13px 12px;border-radius:14px;background:var(--card);border:1px solid var(--line);margin-top:11px;transition:transform .2s var(--ease),border-color .2s var(--ease)}
+.faqq:hover{transform:translateX(3px);border-color:var(--sa)}
+.faqq__q{width:30px;height:30px;border-radius:9px;background:var(--sa);color:#fff;font-family:'Fraunces',serif;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;flex:none}
+.faqq__body{flex:1;min-width:0}
+.faqq__text{font-size:15.5px;font-weight:700;color:var(--cream);line-height:1.35}
+.faqq__from{font-size:12px;color:var(--muted);margin-top:5px;display:inline-flex;align-items:center;gap:5px}
+.faqq__from::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--sa);flex:none}
+
 /* play card */
 .play{background:var(--card);border:1px solid var(--line);border-radius:26px;padding:34px;position:relative;overflow:hidden}
 .play__hour{font-family:'Fraunces',serif;font-weight:600;font-size:26px;margin:6px 0 2px}
@@ -227,6 +248,64 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
         </div>
       </div>
     </aside>
+  </section>
+
+  <!-- Most-asked Class 7 questions — a colourful reference bank, subject by
+       subject, of the questions that come up again and again in exams. -->
+  <section class="faq">
+    <div class="faq__head">
+      <h2 class="sect-title rv" style="animation-delay:.1s">Questions that come up again &amp; again</h2>
+      <p class="faq__sub rv" style="animation-delay:.16s">The Class 7 questions your exams love to repeat — keep them handy, quiz a friend, and walk into the Arena ready. Straight from the NCERT chapters.</p>
+    </div>
+    <div class="faq__grid">
+      <!-- SCIENCE -->
+      <article class="faqc rv" style="--sa:var(--teal);animation-delay:.2s">
+        <div class="faqc__hd"><span class="faqc__ic">🔬</span><div><div class="faqc__name">Science</div><div class="faqc__tag">Most repeated</div></div></div>
+        <div class="faqq"><span class="faqq__q">Q1</span><div class="faqq__body"><div class="faqq__text">Why does a metal spoon feel colder than a wooden one?</div><span class="faqq__from">Heat Transfer in Nature</span></div></div>
+        <div class="faqq"><span class="faqq__q">Q2</span><div class="faqq__body"><div class="faqq__text">Give two differences between a physical and a chemical change.</div><span class="faqq__from">Physical &amp; Chemical Changes</span></div></div>
+        <div class="faqq"><span class="faqq__q">Q3</span><div class="faqq__body"><div class="faqq__text">Draw the symbols for a cell, a bulb and a switch in a circuit.</div><span class="faqq__from">Electricity: Circuits</span></div></div>
+        <div class="faqq"><span class="faqq__q">Q4</span><div class="faqq__body"><div class="faqq__text">What happens to blue and red litmus in an acid and in a base?</div><span class="faqq__from">Acidic, Basic &amp; Neutral</span></div></div>
+        <div class="faqq"><span class="faqq__q">Q5</span><div class="faqq__body"><div class="faqq__text">Name the process by which green plants make their own food.</div><span class="faqq__from">Life Processes in Plants</span></div></div>
+      </article>
+
+      <!-- MATHS -->
+      <article class="faqc rv" style="--sa:var(--peri);animation-delay:.24s">
+        <div class="faqc__hd"><span class="faqc__ic">🧮</span><div><div class="faqc__name">Mathematics</div><div class="faqc__tag">Most repeated</div></div></div>
+        <div class="faqq"><span class="faqq__q">Q1</span><div class="faqq__body"><div class="faqq__text">Solve for x:&nbsp; 3x + 5 = 20.</div><span class="faqq__from">Simple Equations</span></div></div>
+        <div class="faqq"><span class="faqq__q">Q2</span><div class="faqq__body"><div class="faqq__text">Add the integers: (−7) + (+3).</div><span class="faqq__from">Integers</span></div></div>
+        <div class="faqq"><span class="faqq__q">Q3</span><div class="faqq__body"><div class="faqq__text">Find the area and perimeter of a rectangle 8 cm × 5 cm.</div><span class="faqq__from">Perimeter and Area</span></div></div>
+        <div class="faqq"><span class="faqq__q">Q4</span><div class="faqq__body"><div class="faqq__text">What is the sum of the three angles of a triangle?</div><span class="faqq__from">The Triangle &amp; its Properties</span></div></div>
+        <div class="faqq"><span class="faqq__q">Q5</span><div class="faqq__body"><div class="faqq__text">Convert 3/4 into a decimal and a percentage.</div><span class="faqq__from">Comparing Quantities</span></div></div>
+      </article>
+
+      <!-- SOCIAL SCIENCE -->
+      <article class="faqc rv" style="--sa:var(--amber);animation-delay:.28s">
+        <div class="faqc__hd"><span class="faqc__ic">🌍</span><div><div class="faqc__name">Social Science</div><div class="faqc__tag">Most repeated</div></div></div>
+        <div class="faqq"><span class="faqq__q">Q1</span><div class="faqq__body"><div class="faqq__text">Name any two dynasties that ruled as the Delhi Sultans.</div><span class="faqq__from">The Delhi Sultans</span></div></div>
+        <div class="faqq"><span class="faqq__q">Q2</span><div class="faqq__body"><div class="faqq__text">What is the difference between a manuscript and an inscription?</div><span class="faqq__from">Tracing Changes</span></div></div>
+        <div class="faqq"><span class="faqq__q">Q3</span><div class="faqq__body"><div class="faqq__text">Why is Akbar remembered as a great ruler?</div><span class="faqq__from">The Mughal Empire</span></div></div>
+        <div class="faqq"><span class="faqq__q">Q4</span><div class="faqq__body"><div class="faqq__text">Name the three domains of the Earth.</div><span class="faqq__from">Environment</span></div></div>
+        <div class="faqq"><span class="faqq__q">Q5</span><div class="faqq__body"><div class="faqq__text">What do we mean by 'equality' in a democracy?</div><span class="faqq__from">On Equality</span></div></div>
+      </article>
+
+      <!-- ENGLISH -->
+      <article class="faqc rv" style="--sa:var(--rose);animation-delay:.32s">
+        <div class="faqc__hd"><span class="faqc__ic">📖</span><div><div class="faqc__name">English</div><div class="faqc__tag">Most repeated</div></div></div>
+        <div class="faqq"><span class="faqq__q">Q1</span><div class="faqq__body"><div class="faqq__text">In 'Three Questions', what were the king's three questions?</div><span class="faqq__from">Three Questions</span></div></div>
+        <div class="faqq"><span class="faqq__q">Q2</span><div class="faqq__body"><div class="faqq__text">Give one example each of a simile and a metaphor.</div><span class="faqq__from">Grammar</span></div></div>
+        <div class="faqq"><span class="faqq__q">Q3</span><div class="faqq__body"><div class="faqq__text">Change into indirect speech: He said, "I am busy."</div><span class="faqq__from">Grammar</span></div></div>
+        <div class="faqq"><span class="faqq__q">Q4</span><div class="faqq__body"><div class="faqq__text">What is the moral of the lesson 'Fire: Friend and Foe'?</div><span class="faqq__from">Fire: Friend and Foe</span></div></div>
+      </article>
+
+      <!-- HINDI -->
+      <article class="faqc rv" style="--sa:#8B5CF6;animation-delay:.36s">
+        <div class="faqc__hd"><span class="faqc__ic">✍️</span><div><div class="faqc__name">Hindi</div><div class="faqc__tag">Most repeated</div></div></div>
+        <div class="faqq"><span class="faqq__q">Q1</span><div class="faqq__body"><div class="faqq__text">'हम पंछी उन्मुक्त गगन के' कविता में पक्षी क्या चाहते हैं?</div><span class="faqq__from">हम पंछी उन्मुक्त गगन के</span></div></div>
+        <div class="faqq"><span class="faqq__q">Q2</span><div class="faqq__body"><div class="faqq__text">संधि किसे कहते हैं? एक उदाहरण दीजिए।</div><span class="faqq__from">व्याकरण</span></div></div>
+        <div class="faqq"><span class="faqq__q">Q3</span><div class="faqq__body"><div class="faqq__text">'मिठाईवाला' कहानी से हमें क्या सीख मिलती है?</div><span class="faqq__from">मिठाईवाला</span></div></div>
+        <div class="faqq"><span class="faqq__q">Q4</span><div class="faqq__body"><div class="faqq__text">'सूरज' के दो पर्यायवाची शब्द लिखिए।</div><span class="faqq__from">व्याकरण</span></div></div>
+      </article>
+    </div>
   </section>
 
 </main>

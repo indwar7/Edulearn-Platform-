@@ -54,6 +54,27 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
 .pcard__eyebrow{font-family:'Fragment Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:8px}
 .pcard__eyebrow::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--aurora);flex:none}
 
+/* ── Most-asked Class 7 questions — colourful reference bank ──────────── */
+.faq{padding:10px 0 30px}
+.faq__head{margin-bottom:24px}
+.faq__head .sect-title{font-size:clamp(26px,3vw,36px);margin:0}
+.faq__sub{color:var(--muted);font-size:16.5px;max-width:740px;margin-top:10px;line-height:1.55}
+.faq__grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:20px;align-items:start}
+.faqc{--sa:var(--teal);position:relative;background:var(--card);background:color-mix(in srgb,var(--sa) 8%,var(--card));border:1px solid var(--line);border-radius:24px;padding:24px 22px 18px;overflow:hidden;transition:transform .35s var(--ease),border-color .35s var(--ease),box-shadow .35s var(--ease)}
+.faqc:hover{transform:translateY(-4px);border-color:var(--sa);box-shadow:var(--shadow-soft)}
+.faqc::before{content:"";position:absolute;left:0;top:0;right:0;height:6px;background:var(--sa)}
+.faqc__hd{display:flex;align-items:center;gap:13px;margin-bottom:8px}
+.faqc__ic{width:52px;height:52px;border-radius:15px;display:flex;align-items:center;justify-content:center;background:var(--sa);flex:none;font-size:26px;box-shadow:0 6px 16px -6px var(--sa)}
+.faqc__name{font-family:'Fraunces',serif;font-weight:700;font-size:24px;line-height:1.05}
+.faqc__tag{font-family:'Fragment Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.faqq{display:flex;gap:12px;align-items:flex-start;padding:13px 12px;border-radius:14px;background:var(--card);border:1px solid var(--line);margin-top:11px;transition:transform .2s var(--ease),border-color .2s var(--ease)}
+.faqq:hover{transform:translateX(3px);border-color:var(--sa)}
+.faqq__q{width:30px;height:30px;border-radius:9px;background:var(--sa);color:#fff;font-family:'Fraunces',serif;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;flex:none}
+.faqq__body{flex:1;min-width:0}
+.faqq__text{font-size:15.5px;font-weight:700;color:var(--cream);line-height:1.35}
+.faqq__from{font-size:12px;color:var(--muted);margin-top:5px;display:inline-flex;align-items:center;gap:5px}
+.faqq__from::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--sa);flex:none}
+
 /* play card */
 .play{background:var(--card);border:1px solid var(--line);border-radius:26px;padding:34px;position:relative;overflow:hidden}
 .play__hour{font-family:'Fraunces',serif;font-weight:600;font-size:26px;margin:6px 0 2px}
