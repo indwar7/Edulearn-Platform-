@@ -18,20 +18,21 @@
        so the hidden attribute silently stops working. Restore it. */
     [hidden]{display:none!important;}
     body{margin:0;font-family:'Nunito',system-ui,sans-serif;background:var(--bg);color:var(--ink);}
-    .wrap{max-width:640px;margin:0 auto;padding:40px 24px 80px;}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:30px;}
+    /* One question fills the page — a wide, roomy card instead of a small box. */
+    .wrap{max-width:920px;margin:0 auto;padding:44px 28px 96px;}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:26px;box-shadow:var(--shadow);padding:clamp(28px,4vw,54px);}
     .center{text-align:center;padding:60px 20px;color:var(--muted);}
     .center a{color:var(--teal);font-weight:600;}
 
     .qhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
-    .qhead .mono{font-family:'Fragment Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
-    .timer{font-family:'Fraunces',serif;font-weight:600;font-size:22px;}
+    .qhead .mono{font-family:'Fragment Mono',monospace;font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
+    .timer{font-family:'Fraunces',serif;font-weight:600;font-size:27px;}
     .timer.low{color:var(--rose);}
-    .progress-track{height:6px;background:var(--bg2);border-radius:99px;overflow:hidden;margin-bottom:24px;}
+    .progress-track{height:8px;background:var(--bg2);border-radius:99px;overflow:hidden;margin-bottom:32px;}
     .progress-fill{height:100%;background:var(--aurora);border-radius:99px;transition:width .3s linear;}
 
-    .qtext{font-family:'Fraunces',serif;font-weight:500;font-size:22px;line-height:1.35;margin-bottom:22px;}
-    .opt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:1px solid var(--line);background:var(--bg2);border-radius:14px;padding:14px 16px;font-size:15px;font-family:inherit;color:inherit;cursor:pointer;margin-bottom:10px;transition:border-color .2s,transform .15s;}
+    .qtext{font-family:'Fraunces',serif;font-weight:500;font-size:clamp(25px,3vw,33px);line-height:1.35;margin-bottom:30px;}
+    .opt{display:flex;align-items:center;gap:16px;width:100%;text-align:left;border:1px solid var(--line);background:var(--bg2);border-radius:16px;padding:19px 22px;font-size:19px;font-family:inherit;color:inherit;cursor:pointer;margin-bottom:14px;transition:border-color .2s,transform .15s;}
     .opt:hover:not(:disabled){border-color:#3DE8C5;transform:translateY(-1px);}
     .opt:disabled{cursor:default;}
     /* picked but not yet submitted — its own colour, distinct from right/wrong */
@@ -41,15 +42,15 @@
     .opt.is-right .ltr{background:var(--teal);color:#0B1224;border-color:transparent;}
     .opt.is-wrong{border-color:var(--rose);background:rgba(244,63,94,.12);}
     .opt.is-wrong .ltr{background:var(--rose);color:#fff;border-color:transparent;}
-    .opt .ltr{width:26px;height:26px;border-radius:8px;background:var(--card);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:'Fragment Mono',monospace;font-size:11px;flex:none;}
+    .opt .ltr{width:36px;height:36px;border-radius:11px;background:var(--card);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:'Fragment Mono',monospace;font-size:14px;flex:none;}
     .locked-note{text-align:center;color:var(--muted);font-size:13px;margin-top:6px;}
     /* worked solution — revealed only once the student submits */
     .solution{margin-top:18px;border:1px solid var(--line);border-left:3px solid #6366F1;background:var(--bg2);border-radius:14px;padding:16px 18px;}
     .solution .lbl{font-family:'Fragment Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:8px;}
-    .solution .verdict{font-weight:700;font-size:14.5px;margin-bottom:8px;}
-    .solution .body{font-size:14.5px;line-height:1.6;}
-    .qactions{display:flex;align-items:center;gap:12px;margin-top:18px;flex-wrap:wrap;}
-    .qactions .hint{font-size:13px;color:var(--muted);}
+    .solution .verdict{font-weight:700;font-size:16.5px;margin-bottom:8px;}
+    .solution .body{font-size:16px;line-height:1.6;}
+    .qactions{display:flex;align-items:center;gap:14px;margin-top:26px;flex-wrap:wrap;}
+    .qactions .hint{font-size:14.5px;color:var(--muted);}
     .btn[disabled]{opacity:.4;cursor:not-allowed;}
 
     .score-num{font-family:'Fraunces',serif;font-weight:600;font-size:56px;text-align:center;background:var(--aurora);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1;}
@@ -60,5 +61,6 @@
     .review-row .ans{font-size:13px;color:var(--muted);}
     .review-row .ans.correct{color:var(--teal);}
     .review-row .ans.wrong{color:var(--rose);}
-    .btn{border:none;border-radius:12px;background:var(--aurora);color:#0B1224;font-weight:700;font-size:15px;padding:13px 20px;cursor:pointer;text-decoration:none;display:inline-block;}
+    .btn{border:none;border-radius:14px;background:var(--aurora);color:#0B1224;font-weight:700;font-size:17px;padding:15px 30px;cursor:pointer;text-decoration:none;display:inline-block;}
+    .locked-note{font-size:14px;}
   
