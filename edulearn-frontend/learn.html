@@ -326,10 +326,13 @@ input{font-family:inherit;color:inherit}
 /* ============================================================
    Main split: browser + sticky panel
    ============================================================ */
+/* Single full-width column — the subject rail, chapter list and rows now run
+   edge to edge instead of being squeezed by a 332px sidebar. The "Continue
+   learning / Beyond academics" panel stacks full-width below. */
 .split{
   display:grid;
-  grid-template-columns:minmax(0,1fr) 332px;
-  gap:36px;
+  grid-template-columns:1fr;
+  gap:40px;
   align-items:start;
   padding:26px 0 90px;
 }
@@ -423,17 +426,17 @@ input{font-family:inherit;color:inherit}
 /* ============================================================
    Chapter rows
    ============================================================ */
-.chapters{display:flex;flex-direction:column;gap:10px;min-height:320px}
+.chapters{display:flex;flex-direction:column;gap:14px;min-height:320px}
 .chrow{
   --cc:var(--c7);
   position:relative;
   display:grid;
-  grid-template-columns:72px minmax(0,1fr) auto;
-  gap:20px;align-items:center;
+  grid-template-columns:84px minmax(0,1fr) auto;
+  gap:24px;align-items:center;
   background:var(--card);
   border:1px solid var(--line);
-  border-radius:20px;
-  padding:24px 26px 24px 22px;
+  border-radius:22px;
+  padding:30px 34px 30px 28px;
   transition:transform .4s var(--ease),border-color .4s var(--ease),box-shadow .4s var(--ease);
   overflow:hidden;
 }
@@ -455,13 +458,13 @@ input{font-family:inherit;color:inherit}
 .chrow__num{
   font-family:'Fraunces',serif;
   font-weight:300;font-style:italic;
-  font-size:34px;line-height:1;
+  font-size:44px;line-height:1;
   color:var(--cc);
   text-align:center;
 }
-.chrow__body{display:flex;flex-direction:column;gap:8px;min-width:0}
+.chrow__body{display:flex;flex-direction:column;gap:9px;min-width:0}
 .chrow__name{
-  font-size:16.5px;font-weight:600;letter-spacing:-.005em;
+  font-size:19px;font-weight:700;letter-spacing:-.005em;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .chrow__name mark{
@@ -595,10 +598,11 @@ input{font-family:inherit;color:inherit}
 /* ============================================================
    Side panel (sticky)
    ============================================================ */
+/* Full-width now (no longer a sidebar): the two panel cards sit side by side. */
 .panel{
-  position:sticky;top:96px;
-  display:flex;flex-direction:column;gap:18px;
+  display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start;
 }
+@media (max-width:760px){.panel{grid-template-columns:1fr}}
 .pcard{
   background:var(--card);
   border:1px solid var(--line);
