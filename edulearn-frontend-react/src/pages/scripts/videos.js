@@ -306,15 +306,13 @@ export default function init({ location, document, window, onCleanup }) {
     function heroHTML(v){
       if(!v) return '';
       var sj = subjOf(v);
-      return '<div class="hero" id="heroCard" tabindex="0" role="button" aria-label="Play '+esc(cleanTitle(v))+'">'+
-        '<div class="hero-art" style="background:'+sj.grad+'"></div>'+
-        '<div class="hero-glyph">'+sj.glyph+'</div>'+
-        '<div class="scrim"></div>'+
+      // Light, minimal card: subject accent + title + class/views + Play. No
+      // dark artwork, giant glyph or long blurb (per review).
+      return '<div class="hero" id="heroCard" tabindex="0" role="button" aria-label="Play '+esc(cleanTitle(v))+'" style="--accent:'+sj.pip+'">'+
         '<div class="hero-inner">'+
           '<div class="hero-eyebrow"><span class="dot"></span>Featured · '+esc(v.subject||'Lecture')+'</div>'+
           '<h2>'+esc(cleanTitle(v))+'</h2>'+
-          '<p>'+esc(v.description || (v.topic? (v.topic+' — start watching now.') : 'Tap to start watching this lecture.'))+'</p>'+
-          '<div><span class="hero-cta">'+ico('play',16)+'Play now</span>'+
+          '<div class="hero-foot"><span class="hero-cta">'+ico('play',16)+'Play now</span>'+
           '<span class="hero-meta"><span>'+esc(v.className)+'</span><span>'+(v.views||0)+' views</span>'+(v.durationLabel?'<span>'+esc(v.durationLabel)+'</span>':'')+'</span></div>'+
         '</div></div>';
     }

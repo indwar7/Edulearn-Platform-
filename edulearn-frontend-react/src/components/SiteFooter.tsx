@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 /**
  * Marketing footer for the public landing page (the logged-out home — Landing
@@ -10,17 +11,19 @@ import { Link } from 'react-router-dom';
  */
 const PRODUCT = [
   ['Learn', '/login'],
+  ['Lessons', '/login'],
   ['Live', '/login'],
   ['Arena', '/login'],
   ['Tests', '/login'],
-  ['PAL AI', '/login'],
+  ['PAL Adaptive AI', '/login'],
   ['Dashboard', '/login'],
 ];
 const CLASSES = ['Class 6', 'Class 7', 'Class 8', 'Class 9'];
-const COMPANY = ['About', 'Careers', 'For schools', 'Contact'];
-const LANGUAGES = ['हिंदी', 'தமிழ்', 'తెలుగు', 'বাংলা', 'मराठी', 'ગુજરાતી'];
+const COMPANY = ['About', 'For schools', 'Careers', 'Contact'];
+const LANGUAGES = ['English', 'हिंदी', 'मराठी', 'বাংলা', 'தமிழ்', 'తెలుగు', 'ગુજરાતી', 'ਪੰਜਾਬੀ'];
 
 export default function SiteFooter() {
+  const { loggedIn } = useAuth();
   return (
     <footer className="sf">
       <style>{SF_CSS}</style>
@@ -44,24 +47,28 @@ export default function SiteFooter() {
               {PRODUCT.map(([label, to]) => (
                 <li key={label}><Link to={to}>{label}</Link></li>
               ))}
-              <li><Link to="/login">Pricing — ₹299/mo</Link></li>
             </ul>
           </div>
 
-          <div className="sf__col">
-            <h4>Classes</h4>
-            <ul>
-              {CLASSES.map((c) => (
-                <li key={c}><Link to="/login">{c}</Link></li>
-              ))}
-            </ul>
-          </div>
+          {/* Browsing other classes is a signed-out affordance — hidden once
+              logged in (per review). The landing is logged-out only anyway, so
+              this is belt-and-suspenders. */}
+          {!loggedIn && (
+            <div className="sf__col">
+              <h4>Classes</h4>
+              <ul>
+                {CLASSES.map((c) => (
+                  <li key={c}><Link to="/login">{c}</Link></li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           <div className="sf__col">
             <h4>Company</h4>
             <ul>
               {COMPANY.map((c) => (
-                <li key={c}><a href="/#features">{c}</a></li>
+                <li key={c}><Link to="/login">{c}</Link></li>
               ))}
             </ul>
           </div>
@@ -77,10 +84,8 @@ export default function SiteFooter() {
         </div>
 
         <div className="sf__base">
-          <span className="sf__mono">© 2026 EduLearn Learning Pvt. Ltd. · Bengaluru, Bharat</span>
-          <span className="sf__mono">
-            <Link to="/privacy">Privacy Policy</Link> · <Link to="/terms">Terms</Link>
-          </span>
+          <span className="sf__mono">© 2026 EduLearn Learning Pvt. Ltd. · Noida, Bharat</span>
+          <span className="sf__mono">CBSE · NCERT · 20+ State Boards</span>
         </div>
       </div>
     </footer>
@@ -90,7 +95,7 @@ export default function SiteFooter() {
 const SF_CSS = `
 .sf{position:relative;overflow:hidden;background:#fff;border-top:1px solid rgba(15,23,42,.08);}
 .sf__inner{max-width:1280px;margin:0 auto;padding:64px 40px 40px;position:relative;}
-.sf__mark{position:absolute;left:8px;bottom:-40px;font-family:'Fraunces',serif;font-weight:600;font-size:clamp(90px,14vw,210px);line-height:1;letter-spacing:-.03em;color:rgba(14,15,20,.05);pointer-events:none;user-select:none;white-space:nowrap;}
+.sf__mark{position:absolute;left:8px;bottom:-24px;font-family:'Fraunces',serif;font-weight:600;font-size:clamp(48px,6.5vw,110px);line-height:1;letter-spacing:-.03em;color:rgba(14,15,20,.04) !important;-webkit-text-fill-color:rgba(14,15,20,.04) !important;pointer-events:none;user-select:none;white-space:nowrap;}
 .sf__cols{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr 1fr;gap:32px;position:relative;z-index:2;margin-bottom:56px;}
 .sf__brand{display:flex;flex-direction:column;gap:14px;align-items:flex-start;}
 .sf__logo{display:inline-flex;align-items:center;gap:10px;text-decoration:none;}

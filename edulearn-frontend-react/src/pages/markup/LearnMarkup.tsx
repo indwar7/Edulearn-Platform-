@@ -347,7 +347,7 @@ export default function LearnMarkup() {
           </div>
           <div className="footer__base">
             <span className="mono">
-              © 2026 EduLearn Learning Pvt. Ltd. · Bengaluru, Bharat
+              © 2026 EduLearn Learning Pvt. Ltd. · Noida, Bharat
             </span>
             {' '}
             <span className="mono">
