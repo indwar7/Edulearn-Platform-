@@ -349,8 +349,8 @@ input{font-family:inherit;color:inherit}
   border:1px solid var(--line);
   border-radius:20px;
   background:var(--card);
-  padding:18px 16px 15px;
-  display:flex;flex-direction:column;gap:10px;
+  padding:26px 22px 22px;
+  display:flex;flex-direction:column;gap:14px;
   text-align:left;
   transition:all .45s var(--ease);
   overflow:hidden;
@@ -372,8 +372,9 @@ input{font-family:inherit;color:inherit}
   box-shadow:var(--shadow-soft), 0 0 0 1px color-mix(in srgb, var(--sa) 25%, transparent) inset;
 }
 .subj.is-active::after{transform:scaleX(1)}
-.subj__icon{color:var(--sa);height:26px;display:flex;align-items:center}
-.subj__name{font-size:14px;font-weight:600;line-height:1.25}
+.subj__icon{color:var(--sa);height:40px;display:flex;align-items:center}
+.subj__icon svg{width:38px;height:38px}
+.subj__name{font-size:17px;font-weight:700;line-height:1.25}
 .subj__count{
   font-family:'Fragment Mono',monospace;
   font-size:10px;letter-spacing:.12em;text-transform:uppercase;
@@ -427,12 +428,12 @@ input{font-family:inherit;color:inherit}
   --cc:var(--c7);
   position:relative;
   display:grid;
-  grid-template-columns:64px minmax(0,1fr) auto;
-  gap:18px;align-items:center;
+  grid-template-columns:72px minmax(0,1fr) auto;
+  gap:20px;align-items:center;
   background:var(--card);
   border:1px solid var(--line);
   border-radius:20px;
-  padding:18px 22px 18px 18px;
+  padding:24px 26px 24px 22px;
   transition:transform .4s var(--ease),border-color .4s var(--ease),box-shadow .4s var(--ease);
   overflow:hidden;
 }
@@ -485,11 +486,12 @@ input{font-family:inherit;color:inherit}
 .mod{
   position:relative;
   display:flex;align-items:center;justify-content:center;
-  width:24px;height:24px;border-radius:7px;
+  width:36px;height:36px;border-radius:10px;
   color:var(--muted);
   background:var(--card2);
   transition:color .3s var(--ease),background .3s var(--ease);
 }
+.mod svg{width:19px;height:19px}
 .mod:hover{color:var(--cream);background:var(--line)}
 .mod::after{
   content:attr(data-tip);
@@ -1032,7 +1034,7 @@ input{font-family:inherit;color:inherit}
       </div>
     </div>
     <div class="footer__base">
-      <span class="mono">© 2026 EduLearn Learning Pvt. Ltd. · Noida, Bharat</span>
+      <span class="mono">© 2026 EduLearn Learning Pvt. Ltd. · Noida, India</span>
       <span class="mono">CBSE · NCERT · 20+ State Boards</span>
     </div>
   </div>

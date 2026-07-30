@@ -84,7 +84,7 @@ export default function SiteFooter() {
         </div>
 
         <div className="sf__base">
-          <span className="sf__mono">© 2026 EduLearn Learning Pvt. Ltd. · Noida, Bharat</span>
+          <span className="sf__mono">© 2026 EduLearn Learning Pvt. Ltd. · Noida, India</span>
           <span className="sf__mono">CBSE · NCERT · 20+ State Boards</span>
         </div>
       </div>
@@ -106,7 +106,7 @@ const SF_CSS = `
 .sf__col ul{list-style:none;display:flex;flex-direction:column;gap:11px;margin:0;padding:0;}
 .sf__col a,.sf__col span{font-size:14.5px;color:#0B1224;text-decoration:none;font-weight:600;}
 .sf__col a:hover{color:#3F5BE0;text-decoration:underline;}
-.sf__base{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center;position:relative;z-index:2;padding-top:22px;border-top:1px solid rgba(15,23,42,.08);}
+.sf__base{display:flex;flex-wrap:wrap;gap:8px 16px;justify-content:center;text-align:center;align-items:center;position:relative;z-index:2;padding-top:22px;border-top:1px solid rgba(15,23,42,.08);}
 .sf__mono{font-family:'Fragment Mono',monospace;font-size:11px;letter-spacing:.06em;color:#5B6472;}
 .sf__base a{color:#3F5BE0;text-decoration:none;}
 .sf__base a:hover{text-decoration:underline;}

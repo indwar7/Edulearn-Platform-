@@ -137,7 +137,7 @@ export default function ChallengeMarkup() {
       </main>
       <footer className="wrap footer__base">
         <span className="mono">
-          © 2026 EduLearn Learning Pvt. Ltd. · Noida, Bharat
+          © 2026 EduLearn Learning Pvt. Ltd. · Noida, India
         </span>
       </footer>
       {' '}
