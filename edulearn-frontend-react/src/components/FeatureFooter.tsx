@@ -23,6 +23,6 @@ export default function FeatureFooter() {
 
 const FOOT_CSS = `
 .feat-foot{margin-top:auto;}
-.feat-foot__inner{max-width:none;margin:0 auto;padding:24px clamp(24px,2.6vw,60px);border-top:1px solid rgba(15,23,42,.12);font-family:'Fragment Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#5B6472;text-align:center;}
+.feat-foot__inner{max-width:none;margin:0;padding:24px clamp(24px,2.6vw,60px);border-top:1px solid rgba(15,23,42,.12);font-family:'Fragment Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#5B6472;text-align:center;}
 @media (max-width:640px){.feat-foot__inner{padding:22px;}}
 `;

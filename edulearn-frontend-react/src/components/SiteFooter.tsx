@@ -94,7 +94,7 @@ export default function SiteFooter() {
 
 const SF_CSS = `
 .sf{position:relative;overflow:hidden;background:#fff;border-top:1px solid rgba(15,23,42,.08);}
-.sf__inner{max-width:none;margin:0 auto;padding:64px clamp(24px,2.6vw,60px) 40px;position:relative;}
+.sf__inner{max-width:none;margin:0;padding:64px clamp(24px,2.6vw,60px) 40px;position:relative;}
 .sf__mark{position:absolute;left:8px;bottom:-24px;font-family:'Fraunces',serif;font-weight:600;font-size:clamp(48px,6.5vw,110px);line-height:1;letter-spacing:-.03em;color:rgba(14,15,20,.04) !important;-webkit-text-fill-color:rgba(14,15,20,.04) !important;pointer-events:none;user-select:none;white-space:nowrap;}
 .sf__cols{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr 1fr;gap:32px;position:relative;z-index:2;margin-bottom:56px;}
 .sf__brand{display:flex;flex-direction:column;gap:14px;align-items:flex-start;}

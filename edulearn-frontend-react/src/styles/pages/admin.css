@@ -19,7 +19,7 @@
     html.dark-mode .filters button.on{background:#25324F;}
     *{box-sizing:border-box;}
     body{margin:0;font-family:'Nunito',system-ui,sans-serif;background:var(--bg);color:var(--ink);}
-    .wrap{max-width:none;margin:0 auto;padding:36px clamp(24px,2.6vw,60px) 60px;}
+    .wrap{max-width:none;margin:0;padding:36px clamp(24px,2.6vw,60px) 60px;}
     .top{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:8px;}
     h1{font-family:'Fraunces',serif;font-weight:480;font-size:34px;margin:0;}
     h1 em{font-style:italic;background:var(--aurora);-webkit-background-clip:text;background-clip:text;color:transparent;}
