@@ -234,9 +234,12 @@ input{font-family:inherit;color:inherit}
 .hero__crumb a{transition:color .3s var(--ease)}
 .hero__crumb a:hover{color:var(--teal)}
 .hero__crumb .sep{opacity:.4}
+/* Left-aligned vertical stack (heading → subtitle → chips row), flush to the
+   page's left margin exactly like the dashboard greeting — instead of pushing
+   the chips to the far right and leaving the heading floating mid-page. */
 .hero__row{
-  display:flex;align-items:flex-end;justify-content:space-between;
-  gap:40px;flex-wrap:wrap;
+  display:flex;flex-direction:column;align-items:flex-start;
+  gap:22px;
 }
 .hero__title{
   font-family:'Fraunces',serif;
@@ -257,7 +260,7 @@ input{font-family:inherit;color:inherit}
 }
 .hero__lead{max-width:680px}
 .hero__sub{color:var(--muted);font-size:16.5px;line-height:1.6;margin-top:18px;max-width:600px}
-.hero__chips{display:flex;flex-direction:column;gap:10px;align-items:flex-start;padding-bottom:8px}
+.hero__chips{display:flex;flex-direction:row;flex-wrap:wrap;gap:12px;align-items:center}
 .chip{
   display:inline-flex;align-items:center;gap:10px;
   border:1px solid var(--line);
