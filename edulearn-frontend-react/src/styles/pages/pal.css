@@ -35,7 +35,7 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
 .nav .nav__theme{height:32px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:999px;padding:5px 11px;background:transparent;color:var(--cream)}
 
 /* ============ app shell ============ */
-.app{flex:1;display:grid;grid-template-columns:300px minmax(0,1fr);min-height:0;max-width:1500px;width:100%;margin:0 auto}
+.app{flex:1;display:grid;grid-template-columns:300px minmax(0,1fr);min-height:0;max-width:none;width:100%;margin:0;padding:0 clamp(24px,2.6vw,60px)}
 
 /* sidebar */
 .side{border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0;padding:18px 16px;gap:14px;background:var(--ink)}
