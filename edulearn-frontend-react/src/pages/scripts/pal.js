@@ -579,7 +579,13 @@ function askBackend(c, text, sessionId, canRetry){
     // misleading, not just an unpolished fallback).
     var row = document.getElementById('typingRow');
     if(row) row.remove();
-    var m = { who:'pal', text: 'Sorry, I could not reach PAL just now (' + (err && err.message ? err.message : 'connection issue') + '). Please try again in a moment.', quiz: null, quizDone: null, chips: null };
+    // A server-side config failure (dead AI credentials) will not fix itself, so
+    // don't tell the user to try again in a moment — that's a promise the server
+    // can't keep, and they'd sit there retrying a dead endpoint.
+    var text2 = (err && err.code === 'pal_not_configured')
+      ? 'PAL’s AI service is not set up on the server right now, so I can’t answer yet. This needs an admin to fix — please report it.'
+      : 'Sorry, I could not reach PAL just now (' + (err && err.message ? err.message : 'connection issue') + '). Please try again in a moment.';
+    var m = { who:'pal', text: text2, quiz: null, quizDone: null, chips: null };
     streamIn(m, function(){
       c.msgs.push(m);
       save();
