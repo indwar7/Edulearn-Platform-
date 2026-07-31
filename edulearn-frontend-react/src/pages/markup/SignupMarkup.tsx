@@ -482,7 +482,7 @@ export default function SignupMarkup() {
                   </button>
                 </div>
               </form>
-              <p className="login-link">
+              <p className="signin-link">
                 {" Already have an account? "}
                 <a href="login.html">
                   Sign in

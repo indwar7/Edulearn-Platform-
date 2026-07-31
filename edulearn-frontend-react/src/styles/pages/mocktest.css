@@ -44,7 +44,7 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
 .btn-ghost{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);font-weight:600;font-size:14px;padding:10px 20px;border-radius:999px;transition:border-color .3s var(--ease),background .3s var(--ease)}
 .btn-ghost:hover{border-color:rgba(61,232,197,.5);background:rgba(61,232,197,.07)}
 
-.wrap{max-width:none;margin:0;padding:0 clamp(20px,3.5vw,72px)}
+.wrap{max-width:1600px;margin:0 auto;padding:0 32px}
 .hero{padding:52px 0 26px}
 .hero h1{font-family:'Fraunces',serif;font-weight:500;font-size:clamp(38px,4.6vw,62px);line-height:1.04;letter-spacing:-.025em}
 .hero h1 em{font-style:italic;font-weight:600;background:var(--aurora);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
