@@ -147,7 +147,8 @@ var AUTH_ROLE = (_authUser && _authUser.role) || null;
 // to another account on the same device. (The old shared key is retired.)
 var LS_KEY = 'edulearn_pal_chats_' + ((_authUser && _authUser.id) || 'guest');
 try { localStorage.removeItem('edulearn_pal_chats'); } catch(e) {}
-var AUTH_SESSION_ID = null; // tracks current backend session id
+// The backend session id lives on each chat thread (`c.backendSessionId`), not
+// in a page-level variable — see askBackend().
 
 function loadStore(){
   try{
@@ -541,6 +542,53 @@ function streamIn(m, after){
   step();
 }
 
+// One backend round-trip for `chat`. `canRetry` guards a single recovery
+// attempt: a sessionId can go stale (deleted on another device, or a server
+// whose sessions were wiped), and the server 404s it. Because the id is stored
+// on the thread, that 404 would repeat for EVERY later question — the thread
+// would be permanently unable to get an answer. So on a 404 we drop the dead id
+// and ask again as a fresh session instead of surfacing a dead end.
+function askBackend(c, text, sessionId, canRetry){
+  EduAPI.chatPal(text, sessionId || undefined).then(function(res){
+    var row = document.getElementById('typingRow');
+    if(row) row.remove();
+    // Store backend session id for this chat thread
+    if (res.sessionId) c.backendSessionId = res.sessionId;
+    var replyText = (typeof res.reply === 'string' ? res.reply : null) ||
+                    (res.reply && res.reply.content) ||
+                    (res.message && typeof res.message === 'string' ? res.message : null) ||
+                    (res.message && res.message.content) ||
+                    'I did not catch that. Could you rephrase?';
+    var m = { who:'pal', text: replyText, quiz: null, quizDone: null, chips: null };
+    streamIn(m, function(){
+      c.msgs.push(m);
+      save();
+      busy = false; sendBtn.disabled = false;
+      input.focus();
+    });
+  }).catch(function(err){
+    if (canRetry && err && err.status === 404 && sessionId) {
+      c.backendSessionId = null;
+      save();
+      askBackend(c, text, null, false);
+      return;
+    }
+    // A logged-in user gets an honest error, never the local demo engine's
+    // fabricated data (teacherReply's ROSTER is fake — presenting it as a
+    // real answer about a real teacher's real class would be actively
+    // misleading, not just an unpolished fallback).
+    var row = document.getElementById('typingRow');
+    if(row) row.remove();
+    var m = { who:'pal', text: 'Sorry, I could not reach PAL just now (' + (err && err.message ? err.message : 'connection issue') + '). Please try again in a moment.', quiz: null, quizDone: null, chips: null };
+    streamIn(m, function(){
+      c.msgs.push(m);
+      save();
+      busy = false; sendBtn.disabled = false;
+      input.focus();
+    });
+  });
+}
+
 function sendMessage(text){
   text = (text || '').trim();
   if(!text || busy) return;
@@ -562,42 +610,11 @@ function sendMessage(text){
   // Try real backend PAL AI first; fall back to local engine.
   var token = (typeof EduAPI !== 'undefined') && EduAPI.getToken && EduAPI.getToken();
   if (token) {
-    var reqSessionId = c.backendSessionId || AUTH_SESSION_ID || undefined;
-    EduAPI.chatPal(text, reqSessionId).then(function(res){
-      var row = document.getElementById('typingRow');
-      if(row) row.remove();
-      // Store backend session id for this chat thread
-      if (res.sessionId) {
-        c.backendSessionId = res.sessionId;
-        AUTH_SESSION_ID = res.sessionId;
-      }
-      var replyText = (typeof res.reply === 'string' ? res.reply : null) ||
-                      (res.reply && res.reply.content) ||
-                      (res.message && typeof res.message === 'string' ? res.message : null) ||
-                      (res.message && res.message.content) ||
-                      'I did not catch that. Could you rephrase?';
-      var m = { who:'pal', text: replyText, quiz: null, quizDone: null, chips: null };
-      streamIn(m, function(){
-        c.msgs.push(m);
-        save();
-        busy = false; sendBtn.disabled = false;
-        input.focus();
-      });
-    }).catch(function(err){
-      // A logged-in user gets an honest error, never the local demo engine's
-      // fabricated data (teacherReply's ROSTER is fake — presenting it as a
-      // real answer about a real teacher's real class would be actively
-      // misleading, not just an unpolished fallback).
-      var row = document.getElementById('typingRow');
-      if(row) row.remove();
-      var m = { who:'pal', text: 'Sorry, I could not reach PAL just now (' + (err && err.message ? err.message : 'connection issue') + '). Please try again in a moment.', quiz: null, quizDone: null, chips: null };
-      streamIn(m, function(){
-        c.msgs.push(m);
-        save();
-        busy = false; sendBtn.disabled = false;
-        input.focus();
-      });
-    });
+    // Only THIS thread's backend session — never a global "last session id".
+    // A new chat must start a new server session, otherwise every thread in the
+    // sidebar appends to whichever session was used last and PAL answers the
+    // new question with the old thread's context.
+    askBackend(c, text, c.backendSessionId, true);
   } else {
     // No auth token — use offline local engine
     setTimeout(function(){

@@ -367,7 +367,7 @@ th, td{ border-color:var(--u-border) !important; color:var(--u-text) !important;
      — the flex version only centred them within the leftover space between the
      brand and the right actions, which is off-centre when those two differ in
      width. Equal 1fr side columns guarantee the middle column is viewport-centred. */
-  max-width:1600px !important; margin:0 auto !important; padding:0 28px !important;
+  max-width:none !important; margin:0 auto !important; padding:0 clamp(24px,2.6vw,60px) !important;
   height:66px !important; display:grid !important;
   grid-template-columns:1fr auto 1fr !important; align-items:center !important;
   gap:26px !important;
@@ -766,3 +766,6 @@ footer .foot-cols li,
   body{background-image:none;}
   .nav::after, nav:not([class])::after{display:none;}
 }
+
+/* Subtle aurora background so the page never reads as empty, even in the gutters. */
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(760px 600px at -6% -10%,rgba(61,232,197,.09),transparent 62%),radial-gradient(820px 640px at 106% 10%,rgba(124,155,255,.10),transparent 62%),radial-gradient(640px 580px at 42% 116%,rgba(255,180,84,.07),transparent 62%);}

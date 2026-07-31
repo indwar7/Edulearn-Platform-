@@ -118,7 +118,7 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
   border-bottom:1px solid var(--line);
 }
 .nav-inner{
-  max-width:1600px;margin:0 auto;padding:0 32px;
+  max-width:none;margin:0 auto;padding:0 clamp(24px,2.6vw,60px);
   height:68px;display:flex;align-items:center;gap:28px;
 }
 .logo{display:flex;align-items:center;gap:10px;flex-shrink:0;}
@@ -170,7 +170,7 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
 /* ============================================================
    TOP STRIP
    ============================================================ */
-.shell{position:relative;z-index:1;max-width:1600px;margin:0 auto;padding:0 32px;}
+.shell{position:relative;z-index:1;max-width:none;margin:0 auto;padding:0 clamp(24px,2.6vw,60px);}
 .topstrip{
   display:flex;align-items:flex-end;justify-content:space-between;
   gap:24px;padding:52px 0 30px;flex-wrap:wrap;
@@ -572,7 +572,7 @@ footer{
   font-size:clamp(96px,15vw,210px);line-height:1;letter-spacing:-.02em;
   color:var(--hair);white-space:nowrap;pointer-events:none;user-select:none;
 }
-.foot-inner{max-width:1600px;margin:0 auto;padding:48px 32px 130px;position:relative;}
+.foot-inner{max-width:none;margin:0 auto;padding:48px clamp(24px,2.6vw,60px) 130px;position:relative;}
 .foot-cols{display:grid;grid-template-columns:1.4fr repeat(4,1fr);gap:28px;margin-bottom:36px;}
 .foot-cols h5{font-family:'Fragment Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:400;margin-bottom:12px;}
 .foot-cols a,.foot-cols li{display:block;font-size:13px;color:var(--muted);margin-bottom:8px;list-style:none;transition:color .3s ease;}
