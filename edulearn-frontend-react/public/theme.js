@@ -17,7 +17,7 @@ class ThemeManager {
     }
   }
 
-  // EduLearn is LIGHT ONLY. Dark mode is retired.
+  // BestBrain is LIGHT ONLY. Dark mode is retired.
   //
   // The per-page html.dark-mode{} blocks (249 rules across 13 files) are left
   // in place but can never match, because this class is never added and any

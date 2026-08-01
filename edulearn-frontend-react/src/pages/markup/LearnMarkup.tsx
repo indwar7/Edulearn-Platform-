@@ -187,7 +187,7 @@ export default function LearnMarkup() {
       <footer className="footer">
         <div className="footer__inner">
           <div className="footer__mark" aria-hidden="true">
-            EduLearn
+            BestBrain
           </div>
           <div className="footer__cols io">
             <div className="footer__brandcol">
@@ -200,7 +200,7 @@ export default function LearnMarkup() {
                 </svg>
                 {' '}
                 <span className="brand__word" style={{ fontSize: "19px" }}>
-                  EduLearn
+                  BestBrain
                 </span>
               </a>
               <p className="footer__tag" data-i18n="footer_tag">
@@ -346,7 +346,7 @@ export default function LearnMarkup() {
           </div>
           <div className="footer__base">
             <span className="mono">
-              © 2026 EduLearn Learning Pvt. Ltd. · Noida, India
+              © 2026 BestBrain Learning Pvt. Ltd. · Noida, India
             </span>
             {' '}
             <span className="mono">

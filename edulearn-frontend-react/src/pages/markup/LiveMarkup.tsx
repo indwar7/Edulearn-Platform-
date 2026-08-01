@@ -1258,7 +1258,7 @@ export default function LiveMarkup() {
       </main>
       <footer className="wrap footer__base">
         <span className="mono">
-          © 2026 EduLearn Learning Pvt. Ltd. · Noida, India
+          © 2026 BestBrain Learning Pvt. Ltd. · Noida, India
         </span>
       </footer>
       {' '}

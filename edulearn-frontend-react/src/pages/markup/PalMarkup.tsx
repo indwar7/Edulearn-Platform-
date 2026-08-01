@@ -49,7 +49,7 @@ export default function PalMarkup() {
           </span>
           <div className="chatlist" id="chatList" />
           <div className="side__foot">
-            PAL answers from the EduLearn syllabus and your activity on this device. Prototype — answers are generated locally.
+            PAL answers from the BestBrain syllabus and your activity on this device. Prototype — answers are generated locally.
           </div>
         </aside>
         {/* ============ CHAT PANE ============ */}

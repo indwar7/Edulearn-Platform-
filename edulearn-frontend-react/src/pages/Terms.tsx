@@ -1,15 +1,15 @@
 import LegalLayout, { Section } from '../components/LegalLayout';
 
 /**
- * Terms of Service. Placeholder legal content scaffolded for EduLearn — it
+ * Terms of Service. Placeholder legal content scaffolded for BestBrain — it
  * should be reviewed by the company's legal counsel before being relied upon.
  */
 export default function Terms() {
   return (
     <LegalLayout title="Terms of Service" updated="July 2026">
       <p style={{ marginBottom: 24 }}>
-        These Terms govern your use of the EduLearn platform, website, and mobile apps (the
-        “Service”), operated by EduLearn Learning Pvt. Ltd. (“EduLearn”, “we”, “us”). By creating an
+        These Terms govern your use of the BestBrain platform, website, and mobile apps (the
+        “Service”), operated by BestBrain Learning Pvt. Ltd. (“BestBrain”, “we”, “us”). By creating an
         account or using the Service, you agree to these Terms.
       </p>
 
@@ -30,11 +30,11 @@ export default function Terms() {
       </Section>
 
       <Section heading="4. Teacher and admin content">
-        <p>Teachers and admins may upload lecture videos and chapter notes. You confirm that you have the right to share what you upload, and you grant EduLearn a license to host and deliver that content to eligible students within the Service. You remain responsible for your content, and we may remove content that violates these Terms.</p>
+        <p>Teachers and admins may upload lecture videos and chapter notes. You confirm that you have the right to share what you upload, and you grant BestBrain a license to host and deliver that content to eligible students within the Service. You remain responsible for your content, and we may remove content that violates these Terms.</p>
       </Section>
 
       <Section heading="5. Intellectual property">
-        <p>The Service, including its software, design, and EduLearn-provided content, is owned by EduLearn and protected by law. Except for content you upload, you may not copy, distribute, or create derivative works without our permission.</p>
+        <p>The Service, including its software, design, and BestBrain-provided content, is owned by BestBrain and protected by law. Except for content you upload, you may not copy, distribute, or create derivative works without our permission.</p>
       </Section>
 
       <Section heading="6. Disclaimers">
@@ -42,7 +42,7 @@ export default function Terms() {
       </Section>
 
       <Section heading="7. Limitation of liability">
-        <p>To the extent permitted by law, EduLearn will not be liable for indirect, incidental, or consequential damages arising from your use of the Service.</p>
+        <p>To the extent permitted by law, BestBrain will not be liable for indirect, incidental, or consequential damages arising from your use of the Service.</p>
       </Section>
 
       <Section heading="8. Termination">
@@ -58,7 +58,7 @@ export default function Terms() {
       </Section>
 
       <Section heading="11. Contact us">
-        <p>Questions about these Terms can be sent to EduLearn Learning Pvt. Ltd. at the support address listed on our website.</p>
+        <p>Questions about these Terms can be sent to BestBrain Learning Pvt. Ltd. at the support address listed on our website.</p>
       </Section>
     </LegalLayout>
   );

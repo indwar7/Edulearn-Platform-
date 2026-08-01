@@ -1,5 +1,5 @@
 /* ============================================================
-   EduLearn — SHARED THEME  (light only)
+   BestBrain — SHARED THEME  (light only)
 
    Structure comes from the Unfluke Pro design system
    (unfluke-ios/DESIGN-SPEC.md + constants/Colors.ts, light theme):
@@ -7,7 +7,7 @@
      radius 14–22 · generous spacing · soft shadows
      big bold tabular numbers · tiny uppercase letter-spaced labels
 
-   Colour comes from EduLearn's own palette — the 8 accent hues are
+   Colour comes from BestBrain's own palette — the 8 accent hues are
    kept and applied identically on every page, so the platform reads
    as one product instead of fourteen.
 
@@ -44,7 +44,7 @@
   --u-shadow:0 1px 2px rgba(14,15,20,.04), 0 12px 28px rgba(14,15,20,.06);
   --u-shadow-lg:0 2px 4px rgba(14,15,20,.05), 0 20px 44px rgba(14,15,20,.09);
 
-  /* ---- EduLearn accent hues (kept, unified) ---- */
+  /* ---- BestBrain accent hues (kept, unified) ---- */
   --c1:#00A88F;  /* teal   */
   --c2:#3F5BE0;  /* indigo */
   --c3:#E07B00;  /* orange */
@@ -754,7 +754,7 @@ footer .foot-cols li,
 /* the giant watermark stays a faint tint — making it black would
    swamp the column text sitting on top of it. .footer__mark is the same
    watermark on the Learn footer; without it here the global "all text black"
-   rule turns it into a huge solid-black EduLearn that overflows the footer. */
+   rule turns it into a huge solid-black BestBrain that overflows the footer. */
 .foot-word, .footer__mark{ color:rgba(14,15,20,.05) !important; }
 
 

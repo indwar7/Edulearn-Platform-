@@ -1,5 +1,5 @@
 /* ============================================================
-   EduLearn — Feature Showcase + Live Progress Panel
+   BestBrain — Feature Showcase + Live Progress Panel
    A floating button + slide-out panel. The top shows the signed-in
    user's REAL progress pulled live from the backend (/api/dashboard);
    below it, the module map links to every page.
@@ -252,7 +252,7 @@
   panel.setAttribute('role', 'dialog');
   panel.setAttribute('aria-label', 'Feature showcase');
   panel.innerHTML =
-    '<div id="efp-hd"><h2>EduLearn — Feature Tour</h2>' +
+    '<div id="efp-hd"><h2>BestBrain — Feature Tour</h2>' +
     '<p>Your live progress, plus every module. Click any row to jump straight to it.</p>' +
     '<button id="efp-x" type="button" aria-label="Close">' +
       '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>' +

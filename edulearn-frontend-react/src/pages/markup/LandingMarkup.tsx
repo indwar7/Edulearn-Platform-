@@ -471,7 +471,7 @@ export default function LandingMarkup() {
             </div>
           </div>
         </section>
-        <section className="showcase" aria-label="EduLearn on web and mobile">
+        <section className="showcase" aria-label="BestBrain on web and mobile">
           <div className="showcase-inner">
             <div>
               <span className="showcase-eyebrow">

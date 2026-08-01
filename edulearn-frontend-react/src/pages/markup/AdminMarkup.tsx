@@ -13,7 +13,7 @@ export default function AdminMarkup() {
               </em>
             </h1>
             <p className="sub">
-              {"Every user registered on EduLearn — straight from MongoDB. "}
+              {"Every user registered on BestBrain — straight from MongoDB. "}
               <span className="live">
                 <span className="dot" />
                 <span className="mono" id="auto">

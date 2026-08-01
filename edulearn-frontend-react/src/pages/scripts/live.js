@@ -154,14 +154,14 @@ function icsStamp(d){
 function downloadICS(s){
   var end = new Date(s.start.getTime() + s.mins * 60000);
   var ics = [
-    'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//EduLearn//Live Classes//EN',
+    'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//BestBrain//Live Classes//EN',
     'BEGIN:VEVENT',
     'UID:' + s.id + '@edulearn.in',
     'DTSTAMP:' + icsStamp(new Date()),
     'DTSTART:' + icsStamp(s.start),
     'DTEND:' + icsStamp(end),
-    'SUMMARY:EduLearn Live: ' + s.topic,
-    'DESCRIPTION:Class ' + s.cls + ' ' + SUBJ[s.subj].name + ' with ' + s.tutor + '. Join from the EduLearn Live page.',
+    'SUMMARY:BestBrain Live: ' + s.topic,
+    'DESCRIPTION:Class ' + s.cls + ' ' + SUBJ[s.subj].name + ' with ' + s.tutor + '. Join from the BestBrain Live page.',
     'END:VEVENT','END:VCALENDAR'
   ].join('\r\n');
   var blob = new Blob([ics], { type:'text/calendar' });

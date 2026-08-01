@@ -6,7 +6,7 @@
      paints) so a disallowed user is redirected without seeing page content. -->
 <script src="role-guard.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Live Classes — EduLearn</title>
+<title>Live Classes — BestBrain</title>
 <meta name="description" content="Small-group live classes with real tutors. Book a seat, get it on your calendar, join in one tap — with an attentiveness report sent to parents.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -356,11 +356,11 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
 
 <nav class="nav">
   <div class="nav__inner">
-    <a class="brand" href="index.html" aria-label="EduLearn home">
+    <a class="brand" href="index.html" aria-label="BestBrain home">
       <svg class="brand__mark" width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <path d="M12 1.5 L14.6 9.4 L22.5 12 L14.6 14.6 L12 22.5 L9.4 14.6 L1.5 12 L9.4 9.4 Z" fill="url(#auroraGrad)"/>
       </svg>
-      <span class="brand__word">EduLearn</span>
+      <span class="brand__word">BestBrain</span>
     </a>
     <div class="nav__links">
       <a class="nav__link" href="learn.html" data-i18n="nav_learn">Learn</a>
@@ -716,7 +716,7 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
 </main>
 
 <footer class="wrap footer__base">
-  <span class="mono">© 2026 EduLearn Learning Pvt. Ltd. · Noida, India</span>
+  <span class="mono">© 2026 BestBrain Learning Pvt. Ltd. · Noida, India</span>
 </footer>
 
 <script>
@@ -867,14 +867,14 @@ function icsStamp(d){
 function downloadICS(s){
   var end = new Date(s.start.getTime() + s.mins * 60000);
   var ics = [
-    'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//EduLearn//Live Classes//EN',
+    'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//BestBrain//Live Classes//EN',
     'BEGIN:VEVENT',
     'UID:' + s.id + '@edulearn.in',
     'DTSTAMP:' + icsStamp(new Date()),
     'DTSTART:' + icsStamp(s.start),
     'DTEND:' + icsStamp(end),
-    'SUMMARY:EduLearn Live: ' + s.topic,
-    'DESCRIPTION:Class ' + s.cls + ' ' + SUBJ[s.subj].name + ' with ' + s.tutor + '. Join from the EduLearn Live page.',
+    'SUMMARY:BestBrain Live: ' + s.topic,
+    'DESCRIPTION:Class ' + s.cls + ' ' + SUBJ[s.subj].name + ' with ' + s.tutor + '. Join from the BestBrain Live page.',
     'END:VEVENT','END:VCALENDAR'
   ].join('\r\n');
   var blob = new Blob([ics], { type:'text/calendar' });

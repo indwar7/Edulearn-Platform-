@@ -80,14 +80,14 @@ export default function Navbar({ page }: { page: string }) {
   return (
     <nav className="nav">
       <div className="nav__inner">
-        <Link className="brand" to={brandHref} aria-label="EduLearn home">
+        <Link className="brand" to={brandHref} aria-label="BestBrain home">
           <svg className="brand__mark" width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path
               d="M12 1.5 L14.6 9.4 L22.5 12 L14.6 14.6 L12 22.5 L9.4 14.6 L1.5 12 L9.4 9.4 Z"
               fill="url(#auroraGrad)"
             />
           </svg>
-          <span className="brand__word">EduLearn</span>
+          <span className="brand__word">BestBrain</span>
         </Link>
 
         <div className="nav__links">

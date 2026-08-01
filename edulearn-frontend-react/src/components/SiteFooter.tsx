@@ -28,14 +28,14 @@ export default function SiteFooter() {
     <footer className="sf">
       <style>{SF_CSS}</style>
       <div className="sf__inner">
-        <div className="sf__mark" aria-hidden="true">EduLearn</div>
+        <div className="sf__mark" aria-hidden="true">BestBrain</div>
         <div className="sf__cols">
           <div className="sf__brand">
-            <Link className="sf__logo" to="/" aria-label="EduLearn home">
+            <Link className="sf__logo" to="/" aria-label="BestBrain home">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="M12 1.5 L14.6 9.4 L22.5 12 L14.6 14.6 L12 22.5 L9.4 14.6 L1.5 12 L9.4 9.4 Z" fill="url(#auroraGrad)" />
               </svg>
-              <span className="sf__word">EduLearn</span>
+              <span className="sf__word">BestBrain</span>
             </Link>
             <p className="sf__tag">Made for Bharat. Works fully offline.</p>
             <p className="sf__boards">CBSE · NCERT · 20+ State Boards</p>
@@ -84,7 +84,7 @@ export default function SiteFooter() {
         </div>
 
         <div className="sf__base">
-          <span className="sf__mono">© 2026 EduLearn Learning Pvt. Ltd. · Noida, India</span>
+          <span className="sf__mono">© 2026 BestBrain Learning Pvt. Ltd. · Noida, India</span>
           <span className="sf__mono">CBSE · NCERT · 20+ State Boards</span>
         </div>
       </div>

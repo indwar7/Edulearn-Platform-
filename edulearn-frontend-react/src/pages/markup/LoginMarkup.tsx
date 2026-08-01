@@ -15,7 +15,7 @@ export default function LoginMarkup() {
             </svg>
             {' '}
             <span className="logo-text">
-              EduLearn
+              BestBrain
             </span>
           </div>
           <div className="brand-mid">
@@ -146,7 +146,7 @@ export default function LoginMarkup() {
               </svg>
               {' '}
               <span className="logo-text">
-                EduLearn
+                BestBrain
               </span>
             </div>
             <div id="loginFormView">

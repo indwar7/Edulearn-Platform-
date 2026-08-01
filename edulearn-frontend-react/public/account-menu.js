@@ -1,5 +1,5 @@
 /* ============================================================
-   EduLearn — shared account menu (settings + logout)
+   BestBrain — shared account menu (settings + logout)
    Self-injects a gear + logout button (fixed, top-right) and a
    slide-in Settings panel with role-specific fields + preferences.
    Works on every page. Must load AFTER api.js.

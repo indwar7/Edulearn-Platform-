@@ -1,6 +1,6 @@
 /* ============================================================
-   EduLearn — shared frontend API helper
-   Connects the static pages to the EduLearn backend.
+   BestBrain — shared frontend API helper
+   Connects the static pages to the BestBrain backend.
    ============================================================ */
 (function (global) {
   // Backend base URL — points directly at the backend EC2 origin.

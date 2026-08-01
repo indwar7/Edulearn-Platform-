@@ -8,7 +8,7 @@
 export default function init({ location, document, window, onCleanup }) {
 
 /* ============================================================
-   EDULEARN · LEARN — application script
+   BESTBRAIN · LEARN — application script
    ============================================================ */
 (function(){
 'use strict';

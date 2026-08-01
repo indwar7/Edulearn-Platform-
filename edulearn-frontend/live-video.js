@@ -1,5 +1,5 @@
 /* ============================================================
-   EduLearn — LiveKit live-video glue
+   BestBrain — LiveKit live-video glue
    Connects the live classroom to a real LiveKit room.
    - Fetches an eligibility-checked token from the backend
    - Teacher (host) publishes camera + mic

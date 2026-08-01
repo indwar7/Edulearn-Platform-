@@ -31,7 +31,7 @@ export default function LegalLayout({
       </h1>
       <p style={{ color: '#64748B', fontSize: 14, marginBottom: 8 }}>Last updated: {updated}</p>
       <p style={{ color: '#64748B', fontSize: 14, marginBottom: 32 }}>
-        EduLearn Learning Pvt. Ltd. · Made for Bharat
+        BestBrain Learning Pvt. Ltd. · Made for Bharat
       </p>
       <div className="legal-body">{children}</div>
     </main>

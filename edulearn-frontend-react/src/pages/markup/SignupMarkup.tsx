@@ -14,7 +14,7 @@ export default function SignupMarkup() {
             </svg>
             {' '}
             <span className="logo-text">
-              EduLearn
+              BestBrain
             </span>
           </div>
           <div className="brand-mid">
@@ -139,7 +139,7 @@ export default function SignupMarkup() {
               </svg>
               {' '}
               <span className="logo-text">
-                EduLearn
+                BestBrain
               </span>
             </div>
             <div id="signupFormView">

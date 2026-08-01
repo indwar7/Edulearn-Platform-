@@ -1167,7 +1167,7 @@ export default function DashboardMarkup() {
   ============================================================ */}
       <footer>
         <div className="foot-word" aria-hidden="true">
-          EduLearn
+          BestBrain
         </div>
         <div className="foot-inner">
           <div className="foot-cols rv">
@@ -1180,7 +1180,7 @@ export default function DashboardMarkup() {
                 </svg>
                 {' '}
                 <span className="wordmark" style={{ fontSize: "19px" }}>
-                  EduLearn
+                  BestBrain
                 </span>
               </div>
               <p className="foot-tag" data-i18n="foot.tag">

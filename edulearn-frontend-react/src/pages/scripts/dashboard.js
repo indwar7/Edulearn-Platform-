@@ -12,7 +12,7 @@ try{document.documentElement.classList.remove('dark-mode');localStorage.setItem(
 
 
 /* ============================================================
-   EDULEARN DASHBOARD — application script
+   BESTBRAIN DASHBOARD — application script
    ============================================================ */
 (function(){
 'use strict';

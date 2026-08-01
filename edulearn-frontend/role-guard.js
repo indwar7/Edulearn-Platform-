@@ -1,5 +1,5 @@
 /* ============================================================
-   EduLearn — centralized role guard & nav access control
+   BestBrain — centralized role guard & nav access control
    ------------------------------------------------------------
    ONE source of truth for "who can open what". Load this FIRST,
    in <head> (before the page body renders), on every page that
@@ -95,7 +95,7 @@
       // Not signed in -> show the LANDING page, not the bare login form. A
       // shared deep link (e.g. challenge.html) used to dump first-time
       // visitors straight onto login/signup with zero context about what
-      // EduLearn even is; the landing page introduces the product and its
+      // BestBrain even is; the landing page introduces the product and its
       // header carries the Login button. replace() so Back doesn't loop here.
       location.replace(LANDING);
       return;

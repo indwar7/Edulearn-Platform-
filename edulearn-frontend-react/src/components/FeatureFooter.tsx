@@ -15,7 +15,7 @@ export default function FeatureFooter() {
     <footer className="feat-foot">
       <style>{FOOT_CSS}</style>
       <div className="feat-foot__inner">
-        <span>© 2026 EduLearn Learning Pvt. Ltd. · Noida, India</span>
+        <span>© 2026 BestBrain Learning Pvt. Ltd. · Noida, India</span>
       </div>
     </footer>
   );

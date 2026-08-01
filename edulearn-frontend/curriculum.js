@@ -1,5 +1,5 @@
 /* ============================================================
-   EduLearn — SHARED CURRICULUM
+   BestBrain — SHARED CURRICULUM
    ------------------------------------------------------------
    Extracted verbatim from learn.html so the dashboard can use the
    SAME chapter data instead of its own 5-entry demo stub.

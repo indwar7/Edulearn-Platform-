@@ -1,14 +1,14 @@
 import LegalLayout, { Section } from '../components/LegalLayout';
 
 /**
- * Privacy Policy. Placeholder legal content scaffolded for EduLearn — it should
+ * Privacy Policy. Placeholder legal content scaffolded for BestBrain — it should
  * be reviewed by the company's legal counsel before being relied upon.
  */
 export default function Privacy() {
   return (
     <LegalLayout title="Privacy Policy" updated="July 2026">
       <p style={{ marginBottom: 24 }}>
-        This Privacy Policy explains how EduLearn Learning Pvt. Ltd. (“EduLearn”, “we”, “us”)
+        This Privacy Policy explains how BestBrain Learning Pvt. Ltd. (“BestBrain”, “we”, “us”)
         collects, uses, and protects information when you use our learning platform, website, and
         mobile apps (the “Service”). By using the Service you agree to the practices described here.
       </p>
@@ -31,7 +31,7 @@ export default function Privacy() {
       </Section>
 
       <Section heading="4. Children’s privacy">
-        <p>EduLearn is used by school students, who may be minors. Student accounts are intended to be created and overseen with the involvement of a parent, guardian, teacher, or school. We collect only the information needed for learning, and a parent or guardian may request access to or deletion of a linked child’s information.</p>
+        <p>BestBrain is used by school students, who may be minors. Student accounts are intended to be created and overseen with the involvement of a parent, guardian, teacher, or school. We collect only the information needed for learning, and a parent or guardian may request access to or deletion of a linked child’s information.</p>
       </Section>
 
       <Section heading="5. Data security">
@@ -51,7 +51,7 @@ export default function Privacy() {
       </Section>
 
       <Section heading="9. Contact us">
-        <p>Questions about this policy or your data can be sent to EduLearn Learning Pvt. Ltd. at the support address listed on our website.</p>
+        <p>Questions about this policy or your data can be sent to BestBrain Learning Pvt. Ltd. at the support address listed on our website.</p>
       </Section>
     </LegalLayout>
   );
