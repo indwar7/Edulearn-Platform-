@@ -133,7 +133,7 @@ export default function VideosMarkup() {
                 className="seek"
                 min="0"
                 max="100"
-                value="0"
+                defaultValue="0"
                 step="0.1"
                 aria-label="Seek"
                />
@@ -224,15 +224,21 @@ export default function VideosMarkup() {
                     min="0"
                     max="1"
                     step="0.05"
-                    value="1"
+                    defaultValue="1"
                     aria-label="Volume"
                    />
                 </div>
-                <select id="speed" className="speed" title="Playback speed" aria-label="Playback speed">
+                <select
+                  id="speed"
+                  className="speed"
+                  title="Playback speed"
+                  aria-label="Playback speed"
+                  defaultValue="1"
+                >
                   <option value="0.5">
                     0.5×
                   </option>
-                  <option value="1" selected={true}>
+                  <option value="1">
                     1×
                   </option>
                   <option value="1.25">

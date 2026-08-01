@@ -279,11 +279,11 @@ export default function SignupMarkup() {
                         Class
                       </label>
                       {' '}
-                      <select id="s_class">
+                      <select id="s_class" defaultValue="Class 7">
                         <option value="Class 6">
                           Class 6
                         </option>
-                        <option value="Class 7" selected={true}>
+                        <option value="Class 7">
                           Class 7
                         </option>
                         <option value="Class 8">
@@ -337,11 +337,11 @@ export default function SignupMarkup() {
                         Class
                       </label>
                       {' '}
-                      <select id="t_class">
+                      <select id="t_class" defaultValue="Class 7">
                         <option value="Class 6">
                           Class 6
                         </option>
-                        <option value="Class 7" selected={true}>
+                        <option value="Class 7">
                           Class 7
                         </option>
                         <option value="Class 8">
@@ -396,11 +396,11 @@ export default function SignupMarkup() {
                         Child's Class
                       </label>
                       {' '}
-                      <select id="p_class">
+                      <select id="p_class" defaultValue="Class 7">
                         <option value="Class 6">
                           Class 6
                         </option>
-                        <option value="Class 7" selected={true}>
+                        <option value="Class 7">
                           Class 7
                         </option>
                         <option value="Class 8">

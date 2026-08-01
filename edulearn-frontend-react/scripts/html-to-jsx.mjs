@@ -145,7 +145,31 @@ function isSignificantGap(nodes, i) {
   return isInlineNode(prev) && isInlineNode(next);
 }
 
-function renderAttrs(attrs, state) {
+/**
+ * Find what a <select> should start on, from the `selected` option beneath it.
+ *
+ * In HTML `selected` marks the initial choice; React expects that expressed as
+ * defaultValue on the <select> and rejects `selected` on the <option>. An
+ * option with no value attribute falls back to its text, which is what the
+ * browser submits for it.
+ */
+function selectDefault(node) {
+  const found = [];
+  (function walk(n) {
+    for (const c of n.childNodes || []) {
+      if (c.nodeName === 'option' && (c.attrs || []).some((a) => a.name === 'selected')) {
+        const v = (c.attrs || []).find((a) => a.name === 'value');
+        found.push(v ? v.value : (c.childNodes || []).map((t) => t.value || '').join('').trim());
+      }
+      walk(c);
+    }
+  })(node);
+  if (!found.length) return null;
+  const multiple = (node.attrs || []).some((a) => a.name === 'multiple');
+  return multiple ? `{${JSON.stringify(found)}}` : JSON.stringify(found[0]);
+}
+
+function renderAttrs(attrs, state, tag) {
   const out = [];
   for (const { name, value } of attrs) {
     if (name.startsWith('on')) continue; // inline handlers are re-attached in React
@@ -154,6 +178,22 @@ function renderAttrs(attrs, state) {
       if (obj) out.push(`style=${obj}`);
       continue;
     }
+    /*
+      HTML's `value`/`checked`/`selected` set the INITIAL state of a control.
+      React reads the same spellings as the *controlled* value and then demands
+      an onChange for every one of them, logging an error per field and
+      rendering it read-only. defaultValue/defaultChecked are React's names for
+      what the HTML actually meant, and these controls are all driven
+      imperatively by the lifted page scripts anyway.
+    */
+    if (name === 'value' && (tag === 'input' || tag === 'textarea' || tag === 'select')) {
+      out.push(`defaultValue=${JSON.stringify(value)}`);
+      continue;
+    }
+    if (name === 'checked' && tag === 'input') { out.push('defaultChecked={true}'); continue; }
+    // Consumed by selectDefault() on the parent <select>.
+    if (name === 'selected' && tag === 'option') continue;
+
     const jsxName = jsxAttrName(name);
     if (value === '' && BOOLEAN.has(name)) { out.push(`${jsxName}={true}`); continue; }
     if (NUMERIC.has(name) && /^-?\d+$/.test(value.trim())) {
@@ -212,7 +252,13 @@ function walk(node, depth, out, state) {
   if (isDropped(node)) return;
 
   const tag = node.nodeName;
-  const attrs = renderAttrs(node.attrs || [], state);
+  const attrs = renderAttrs(node.attrs || [], state, tag);
+  if (tag === 'select') {
+    const initial = selectDefault(node);
+    if (initial && !attrs.some((a) => a.startsWith('defaultValue='))) {
+      attrs.push(`defaultValue=${initial}`);
+    }
+  }
   const all = node.childNodes || [];
   const kids = all.filter((c, i) => {
     if (isDropped(c)) return false;

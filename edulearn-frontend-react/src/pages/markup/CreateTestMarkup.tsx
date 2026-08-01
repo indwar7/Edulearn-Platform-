@@ -49,14 +49,14 @@ export default function CreateTestMarkup() {
                   Seconds per question
                 </label>
                 {' '}
-                <input type="number" id="seconds" min="5" max="300" value="30" required={true} />
+                <input type="number" id="seconds" min="5" max="300" defaultValue="30" required={true} />
               </div>
               <div>
                 <label htmlFor="numQuestions">
                   Number of questions
                 </label>
                 {' '}
-                <input type="number" id="numQuestions" min="1" max="30" value="7" required={true} />
+                <input type="number" id="numQuestions" min="1" max="30" defaultValue="7" required={true} />
               </div>
             </div>
           </div>
