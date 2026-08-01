@@ -20,7 +20,26 @@ function resolveApiBase(): string {
     if (isLocalHost(location.hostname)) return location.origin;
 
     if (location.protocol === 'https:') {
-      base = '/backend-api';
+      /*
+        Two production hosts need two different answers.
+
+        Vercel rewrites /backend-api/* onto the backend (see
+        edulearn-frontend-react/vercel.json), so a deployment there stays
+        same-origin and needs no CORS grant.
+
+        bestbrainplus.com is served by Hostinger, which has no such proxy —
+        /backend-api returned Hostinger's own 404 page for every call, which is
+        what broke login there. That host talks to the API subdomain directly,
+        which means the backend has to serve HTTPS (an https page may not call
+        http://65.2.183.7 — the browser blocks it as mixed content) and has to
+        list this origin in CLIENT_ORIGIN for CORS.
+
+        VITE_API_ORIGIN overrides at build time; localStorage.edulearn_api
+        still overrides at runtime, just below.
+      */
+      base = location.hostname.endsWith('.vercel.app')
+        ? '/backend-api'
+        : (import.meta.env.VITE_API_ORIGIN || 'https://api.bestbrainplus.com');
     }
   } catch { /* non-browser */ }
 
