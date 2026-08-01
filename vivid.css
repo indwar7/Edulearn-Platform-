@@ -437,7 +437,14 @@ th, td{ border-color:var(--u-border) !important; color:var(--u-text) !important;
 }
 
 @media (max-width:1080px){
-  .nav__links, .nav-links{ display:none; }
+  /* This block used to also carry `.nav__links{display:none}`. It never once
+     applied — `.nav__links{display:flex !important}` above outranks a plain
+     declaration however late it appears — so the links stayed in the bar and
+     forced the document to ~638px wide at phone widths. The collapse now lives
+     in the mobile layer at the end of this file, at 900px, paired with a burger
+     that gives those links somewhere to go. Do not re-add it here: between
+     900px and 1080px the links still fit, and hiding them at 1080 would leave
+     that range with no navigation at all. */
   .nav__inner, .nav-inner{ padding:0 18px; }
 }
 .footer__base, .footer, footer{ border-top:2px solid #000000 !important; }
@@ -769,3 +776,299 @@ footer .foot-cols li,
 
 /* Subtle aurora background so the page never reads as empty, even in the gutters. */
 body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(760px 600px at -6% -10%,rgba(61,232,197,.09),transparent 62%),radial-gradient(820px 640px at 106% 10%,rgba(124,155,255,.10),transparent 62%),radial-gradient(640px 580px at 42% 116%,rgba(255,180,84,.07),transparent 62%);}
+
+
+/* ================================================================
+   MOBILE LAYER — phones and small tablets
+   ================================================================
+   Last block in the file, and heavy on !important, both on purpose.
+   Everything above was authored desktop-first and already forces its
+   values (see the "Every property below is !important ON PURPOSE"
+   note in the nav section). An !important declaration is not beaten
+   by source order alone, so a mobile rule that has to win one has to
+   be !important too. The nav is the clearest case: line ~377 sets
+   `.nav__links{display:flex !important}` while the old max-width:1080px
+   rule below it said plain `display:none` — which is why the links
+   never collapsed and every page scrolled sideways at phone widths.
+
+   There is deliberately NO blanket `overflow-x:hidden` on html/body.
+   The nav is position:sticky and an overflow clip on an ancestor
+   silently disables sticky. Each real overflow source is fixed at
+   the source instead.
+   ================================================================ */
+
+/* ---------- nav: burger + drawer (hidden until mobile) ---------- */
+.nav__burger{
+  display:none;
+  /* 44px is the floor everywhere on this site: iOS HIG's 44pt and WCAG 2.5.5
+     (Target Size, AAA) agree on it, and it is the size the rest of the mobile
+     controls below are held to. */
+  width:44px; height:44px; padding:0; flex:none;
+  align-items:center; justify-content:center;
+  border:1.5px solid #000000; border-radius:12px;
+  background:#FFFFFF; color:#000000; cursor:pointer;
+}
+.nav__scrim, .nav__drawer{ display:none; }
+
+@media (max-width:900px){
+  /*
+    Everything that collapses the bar is scoped to .nav__inner--mobilenav,
+    the marker the React <Navbar/> sets because it also renders the burger and
+    the drawer.
+
+    This file is shared: the legacy static pages under /edulearn-frontend/ link
+    it too, and their nav is hand-written HTML with no burger in it. Hiding
+    .nav__links unconditionally would leave those pages with no navigation at
+    all on a phone. Scoping means a page opts into the collapse by shipping the
+    control that reopens the links. Do not lift these rules out of the scope.
+  */
+
+  /* Burger | brand | actions. .nav__links is display:none so it claims no
+     track, leaving exactly three items for three columns. */
+  .nav__inner--mobilenav{
+    grid-template-columns:auto 1fr auto !important;
+    gap:12px !important;
+    padding:0 14px !important;
+    height:60px !important;
+  }
+  .nav__inner--mobilenav .nav__burger{ display:inline-flex !important; }
+  .nav__inner--mobilenav .nav__links,
+  .nav__inner--mobilenav .nav-links{ display:none !important; }
+  .nav__inner--mobilenav .brand,
+  .nav__inner--mobilenav .logo{ justify-self:start !important; min-width:0 !important; }
+  .brand__word{ font-size:19px !important; }
+  .nav__inner--mobilenav .nav__right,
+  .nav__inner--mobilenav .nav-right{ justify-self:end !important; gap:8px !important; }
+
+  .nav__scrim{
+    display:block; position:fixed; inset:0;
+    background:rgba(14,15,20,.44);
+    opacity:0; pointer-events:none;
+    transition:opacity .24s ease;
+    z-index:9300;
+  }
+  .nav__scrim.is-open{ opacity:1; pointer-events:auto; }
+
+  /* Slides from the LEFT because the burger is on the left — a drawer that
+     flies in from the opposite side to the control that opened it reads as a
+     different surface entirely. */
+  .nav__drawer{
+    display:block; position:fixed; top:0; left:0; bottom:0;
+    width:min(300px,84vw);
+    padding:12px 14px calc(24px + env(safe-area-inset-bottom,0px));
+    background:#FFFFFF;
+    border-right:2px solid #000000;
+    box-shadow:14px 0 46px rgba(15,23,42,.20);
+    transform:translateX(-102%);
+    transition:transform .3s cubic-bezier(.22,1,.36,1);
+    overflow-y:auto; -webkit-overflow-scrolling:touch;
+    z-index:9400;
+  }
+  .nav__drawer.is-open{ transform:translateX(0); }
+  /* Aligns the X with the burger underneath it: the bar is 60px tall and the
+     drawer's own top padding is 12px, so a 42px control lands on the same
+     optical row. */
+  .nav__drawer-head{ display:flex; align-items:center; height:44px; margin-bottom:14px; }
+  .nav__drawer-close{
+    width:44px; height:44px; padding:0; flex:none;
+    display:inline-flex; align-items:center; justify-content:center;
+    border:1.5px solid #000000; border-radius:12px;
+    background:#FFFFFF; color:#000000; cursor:pointer;
+  }
+  .nav__drawer-links{ display:flex; flex-direction:column; gap:4px; }
+  /* Stacked full-width rows, not the desktop pill row. */
+  .nav__drawer .nav__link{
+    display:block !important;
+    padding:14px 16px !important;
+    font-size:17px !important;
+    line-height:1.25 !important;
+    border-radius:12px !important;
+    min-height:48px;
+  }
+  /* Floating buttons belong to body, not to this component's tree — they are
+     hidden by class while the drawer owns the screen (see Navbar.tsx). */
+  body.nav-drawer-open .acct-fab,
+  body.nav-drawer-open #efp-btn{ display:none !important; }
+}
+
+@media (min-width:901px){
+  /* The drawer never participates above the breakpoint, whatever its state. */
+  .nav__drawer, .nav__scrim{ display:none !important; }
+}
+
+/* ---------- readable type floor ---------- */
+@media (max-width:600px){
+  /* 11px eyebrow/mono labels read fine on a monitor at arm's length and not
+     on a phone held at 30cm. 12px is the floor. These are the same selectors
+     that set the small sizes earlier in this file, plus the per-page
+     equivalents the page stylesheets set themselves — the audit found text
+     down to 9.5px on live and pal. */
+  .eyebrow, .mono, .feat-label, .pcard__eyebrow, .hm-scale,
+  .roster th, .cstat span, .dlab, .role-note, .foot-mono, .rc-tag,
+  .cls-chip, .weak-chip, .msub,
+  .subj__count, .chrow__dur, .chrow__pct, .chrow__subjtag,
+  .ctab__count, .subjcard__go, .nextup__kicker, .greet-date,
+  .how__num, .faqc__tag, .pick__subj, .qnum, .sylc__count,
+  .joinband__eyebrow, .side__foot, .composer__note, .rolebadge,
+  .tag, .count{
+    font-size:12px !important;
+    letter-spacing:.6px !important;
+  }
+}
+
+@media (max-width:900px){
+  /* ---------- tables scroll instead of being cut off ---------- */
+  /* .tablecard uses overflow:hidden to clip its own rounded corners, which
+     also clipped the roster's right-hand columns clean off — the table was
+     168px wider than the screen with no way to reach the rest. Scrolling it
+     horizontally keeps the corners and gives the columns back. */
+  .tablecard{
+    overflow-x:auto !important; overflow-y:hidden !important;
+    -webkit-overflow-scrolling:touch;
+  }
+  .tablecard table{ min-width:640px; }
+
+  /* ---------- form controls ---------- */
+  /* Mobile Safari zooms the whole page when a focused control's text is
+     smaller than 16px, and leaves the page scrolled sideways afterwards.
+     Every form on the site was between 11px and 15.5px. */
+  input, textarea, select, .box textarea{ font-size:16px !important; }
+  /* A long placeholder in a rows=1 textarea wraps and gets sliced through the
+     middle of the glyphs; one ellipsised line reads as deliberate. */
+  .box textarea::placeholder{
+    white-space:nowrap; text-overflow:ellipsis; overflow:hidden;
+  }
+
+  /* ---------- touch targets ---------- */
+  /* Padding rather than height so these keep their current display and do not
+     reflow the rows they sit in; on inline elements padding still grows the
+     hit area even though it does not grow the line box. */
+  a.foot-learn-link, a.top-link, a.mod, .filters button, .tabs button{
+    padding-top:11px !important; padding-bottom:11px !important;
+  }
+
+  /* ---------- nothing hides under the floating Features button ---------- */
+  /* #efp-btn is fixed to the bottom-right corner at z-index 99998, so the last
+     line of a footer — and PAL's composer note — sat underneath it. */
+  .foot-inner, .composer{ padding-bottom:64px !important; }
+
+  /* Media never widens the document. */
+  img, video, canvas, iframe{ max-width:100%; height:auto; }
+}
+
+@media (max-width:900px){
+  /* The per-chapter video/notes/test chips and the chapter arrow are sized in
+     px above (30px and 34px), so the touch-target padding further up cannot
+     grow them — a fixed height wins over padding. On a phone these are the
+     primary way into a chapter, so they get a proper finger-sized box. */
+  .chrow .mod, .mod{ width:40px !important; height:40px !important; }
+  .chrow__arrow{ width:40px !important; height:40px !important; }
+  .mods{ gap:10px !important; }
+}
+
+@media (max-width:600px){
+  /* Second pass on the type floor: these turned up only once the first pass
+     removed the louder offenders — live's stage/roster furniture ran as small
+     as 8.5px, which is unreadable at arm's length. */
+  .wtile__unit, .hm-dow, .chart-tip, .footer__boards,
+  .handchip, .gaze-badge, .st, .stage__note, .roster__count,
+  .vcard__meta, .sylc__label, .lvlpill, .streakchip{
+    font-size:12px !important;
+  }
+}
+
+@media (max-width:900px){
+  /* A chapter row's meta strip (module chips, percent, duration) is a
+     no-wrap flex row sized for a desktop column. Once the module chips grew
+     to a finger-sized 40px it no longer fit a phone, so let it wrap rather
+     than shrinking the targets back. */
+  .chrow__meta{ flex-wrap:wrap !important; row-gap:8px !important; }
+
+  /* `minmax(340px,1fr)` cannot go below 340px, so on a 320px screen the card
+     is wider than the screen it sits on. min() lets the track collapse to the
+     container while keeping the multi-column behaviour on wider screens. */
+  .syl__grid{ grid-template-columns:repeat(auto-fill,minmax(min(340px,100%),1fr)) !important; }
+  .faq__grid{ grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr)) !important; }
+
+  /* The roster's segmented filter is width:max-content — four tabs are wider
+     than a small phone. Scrolling it keeps the segmented-control look instead
+     of wrapping it into a ragged block. */
+  .filters{
+    width:auto !important; max-width:100% !important;
+    overflow-x:auto !important; flex-wrap:nowrap !important;
+    -webkit-overflow-scrolling:touch;
+  }
+  .filters button{ flex:none !important; }
+}
+
+/* ================================================================
+   MOBILE STANDARDS PASS — target size and type floor
+   ================================================================
+   Two published minimums, applied uniformly rather than per page:
+
+     · touch targets 44x44 CSS px  (Apple HIG 44pt, WCAG 2.5.5 Target
+       Size AAA; WCAG 2.5.8 AA only asks 24px, so 44 clears both)
+     · body/label text never below 12px
+
+   Applied by role — every standalone control — instead of listing the
+   pages, so a control added later inherits the floor for free. Inline
+   links inside running prose are deliberately NOT included: WCAG
+   exempts them, and padding them out would wreck the line box.
+   ================================================================ */
+@media (max-width:900px){
+  a.btn, a.btn-primary, a.btn-ghost, a.btn-back, a.top-link, a.mod,
+  a.eyebrow, a.foot-learn-link, a.brand,
+  button, .btn, .btn-primary, .btn-ghost, .btn-join, .btn-back, .btn-fix,
+  .btn-book, .btn-new, .btn-resume, .cbtn, .send, .menu-btn, .remove,
+  .userchip__out, .chrow__arrow,
+  input[type="submit"], input[type="button"], select{
+    min-height:44px;
+  }
+
+  /* Icon-only controls need the width too — a 19px-wide "×" is a 19px
+     target however tall it is. */
+  .mod, .remove, .send, .menu-btn, .cbtn, .chrow__arrow,
+  .vtoggle button, .filters button, .nav__burger, .nav__drawer-close{
+    min-width:44px;
+  }
+  /* These were sized in px further up, which beats min-width/min-height. */
+  .chrow .mod, .mod{ width:44px !important; height:44px !important; }
+  .chrow__arrow{ width:44px !important; height:44px !important; }
+
+  /* Checkboxes and radios ship at the browser's 13–18px default. 24px is the
+     WCAG 2.5.8 AA minimum and about as large as these read well; the row
+     label next to them extends the effective target. */
+  input[type="checkbox"], input[type="radio"]{
+    width:24px !important; height:24px !important;
+  }
+
+  /* PAL's composer is a rows=1 textarea, so its height comes from the line
+     box rather than from a box model the min-height above can reach. */
+  .box textarea{ min-height:44px; }
+}
+
+@media (max-width:600px){
+  /* Type floor, second sweep. `small` is the generic offender — the live
+     board caption, the videos skip counter and the mocktest ring label all
+     use it and all landed between 9px and 9.3px. */
+  small,
+  .fcol h4, .feat-foot__inner span, .board__head small, .calledon__x,
+  .filters button, .roster th, table th, .cbtn small, .bigring__num small{
+    font-size:12px !important;
+  }
+}
+
+@media (max-width:900px){
+  /* Footer column links are stacked block links — real navigation, not prose —
+     so they take the 44px floor like every other control. Centring the text
+     keeps the label optically in the middle of the taller row. */
+  .foot-cols a, .fcol a, .footer__cols a{
+    min-height:44px; display:flex; align-items:center;
+  }
+
+  /* features-panel.js builds an off-canvas panel of links at 24–33px. It is a
+     real navigation surface once opened, so it gets the same floor. */
+  #efp a, .efp-it, .efp-open{
+    min-height:44px; display:flex; align-items:center;
+  }
+}
