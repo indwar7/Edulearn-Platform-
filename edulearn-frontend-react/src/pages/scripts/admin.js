@@ -11,7 +11,16 @@ export default function init({ location, document, window, onCleanup }) {
 /* ---- next <script> block ---- */
 
 
-    var API = (window.EduAPI && EduAPI.API_BASE) || (localStorage.getItem('edulearn_api') || '/backend-api');
+    // EduAPI.API_BASE is already the final answer: api.js resolves the host
+    // (localhost / *.vercel.app / bestbrainplus.com) AND applies the
+    // localStorage.edulearn_api override, stripping trailing slashes and
+    // refusing an http:// override on an https page. Re-deriving it here only
+    // reproduced that logic worse, and the old '/backend-api' tail-fallback was
+    // actively harmful: nothing serves that path in dev, so a miss returned
+    // index.html and the page failed as "Unexpected token '<'". api.js loads
+    // synchronously above, so the global is always there; if it ever isn't,
+    // throwing here is the honest failure.
+    var API = EduAPI.API_BASE;
     var filter = 'all';
     var lastIds = new Set();
 

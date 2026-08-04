@@ -11,7 +11,13 @@ export default function init({ location, document, window, onCleanup }) {
 /* ---- next <script> block ---- */
 
 
-    var API = (window.EduAPI && EduAPI.API_BASE) || (localStorage.getItem('edulearn_api') || '/backend-api');
+    // EduAPI.API_BASE is the final answer — api.js (loaded synchronously above)
+    // already resolves the host and applies the localStorage.edulearn_api
+    // override safely. The old fallbacks were unreachable, and '/backend-api'
+    // was a trap: nothing serves it in dev, so a miss returned index.html and
+    // the page died on "Unexpected token '<'". The next line calls EduAPI
+    // unguarded anyway, so guarding here bought nothing.
+    var API = EduAPI.API_BASE;
     var user = EduAPI.requireAuth();
     var ALL = [];
     var subjectFilter = 'all';
