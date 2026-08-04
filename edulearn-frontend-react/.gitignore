@@ -12,6 +12,13 @@ dist
 dist-ssr
 *.local
 
+# Local env. Vite inlines VITE_* into the bundle at build time, so these can
+# carry the address of an internal backend. .env.example is the tracked
+# reference; the real values stay on whoever is building.
+.env
+.env.*
+!.env.example
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

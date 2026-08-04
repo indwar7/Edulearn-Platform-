@@ -5,6 +5,22 @@ const USER_KEY = 'edulearn_user';
 function resolveApiBase(): string {
   let base = API_DEFAULT;
 
+  /*
+    VITE_API_ORIGIN wins everywhere, before any host sniffing below.
+
+    Vite reads it from .env / .env.production / .env.local at BUILD time and
+    inlines the literal — there is no runtime env on a static site, so it has
+    to be set before `npm run build`, not when the server starts. See
+    .env.example.
+
+    It is checked ahead of the per-host rules so one build can be pointed at
+    any backend (staging, a laptop, a new box) without touching this file. The
+    hardcoded values below stay as the defaults for the deployments we already
+    have, so an unset variable keeps today's behaviour.
+  */
+  const configured = import.meta.env.VITE_API_ORIGIN?.trim();
+  if (configured) return configured.replace(/\/+$/, '');
+
   try {
     // Dev: go through Vite's proxy (see vite.config.ts) so calls are
     // same-origin. Hitting the deployed API directly from :5173 would be
@@ -34,12 +50,13 @@ function resolveApiBase(): string {
         http://65.2.183.7 — the browser blocks it as mixed content) and has to
         list this origin in CLIENT_ORIGIN for CORS.
 
-        VITE_API_ORIGIN overrides at build time; localStorage.edulearn_api
-        still overrides at runtime, just below.
+        These are only the defaults for when VITE_API_ORIGIN is unset; that
+        variable is handled above and wins. localStorage.edulearn_api still
+        overrides at runtime, just below.
       */
       base = location.hostname.endsWith('.vercel.app')
         ? '/backend-api'
-        : (import.meta.env.VITE_API_ORIGIN || 'https://api.bestbrainplus.com');
+        : 'https://api.bestbrainplus.com';
     }
   } catch { /* non-browser */ }
 
